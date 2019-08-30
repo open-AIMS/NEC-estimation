@@ -107,7 +107,7 @@ cat("
 sink()  #Made model in working directory
 
 inits.gammaY_betaX <- function(){list(
-  top = rlnorm(1,log(max(mod.dat$y)),1),
+  top = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.3),
   beta = rgamma(1,0.2,0.001),
   shape = runif(1,0,10),
   NEC = runif(1, 0.01, 0.9))}
