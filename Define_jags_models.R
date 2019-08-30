@@ -107,9 +107,36 @@ cat("
 sink()  #Made model in working directory
 
 inits.gammaY_betaX <- function(){list(
-  top = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.3),
+  top = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.1),
   beta = rgamma(1,0.2,0.001),
   shape = runif(1,0,10),
-  NEC = runif(1, 0.01, 0.9))}
+  NEC = runif(1, 0.3, 0.6))}
 
+# gamma y; gaussian x -----
+sink("NEC_model_gammaY_gaussianX.txt")
+cat("
+    model
+    {
+    
+    # likelihood
+    for (i in 1:N)
+    {
+    theta[i]<-top*exp(-beta*((x[i])-NEC)*step(((x[i])-NEC)))
+    # response is gamma
+    y[i]~dgamma(shape, shape / (theta[i]))
+    }
+    
+    # specify model priors
+    top ~  dgamma(1,0.001) # dnorm(0,0.001) #T(0,) #
+    beta ~ dgamma(0.0001,0.0001)
+    NEC ~ dnorm(0, 0.0001)
+    shape ~ dunif(0,1000)
+    }
+    ", fill=TRUE)
+sink()  #Made model in working directory
 
+inits.gammaY_gaussianX <- function(){list(
+  top = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.1),
+  beta = rgamma(1,0.2,0.001),
+  shape = runif(1,0,10),
+  NEC = rnorm(1, 0, 1))}
