@@ -140,3 +140,35 @@ inits.gammaY_gaussianX <- function(){list(
   beta = rgamma(1,0.2,0.001),
   shape = runif(1,0,10),
   NEC = rnorm(1, 0, 1))}
+
+# binomial y; gamma x ----
+sink("NEC_model_poissonY_gammaX.txt")
+cat("
+    model
+    {
+    
+    # likelihood
+    for (i in 1:N)
+    {
+    theta[i]<-top*exp(-beta*(x[i]-NEC)*step((x[i]-NEC)))
+    # response is poisson
+    y[i]~dbin(theta[i],trials[i])
+    }
+    
+    # specify model priors
+    top ~  dunif(0.0001,0.999) 
+    beta~dgamma(0.0001,0.0001)
+    NEC~dgamma(0.0001,0.0001) #d norm(3, 0.0001) T(0,)
+    
+    }
+    ", fill=TRUE)
+sink()  #Made model in working directory
+
+inits.binomialY_gammaX <- function(){list(
+  top = rbinom(1, mean(mod.dat$trials), max(mod.dat$y/mod.dat$trials)), 
+  beta = rgamma(1,0.2,0.001),
+  NEC = rgamma(1,0.2,0.001) #
+  
+)}
+
+
