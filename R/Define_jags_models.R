@@ -142,7 +142,7 @@ inits.gammaY_gaussianX <- function(){list(
   NEC = rnorm(1, 0, 1))}
 
 # binomial y; gamma x ----
-sink("NEC_model_poissonY_gammaX.txt")
+sink("NEC_model_binomialY_gammaX.txt")
 cat("
     model
     {
