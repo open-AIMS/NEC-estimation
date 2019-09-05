@@ -1,6 +1,6 @@
 #' write.jags.NECmod
 #'
-#' Writes and NEC model file and generates a function for initial values to pass to jags
+#' Writes an NEC model file and generates a function for initial values to pass to jags
 #' 
 #' @param x the statistical distribution to use for the x (concentration) data. This may currently be one of  'beta', 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer.
 #' 
