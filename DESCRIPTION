@@ -1,0 +1,14 @@
+Package: jagsNEC
+Title: Full subsets multiple regresssion in R using gam(m4)
+Version: 1.0
+Authors@R: c(person("Rebecca", "Fisher", email = "r.fisher@aims.gov.au", role = c("aut", "cre")))
+Description: jagsNEC is a No-Effect-Concentration estimation package that is a wrapper for the R2jags package that enables the NEC model as defined by Fox 2010 to be fit via jags.
+Depends:
+    R (>= 3.3.2)
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Imports: R2jags
+Suggests: R.rsp
+VignetteBuilder: R.rsp
