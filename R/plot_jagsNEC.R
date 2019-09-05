@@ -13,9 +13,9 @@
 #' @param add.NEC a logocal value indicating if the estimated NEC values and 95% credible intervals should be added to the plot.
 #'
 #' @export
-#' @return a plot of the fitted model
+#' @return a plot of the fitted model.
 
-plot.jagsNEC <- function(X,
+plot.jagsNEC <<- function(X,
   CI=TRUE,
   posterior.median=TRUE,
   median.model=FALSE,
@@ -31,7 +31,6 @@ plot.jagsNEC <- function(X,
        col=adjustcolor(1, alpha=0.25), cex=1.5, xlab="concentration")     
   }
 
-  
   abline(v=X$NEC, col = "red", lty=c(3,2,3))   
   
   if(CI==TRUE){
@@ -50,5 +49,4 @@ plot.jagsNEC <- function(X,
                         " (", signif(X$NEC[1],3),"-", signif(X$NEC[3],3),")",sep=""))
   }
 
-  
 }

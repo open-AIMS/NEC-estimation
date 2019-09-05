@@ -19,7 +19,7 @@
 \item{add.NEC}{a logocal value indicating if the estimated NEC values and 95% credible intervals should be added to the plot.}
 }
 \value{
-a plot of the fitted model
+a plot of the fitted model.
 }
 \description{
 Generates a plot of a fitted jags NEC model, as returned by fit.jagsNEC.

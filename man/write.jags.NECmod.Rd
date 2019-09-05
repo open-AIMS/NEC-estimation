@@ -15,5 +15,5 @@ write.jags.NECmod(x = "gamma", y)
 an init function to pass to jags
 }
 \description{
-Writes and NEC model file and generates a function for initial values to pass to jags
+Writes an NEC model file and generates a function for initial values to pass to jags
 }
