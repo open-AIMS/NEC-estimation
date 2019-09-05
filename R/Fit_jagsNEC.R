@@ -43,9 +43,12 @@ fit.jagsNEC <- function(data,
   mod.dat <<- list(
     x = data[,x.var],   # concentration
     y = data[,y.var], # response (successes)
-    trials = data[,trials.var], # number of "trials"
     N = nrow(data))  # Sample size
-  
+ 
+  if(y.type=="binomial"){
+   mod.dat$trials = data[,trials.var] # number of "trials"
+  }
+   
   init.fun <- write.jags.NECmod(x=x.type,y=y.type)
   
   J1 <- jags(data       = mod.dat,
@@ -56,7 +59,7 @@ fit.jagsNEC <- function(data,
              n.chains   = 5,
              n.burnin   = burnin,
              n.iter     = n.iter)
-  out <- c(J1$BUGSoutput, list(mod.dat=mod.dat))
+  out <- c(J1$BUGSoutput, list(mod.dat=mod.dat, y.type = y.type))
   
   NEC <-  quantile(out$sims.list$NEC,c(0.025, 0.5, 0.975))
   top <-  quantile(out$sims.list$top,c(0.025, 0.5, 0.975))

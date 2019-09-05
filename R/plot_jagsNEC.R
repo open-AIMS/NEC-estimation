@@ -20,9 +20,18 @@ plot.jagsNEC <- function(X,
   posterior.median=TRUE,
   median.model=FALSE,
   add.NEC=TRUE){
+ 
+  y.type <- out$y.type
   
-  plot(X$mod.dat$x,X$mod.dat$y/X$mod.dat$trials, ylab="response", pch=16, 
-       col=adjustcolor(1, alpha=0.25), cex=1.5, xlab="concentration")  
+  if(y.type=="binomial"){
+     plot(X$mod.dat$x,X$mod.dat$y/X$mod.dat$trials, ylab="response", pch=16, 
+       col=adjustcolor(1, alpha=0.25), cex=1.5, xlab="concentration") 
+  }else{
+    plot(X$mod.dat$x,X$mod.dat$y, ylab="response", pch=16, 
+       col=adjustcolor(1, alpha=0.25), cex=1.5, xlab="concentration")     
+  }
+
+  
   abline(v=X$NEC, col = "red", lty=c(3,2,3))   
   
   if(CI==TRUE){
