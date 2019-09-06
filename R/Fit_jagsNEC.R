@@ -27,29 +27,29 @@ fit.jagsNEC <- function(data,
                         x.var,
                         y.var,
                         trials.var = NA,
-                        x.type = "", 
-                        y.type = "",
+                        x.type = NA, 
+                        y.type = NA,
                         params = c("top", "beta", "NEC"), # default params for typical NEC model
                         burnin = 1000,
                         n.iter = burnin*2
                         ){
   
   # check variable type x.var
-  if(x.type==""){ # if the x.var is not specified, then guess
+  if(is.na(x.type)==T){ # if the x.var is not specified, then guess
     x.dat <- data[,x.var]
-    if(class(x.dat)=="numeric" & max(x.dat>1) & min(x.dat>=0)){x.type=="gamma"}
-    if(class(x.dat)=="numeric" & max(x.dat<1) & min(x.dat>0)){x.type=="beta"} 
-    if(class(x.dat)=="numeric" & max(x.dat>1) & min(x.dat<0)){x.type=="gaussian"}    
+    if(class(x.dat)=="numeric" & max(x.dat)>1 & min(x.dat)>=0){x.type="gamma"}
+    if(class(x.dat)=="numeric" & max(x.dat)<1 & min(x.dat)>0){x.type="beta"} 
+    if(class(x.dat)=="numeric" & max(x.dat)>1 & min(x.dat)<0){x.type="gaussian"}    
   }
 
   # check variable type y.var
-  if(y.type==""){ # if the y.var is not specified, then guess
+  if(is.na(y.type)==T){ # if the y.var is not specified, then guess
     y.dat <- data[,y.var]
-    if(class(y.dat)=="numeric" & max(y.dat>1) & min(y.dat>=0)){y.type=="gamma"}
-    if(class(y.dat)=="numeric" & max(y.dat<1) & min(y.dat>0)){y.type=="gamma"} # "beta" # beta currently not implemented, use gamma
-    if(class(y.dat)=="numeric" & max(y.dat>1) & min(y.dat<0)){y.type=="gaussian"}  
-    if(class(y.dat)=="integer" & min(y.dat>=0 & is.na(trials.var) == TRUE)){y.type=="poisson"}   
-    if(class(y.dat)=="integer" & min(y.dat>=0 & is.na(trials.var) != TRUE)){y.type=="binomial"}   
+    if(class(y.dat)=="numeric" & max(y.dat)>1 & min(y.dat)>=0){y.type="gamma"}
+    if(class(y.dat)=="numeric" & max(y.dat)<1 & min(y.dat)>0){y.type="gamma"} # "beta" # beta currently not implemented, use gamma
+    if(class(y.dat)=="numeric" & max(y.dat)>1 & min(y.dat)<0){y.type="gaussian"}  
+    if(class(y.dat)=="integer" & min(y.dat)>=0 & is.na(trials.var) == TRUE){y.type="poisson"}   
+    if(class(y.dat)=="integer" & min(y.dat)>=0 & is.na(trials.var)!= TRUE){y.type="binomial"}   
   }   
    
 
