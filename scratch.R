@@ -1,11 +1,11 @@
 
 
-data=binom.data
+data= count.data#binom.data
 x.var="raw.x"
-y.var="suc"
-trials.var="tot"
+y.var= "count" #"suc"
+#trials.var="tot"
 x.type = "gamma"
-y.type = "gaussian" #binomial"
+y.type = "poisson" # #binomial"#"gaussian" #
 params = c("top", "beta", "NEC")
 burnin = 1000
 n.iter = 2000

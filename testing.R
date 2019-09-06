@@ -23,7 +23,7 @@ out <- fit.jagsNEC(data=binom.data,
 check.chains(out)
 
 par(mfrow=c(1,1))
-plot.jagsNEC(out)
+plot_jagsNEC(out)
 
 
 
@@ -38,16 +38,30 @@ out <- fit.jagsNEC(data=binom.data,
                    y.var="logit.prop", 
                    #trials.var="tot",  
                    y.type = "gaussian",
-                   burnin=10000,
+                   burnin=1000,
                    params=params)
 
 check.chains(out, params=params)
 
 par(mfrow=c(1,1))
-plot.jagsNEC(out)
+plot_jagsNEC(out)
 
 
+# try the poisson example
+count.data = read.table("https://pastebin.com/raw/ENgNSgf7", header= TRUE,dec=",")
+str(count.data)
 
+count.data$raw.x <- as.numeric(as.character(count.data$raw.x))
+
+range(count.data$raw.x)
+par(mfrow=c(2,1))
+hist(count.data$raw.x)
+hist(count.data$count)
+out <- fit.jagsNEC(data=count.data, 
+                   x.var="raw.x", 
+                   y.var="count", 
+                   y.type = "poisson",
+                   burnin=5000)
 
 
 
