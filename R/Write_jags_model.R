@@ -33,13 +33,13 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         
         }
         ", fill=TRUE)
-    sink()  #Made model in working directory
+    sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
       top = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.75))/
         round(mean(mod.dat$trials)), 
-      beta = runif(1,0.0001,0.999),
-      NEC = rgamma(1,0.2,0.001))}  
+      beta = runif(1,0.0001,0.999),#rlnorm(1,0,1), #
+      NEC = rlnorm(1,log(mean(mod.dat$x)),1))}#rgamma(1,0.2,0.001))}  
    }
 
     
@@ -59,18 +59,18 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         }
         
         # specify model priors
-        top ~  dgamma(1,0.001) # dnorm(0,0.001) #T(0,) 
+        top ~ dgamma(1,0.001) # dnorm(0,0.001) T(0,) dnorm(100,0.0001)T(0,) #
         beta~dgamma(0.0001,0.0001)
-        NEC~dgamma(0.0001,0.0001) #d norm(3, 0.0001) T(0,)
+        NEC~dgamma(0.0001,0.0001) #dnorm(3, 0.0001) T(0,) dnorm(30, 0.0001) T(0,) #
         
         }
         ", fill=TRUE)
-    sink()  #Made model in working directory
+    sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
       top = rpois(1,max(mod.dat$y)), 
-      beta = rgamma(1,0.2,0.001),
-      NEC = rgamma(1,0.2,0.001))}
+      beta = runif(1,0.0001,0.999), #rlnorm(1,0,1), #rgamma(1,0.2,0.001),
+      NEC =  rlnorm(1,log(mean(mod.dat$x)),1))}#rnorm(1,30,10))} #rgamma(1,0.2,0.001))} #
   }
   
   # poisson y; gaussian x----
@@ -93,7 +93,7 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         }
         }
         ", fill=TRUE)
-    sink()  #Made model in working directory
+    sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
       top = rpois(1,max(mod.dat$y)), 
@@ -122,7 +122,7 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         NEC ~  dunif(0.0001,0.9999) #dbeta(1,1)
         }
         ", fill=TRUE)
-    sink()  #Made model in working directory
+    sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
       top = rpois(1,max(mod.dat$y)), #rnorm(1,0,1),#
@@ -152,7 +152,7 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         shape ~ dunif(0,1000)
         }
         ", fill=TRUE)
-    sink()  #Made model in working directory
+    sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
       top = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.1),
@@ -183,7 +183,7 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         shape ~ dunif(0,1000)
         }
         ", fill=TRUE)
-    sink()  #Made model in working directory
+    sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
       top = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.1),
@@ -217,13 +217,13 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
       tau  = 1 / (sigma * sigma)  #tau is the reciprical of the variance     
       }
       ", fill=TRUE)
-  sink()  #Made model in working directory
+  sink()  #Make model in working directory
   
   init.fun <- function(mod.data=mod.data){list(
     top = rnorm(1,max(mod.dat$y),1), 
     beta = rgamma(1,0.2,0.001),
     alpha = rnorm(1,min(mod.dat$y),1),
-    NEC = rgamma(1,0.2,0.001),
+    NEC = rlnorm(1,log(mean(mod.dat$x)),1),#rgamma(1,0.2,0.001),
     sigma = runif(1, 0, 5))}
 
  }
