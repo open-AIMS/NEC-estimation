@@ -10,12 +10,16 @@
 #' LazyLoad: \tab yes\cr
 #' Depends: \tab R2jags\cr
 #' }
-#'
-#' @details
+#' 
+#' @description 
 #' Baysian model fitting can be diffcult to generalise across a broad range of usage cases, particularly with respect to specifying valid initial values and appropriately vauge priors. This is one reason the use of Bayesian statistics in NEC estimation is currently limited across broader ecotoxicological community, who rarely have access to specialist statistical expertise. The jagsNEC package attempts to provide an accessible interface to the R2jags package specifically for fitting NEC models, with a range of models specified based on the known distribution of the "concentration"or "dose" variable (the predictor, x) as well as the "response" (y) variable. The model forumla, incuding priors and the required init function required to call a jags model are automatically generated based on information contained in the supplied data, and the specified variable types. See ?write.jags.NECmod for the currently available x and y data types.
 #' 
+#' @details
 #' This package is currently under development. We are keen on any feedback regarding usage, and especially bug reporting that includes an easy self contained reproducible example of either unexpected behaviour or example model fits that fail to converge (have poor chain mixing) or yield other errors. Such information will hopefully help us towards building a more robust package. We cannot help troublshoot issues if an easy to run reproducible example is not supplied.
 #' Please see the example file on github for usage examples at \url{https://github.com/AIMS/NEC-estimation}
+#' 
+#' Note that jagsNEC by dafault assumes that the concentration (x) data are Gamma distributed (although this can be changed, see ?write.jags.NECmod). If the cx data contain 0, this is adjusted by adding 1/10^5 of the next smallest values.
+#' 
 #' @name jagsNEC-package
 #' @aliases jagsNEC jagsNEC-package
 #' @docType package
