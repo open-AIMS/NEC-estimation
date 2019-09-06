@@ -49,7 +49,7 @@ fit.jagsNEC <- function(data,
    mod.dat$trials = data[,trials.var] # number of "trials"
   }
    
-  init.fun <- write.jags.NECmod(x=x.type,y=y.type)
+  init.fun <- write.jags.NECmod(x=x.type,y=y.type, mod.dat=mod.dat)
   
   J1 <- jags(data       = mod.dat,
              inits      = init.fun,
