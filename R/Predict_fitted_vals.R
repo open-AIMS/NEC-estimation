@@ -43,12 +43,12 @@ predict_NECbugsmod <- function(X){
 
   if(X$y.type != "gaussian"){
    pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
-    predict.NECmod(x.vec=x.seq,
+    predict_NECmod(x.vec=x.seq,
                    NEC=X$sims.list$NEC[x],
                    top=X$sims.list$top[x],
                    beta=X$sims.list$beta[x])}))}else{
    pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
-    predict.NECmod(x.vec=x.seq,
+    predict_NECmod(x.vec=x.seq,
                    NEC=X$sims.list$NEC[x],
                    top=X$sims.list$top[x],
                    beta=X$sims.list$beta[x],
