@@ -47,7 +47,7 @@ fit.jagsNEC <- function(data,
     y.dat <- data[,y.var]
     if(class(y.dat)=="numeric" & max(y.dat)>1 & min(y.dat)>=0){y.type="gamma"}
     if(class(y.dat)=="numeric" & max(y.dat)<1 & min(y.dat)>0){y.type="gamma"} # "beta" # beta currently not implemented, use gamma
-    if(class(y.dat)=="numeric" & max(y.dat)>1 & min(y.dat)<0){y.type="gaussian"}  
+    if(class(y.dat)=="numeric" & min(y.dat)<0){y.type="gaussian"}  
     if(class(y.dat)=="integer" & min(y.dat)>=0 & is.na(trials.var) == TRUE){y.type="poisson"}   
     if(class(y.dat)=="integer" & min(y.dat)>=0 & is.na(trials.var)!= TRUE){y.type="binomial"}   
   }   
