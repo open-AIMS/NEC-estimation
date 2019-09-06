@@ -1,4 +1,4 @@
-#' predict.NECmod
+#' predict_NECmod
 #'
 #' Calculates predicted y (response) values for a supplied vector of x (concentration) values for a given set of NEC, top and beta values
 #'
@@ -13,7 +13,7 @@
 #' @export
 #' @return The $BUGSoutput element of fitted jags model.
 
-predict.NECmod <- function(x.vec, NEC, top, beta, alpha=0){
+predict_NECmod <- function(x.vec, NEC, top, beta, alpha=0){
 
   x.seq.pre <-  x.vec[which(x.vec<=NEC)] #seq(min.x, NEC.m, length=20)
   x.seq.post <- x.vec[which(x.vec>NEC)] # seq(NEC.m, max.x, length=20)
@@ -26,7 +26,7 @@ predict.NECmod <- function(x.vec, NEC, top, beta, alpha=0){
 
 }
 
-#' predict.NECbugsmod
+#' predict_NECbugsmod
 #'
 #' Calculates predicted y (response) values for a supplied vector of x (concentration) values for a jags fitted NEC model fit (as returned by fit.jagsNEC)
 #' 
@@ -35,7 +35,7 @@ predict.NECmod <- function(x.vec, NEC, top, beta, alpha=0){
 #' @export
 #' @return a list containing x (the x.seq), y (the median predicted y values at each value of x), up.vals (the upper 97.5% percentile of the predicted y values at each value of x), and lw (the lower 2.5% percentile of the predicted y values at each value of x)
 
-predict.NECbugsmod <- function(X){
+predict_NECbugsmod <- function(X){
   mod.dat <- X$mod.dat
   min.x <- min(mod.dat$x)
   max.x <- max(mod.dat$x)

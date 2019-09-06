@@ -13,13 +13,9 @@
 #' @param add.NEC a logocal value indicating if the estimated NEC values and 95% credible intervals should be added to the plot.
 #'
 #' @export
-#' @return a plot of the fitted model.
+#' @return a plot of the fitted model
 
-plot.jagsNEC <<- function(X,
-  CI=TRUE,
-  posterior.median=TRUE,
-  median.model=FALSE,
-  add.NEC=TRUE){
+plot_jagsNEC <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=FALSE,  add.NEC=TRUE){
  
   y.type <- out$y.type
   
@@ -50,3 +46,5 @@ plot.jagsNEC <<- function(X,
   }
 
 }
+
+

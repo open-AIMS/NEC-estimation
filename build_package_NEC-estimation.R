@@ -1,7 +1,7 @@
 
 
 # This script includes the basic steps required to create and
-#    build the FFSgam package
+#    build the jagsNEC package
 
 library(devtools)
 library(roxygen2)

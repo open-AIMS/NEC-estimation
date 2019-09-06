@@ -69,8 +69,8 @@ fit.jagsNEC <- function(data,
   max.x <- max(mod.dat$x)
   x.seq <- seq(min.x, max.x, length=100)
   
-  y.pred.m <- predict.NECmod(x.vec=x.seq, NEC=NEC["50%"], top=top["50%"], beta=beta["50%"]) 
-  pred.vals <- c(predict.NECbugsmod(X=out), list(y.m=y.pred.m))  
+  y.pred.m <- predict_NECmod(x.vec=x.seq, NEC=NEC["50%"], top=top["50%"], beta=beta["50%"]) 
+  pred.vals <- c(predict_NECbugsmod(X=out), list(y.m=y.pred.m))  
   
   out <- c(out, list(
      pred.vals = pred.vals,
