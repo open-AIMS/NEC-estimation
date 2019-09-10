@@ -47,7 +47,10 @@ fit.jagsNEC <- function(data,
     y.dat <- data[,y.var]
     if(class(y.dat)=="numeric" & max(y.dat)>1 & min(y.dat)>=0){y.type="gamma"}
     if(class(y.dat)=="numeric" & max(y.dat)<1 & min(y.dat)>0){y.type="gamma"} # "beta" # beta currently not implemented, use gamma
-    if(class(y.dat)=="numeric" & min(y.dat)<0){y.type="gaussian"}  
+    if(class(y.dat)=="numeric" & min(y.dat)<0){
+      y.type="gaussian"
+      params=c(params,"alpha")
+      }  
     if(class(y.dat)=="integer" & min(y.dat)>=0 & is.na(trials.var) == TRUE){y.type="poisson"}   
     if(class(y.dat)=="integer" & min(y.dat)>=0 & is.na(trials.var)!= TRUE){y.type="binomial"}   
   }   
@@ -71,14 +74,29 @@ fit.jagsNEC <- function(data,
    
   init.fun <- write.jags.NECmod(x=x.type,y=y.type, mod.dat=mod.dat)
   
-  J1 <- jags(data       = mod.dat,
+  J1 <- try(jags(data       = mod.dat,
              inits      = init.fun,
              parameters = params,
              model      = "NECmod.txt",
              n.thin     = 10,
              n.chains   = 5,
              n.burnin   = burnin,
-             n.iter     = n.iter)
+             n.iter     = n.iter), silent = T)
+  # if the attempt fails try 10 more times
+  w <- 1
+    while(class(J1)=="try-error" & w <= 10){
+    w <- w+1      
+    J1 <- try(jags(data       = mod.dat,
+                   inits      = init.fun,
+                   parameters = params,
+                   model      = "NECmod.txt",
+                   n.thin     = 10,
+                   n.chains   = 5,
+                   n.burnin   = burnin,
+                   n.iter     = n.iter), silent = T)  
+  }
+  
+    
   out <- c(J1$BUGSoutput, list(mod.dat=mod.dat, y.type = y.type))
   
   NEC <-  quantile(out$sims.list$NEC,c(0.025, 0.5, 0.975))

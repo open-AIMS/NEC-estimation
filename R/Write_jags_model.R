@@ -177,7 +177,7 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         }
         
         # specify model priors
-        top ~  dgamma(1,0.001) # dnorm(0,0.001) #T(0,) #
+        top ~  dlnorm(0,0.001) # dnorm(0,0.001) T(0,) #dgamma(1,0.001) #
         beta ~ dgamma(0.0001,0.0001)
         NEC ~ dnorm(0, 0.0001)
         shape ~ dunif(0,1000)
@@ -189,7 +189,7 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
       top = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.1),
       beta = rgamma(1,0.2,0.001),
       shape = runif(1,0,10),
-      NEC = rnorm(1, 0, 1))}
+      NEC = rnorm(1, mean(mod.dat$x), 1))}
   }
 
 # gaussian y; gamma x ----
@@ -228,5 +228,41 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
 
  }
 
+  # gaussian y; beta x ----
+  if(x=="beta" & y=="gaussian"){
+    sink("NECmod.txt")
+    cat("
+        model
+        {
+        
+        # likelihood
+        for (i in 1:N)
+        {
+        theta[i]<-top*exp(-beta*(x[i]-NEC)*step((x[i]-NEC)))-alpha # extra parameter alpha is offset to y
+        # response is gaussian
+        
+        y[i]~dnorm(theta[i],tau)
+        }
+        
+        # specify model priors
+        top ~  dnorm(0,0.1) # dnorm(0,0.001) #T(0,) 
+        beta ~ dgamma(0.0001,0.0001)
+        alpha ~ dnorm(0,0.1)
+        NEC ~  dunif(0.001,0.999) #dbeta(1,1)
+        sigma ~ dunif(0, 20)  #sigma is the SD
+        tau  = 1 / (sigma * sigma)  #tau is the reciprical of the variance     
+        }
+        ", fill=TRUE)
+    sink()  #Make model in working directory
+    
+    init.fun <- function(mod.data=mod.data){list(
+      top = rnorm(1,max(mod.dat$y),1), 
+      beta = rgamma(1,0.2,0.001),
+      alpha = rnorm(1,min(mod.dat$y),1),
+      NEC =  runif(1, 0.3, 0.6),#rgamma(1,0.2,0.001),
+      sigma = runif(1, 0, 5))}
+    
+  }
+  
  return(init.fun) 
 }
