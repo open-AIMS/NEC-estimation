@@ -17,7 +17,6 @@ out <- fit.jagsNEC(data=binom.data,
                         x.var="raw.x", 
                         y.var="suc", 
                         trials.var="tot",  
-                        y.type = "binomial",
                         burnin=5000)
 
 check.chains(out)
@@ -36,8 +35,6 @@ binom.data$logit.prop <- logit(binom.data$prop)
 out <- fit.jagsNEC(data=binom.data, 
                    x.var="raw.x", 
                    y.var="logit.prop", 
-                   #trials.var="tot",  
-                   y.type = "gaussian",
                    burnin=1000,
                    params=params)
 
@@ -60,8 +57,33 @@ hist(count.data$count)
 out <- fit.jagsNEC(data=count.data, 
                    x.var="raw.x", 
                    y.var="count", 
-                   y.type = "poisson",
-                   burnin=5000)
+                   burnin=10000)
+check.chains(out)
+
+par(mfrow=c(1,1))
+plot_jagsNEC(out)
 
 
+### not test all Heidi's examples
+
+path <- "C:/Users/rfisher/OneDrive - Australian Institute of Marine Science/Documents/AIMS/EcologicalRiskModelling/Ecotoxicology/Ecotox_stats/CR-examples"
+all.files <- list.files(path)
+files <- all.files[grep(".csv",all.files)]
+
+pdf("testing.pdf",onefile = T)
+
+for(f in 1:length(files)){
+  dat <- read.csv(paste(path,files[f], sep="/"))
+  out <- fit.jagsNEC(data=dat, 
+                     x.var="concentration", 
+                     y.var="response", 
+                     burnin=1000)
+  check.chains(out)
+  
+  par(mfrow=c(1,1))
+  plot_jagsNEC(out)
+  mtext(side=3,text=f,outer=T)
+  
+}
+dev.off()
 

@@ -82,6 +82,7 @@ fit.jagsNEC <- function(data,
              n.chains   = 5,
              n.burnin   = burnin,
              n.iter     = n.iter), silent = T)
+ 
   # if the attempt fails try 10 more times
   w <- 1
     while(class(J1)=="try-error" & w <= 10){
@@ -96,7 +97,18 @@ fit.jagsNEC <- function(data,
                    n.iter     = n.iter), silent = T)  
   }
   
-    
+  # if the attempt failts try without initial values
+  if(class(J1)=="try-error"){
+    J1 <- try(jags(data       = mod.dat,
+                   # inits      = init.fun,
+                   parameters = params,
+                   model      = "NECmod.txt",
+                   n.thin     = 10,
+                   n.chains   = 5,
+                   n.burnin   = burnin,
+                   n.iter     = n.iter), silent = T) 
+  }
+  
   out <- c(J1$BUGSoutput, list(mod.dat=mod.dat, y.type = y.type))
   
   NEC <-  quantile(out$sims.list$NEC,c(0.025, 0.5, 0.975))
