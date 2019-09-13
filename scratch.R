@@ -9,7 +9,9 @@ y.type = NA #"poisson" # #binomial"#"gaussian" #
 params = c("top", "beta", "NEC")
 burnin = 1000
 n.iter = 2000
+n.iter.update = 10000
 
+name=""
 
 
 CI=TRUE
