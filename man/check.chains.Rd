@@ -4,12 +4,10 @@
 \alias{check.chains}
 \title{check.chains}
 \usage{
-check.chains(X, params = c("top", "beta", "NEC"), name = "")
+check.chains(X, name = "")
 }
 \arguments{
-\item{X}{a jag model fit as returned by a call to jags from R2jags}
-
-\item{params}{A vector of names indicating the parameters that were traced during the jags fit. For the NEC jags model this is typically 'NEC','top' and 'beta', whicha are the defaults.}
+\item{X}{a jag model fit as returned by a call to jags from fit.jagsNEC}
 
 \item{name}{and optional character string indicating the label to be placed at the top of the plotting window}
 }
