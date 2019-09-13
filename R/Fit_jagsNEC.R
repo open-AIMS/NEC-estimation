@@ -136,38 +136,33 @@ fit.jagsNEC <- function(data,
     if(length(all.Js)==0){
       stop("The function fit.jagsNEC was unable to fit this model. Please help us make this software better by emailing a self contained reproducible example to the developers")
     } 
-  }else{
-    J2  <- update(J1, n.iter = n.iter.update, n.thin = floor((n.iter.update*0.01)))  
-    #J2 <- window(J2, start=)#(n.iter.update-burnin))
-    #extend.jags(J2,combine=FALSE)
+  }
+  J2  <- update(J1, n.iter = n.iter.update, n.thin = floor((n.iter.update*0.01)))  
+  out <- c(J2$BUGSoutput, list(mod.dat=mod.dat, y.type = y.type))
     
-    out <- c(J2$BUGSoutput, list(mod.dat=mod.dat, y.type = y.type))
-    
-    NEC <-  quantile(out$sims.list$NEC,c(0.025, 0.5, 0.975))
-    top <-  quantile(out$sims.list$top,c(0.025, 0.5, 0.975))
-    beta <-  quantile(out$sims.list$beta,c(0.025, 0.5, 0.975)) 
-    alpha <- rep(0,3)#rep(0, length(NEC))
-    if(y.type=="gaussian"){
+  NEC <-  quantile(out$sims.list$NEC,c(0.025, 0.5, 0.975))
+  top <-  quantile(out$sims.list$top,c(0.025, 0.5, 0.975))
+  beta <-  quantile(out$sims.list$beta,c(0.025, 0.5, 0.975)) 
+  alpha <- rep(0,3)#rep(0, length(NEC))
+  if(y.type=="gaussian"){
          alpha <-  quantile(out$sims.list$lapha,c(0.025, 0.5, 0.975)) 
-    }
-
-    min.x <- min(mod.dat$x)
-    max.x <- max(mod.dat$x)
-    x.seq <- seq(min.x, max.x, length=100)
-    
-    y.pred.m <- predict_NECmod(x.vec=x.seq, NEC=NEC["50%"], top=top["50%"], beta=beta["50%"]) 
-    pred.vals <- c(predict_NECbugsmod(X=out), list(y.m=y.pred.m))  
-    
-    out <- c(out, list(
-       pred.vals = pred.vals,
-       NEC = NEC,
-       top =top,
-       beta = beta,
-       alpha = alpha,
-       params = params))
-    return(out)    
   }
 
+  min.x <- min(mod.dat$x)
+  max.x <- max(mod.dat$x)
+  x.seq <- seq(min.x, max.x, length=100)
+  
+  y.pred.m <- predict_NECmod(x.vec=x.seq, NEC=NEC["50%"], top=top["50%"], beta=beta["50%"]) 
+  pred.vals <- c(predict_NECbugsmod(X=out), list(y.m=y.pred.m))  
+  
+  out <- c(out, list(
+     pred.vals = pred.vals,
+     NEC = NEC,
+     top =top,
+     beta = beta,
+     alpha = alpha,
+     params = params))
+  return(out)    
 }
 
 
