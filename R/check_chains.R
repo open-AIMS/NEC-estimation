@@ -4,7 +4,7 @@
 #'
 #' @param  X a jag model fit as returned by a call to jags from fit.jagsNEC
 #'
-#' @param name and optional character string indicating the label to be placed at the top of the plotting window
+#' @param name an optional character string indicating the label to be placed at the top of the plotting window
 #'
 #' @export
 #' @return A plot of MCMC chains and ACF diagrames for each element in params.
