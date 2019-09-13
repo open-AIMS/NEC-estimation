@@ -9,9 +9,11 @@
 #' @param top the estimated value of y (response) over the range of x for which no effect occurs
 #' 
 #' @param beta the exponential decay rate
+#' 
+#' @alpha alpha the offset of a gaussian y response variable
 #'
 #' @export
-#' @return A list caontaining x and fitted y, with up and lw values
+#' @return A list containing x and fitted y, with up and lw values
 
 predict_NECmod <- function(x.vec, NEC, top, beta, alpha=0){
 
