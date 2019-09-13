@@ -25,7 +25,7 @@ This package is currently under development. We are keen on any feedback regardi
 With the R package 'devtools' jagsNEC can be installed straight from github. Once installed the library must be loaded (like any other R library), along with the R2jags library.
 
 ```{r install-jagsNEC}
-devtools::install_github("AIMS/NEC-estimation")
+#devtools::install_github("AIMS/NEC-estimation")
 library(jagsNEC)
 library(R2jags)
 ```
