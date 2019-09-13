@@ -10,15 +10,17 @@
 #' 
 #' @param trials.var the column heading indicating the column for the number of "trials" for binomial response data
 #' 
-#' @param x.type the statistical distribution to use for the x (concentration) data. The default is "gamma" as most concentration data are gamma (ie continuous on the scale of >0 to inf). As some experiments will use zero concentration, and there is no distribution on the continuous scale from 0 to in (ie tweedie) available in jags, a small offset is added (1/10^5 of the next lowest value) to zero values of concentration
+#' @param x.type the statistical distribution to use for the x (concentration) data. fit.jagsNEC will guess if not supplied. As some experiments will use zero concentration, and there is no distribution on the continuous scale from 0 to in (ie tweedie) available in jags, a small offset is added (1/10^5 of the next lowest value) to zero values of concentration
 #'
-#' @param y.type the statistical distribution to use for the y (response) data. This may currently be one of  'binomial', 'poisson', or 'gamma'. Others can be added as required, please contact the package maintainer.
+#' @param y.type the statistical distribution to use for the y (response) data. This may currently be one of  'binomial', 'poisson', or 'gamma'. Others can be added as required, please contact the package maintainer. fit.jagsNEC will guess if not supplied.
 #'
 #' @param  params A vector of names indicating the parameters that were traced during the jags fit. For the NEC jags model this is typically 'NEC','top' and 'beta'. If left NA, fit.jagsNEC will supply this based on the selected y.type and x.type.
 #'
 #' @param burnin the number of iterations to use as burning.
 #' 
-#' @param n.iter the number of interations to run overall. Defaults to 2 times burnin.
+#' @param n.iter the number of interations to run following burnin. Defaults to 500 + burnin, but small values are good when the model may have trouble fitting, and is updated by n.iter.update iterations anyway.
+#'
+#' @param n.iter.burnin the number of interations to run overall. Defaults to 2 times burnin.
 #'
 #' @export
 #' @return The $BUGSoutput element of fitted jags model.

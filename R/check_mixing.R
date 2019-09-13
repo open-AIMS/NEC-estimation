@@ -2,9 +2,7 @@
 #'
 #' Generates a plot of MCMC chains and ACF function for a Jags model output.
 #'
-#' @param  X a jag model fit as returned by a call to jags fit.jagsNEC
-#'
-#' @param  params A vector of names indicating the parameters that were traced during the jags fit. For the NEC jags model this is typically 'NEC','top' and 'beta', whicha are the defaults. 
+#' @param  J a jag model fit as returned by a call to jags fit.jagsNEC
 #'
 #' @export
 #' @return A plot of MCMC chains and ACF diagrames for each element in params.
