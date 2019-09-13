@@ -70,7 +70,6 @@ binom.data$logit.prop <- logit(binom.data$prop)
 out <- fit.jagsNEC(data=binom.data, 
                    x.var="raw.x", 
                    y.var="logit.prop")
-
 check.chains(out)
 
 par(mfrow=c(1,1))
