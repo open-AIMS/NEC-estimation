@@ -14,7 +14,7 @@
 #'
 #' @param y.type the statistical distribution to use for the y (response) data. This may currently be one of  'binomial', 'poisson', or 'gamma'. Others can be added as required, please contact the package maintainer.
 #'
-#' @param  params A vector of names indicating the parameters that were traced during the jags fit. For the NEC jags model this is typically 'NEC','top' and 'beta', whicha are the defaults. 
+#' @param  params A vector of names indicating the parameters that were traced during the jags fit. For the NEC jags model this is typically 'NEC','top' and 'beta'. If left NA, fit.jagsNEC will supply this based on the selected y.type and x.type.
 #'
 #' @param burnin the number of iterations to use as burning.
 #' 
@@ -29,9 +29,10 @@ fit.jagsNEC <- function(data,
                         trials.var = NA,
                         x.type = NA, 
                         y.type = NA,
-                        params = c("top", "beta", "NEC"), # default params for typical NEC model
-                        burnin = 1000,
-                        n.iter = burnin*2
+                        params = NA,
+                        burnin = 5000,
+                        n.iter = burnin+500,
+                        n.iter.update = 10000
                         ){
   
   # check variable type x.var
@@ -47,20 +48,23 @@ fit.jagsNEC <- function(data,
     y.dat <- data[,y.var]
     if(class(y.dat)=="numeric" & max(y.dat)>1 & min(y.dat)>=0){y.type="gamma"}
     if(class(y.dat)=="numeric" & max(y.dat)<1 & min(y.dat)>0){y.type="gamma"} # "beta" # beta currently not implemented, use gamma
-    if(class(y.dat)=="numeric" & min(y.dat)<0){
-      y.type="gaussian"
-      params=c(params,"alpha")
-      }  
-    if(class(y.dat)=="integer" & min(y.dat)>=0 & is.na(trials.var) == TRUE){y.type="poisson"}   
-    if(class(y.dat)=="integer" & min(y.dat)>=0 & is.na(trials.var)!= TRUE){y.type="binomial"}   
+    if(class(y.dat)=="numeric" & min(y.dat)<0){y.type="gaussian"}  
+    if(class(y.dat)=="integer" & min(y.dat)>=0 & is.na(trials.var) == TRUE){
+      y.type="poisson"}   
+    if(class(y.dat)=="integer" & min(y.dat)>=0 & is.na(trials.var)!= TRUE){
+      y.type="binomial"}   
   }   
-   
-
+  
+  params <- c("top", "beta", "NEC")
+  
+  if(y.type=="gamma"){params=c(params,"shape")}
+  if(y.type=="gaussian"){params=c(params,"alpha","sigma")}
+    
   # error catching for 0 concentration for gamma by adding very small value (no tweedie available in jags)
   if(min(data[,x.var])==0 & x.type=="gamma"){
    tt <- data[,x.var]
    min.val <- min(tt[which(tt>0)])
-   data[which(tt==0),x.var] <- tt[which(tt==0)]+(min.val/10^5) 
+   data[which(tt==0),x.var] <- tt[which(tt==0)]+(min.val/10^3) 
   } 
 
   mod.dat <<- list(
@@ -74,6 +78,8 @@ fit.jagsNEC <- function(data,
    
   init.fun <- write.jags.NECmod(x=x.type,y=y.type, mod.dat=mod.dat)
   
+  all.Js <- list()
+  
   J1 <- try(jags(data       = mod.dat,
              inits      = init.fun,
              parameters = params,
@@ -82,6 +88,10 @@ fit.jagsNEC <- function(data,
              n.chains   = 5,
              n.burnin   = burnin,
              n.iter     = n.iter), silent = T)
+  if(class(J1)!="try-error"){ # make sure the fitted model had good mixing
+    all.Js <- c(all.Js, list(J1))   
+    if(max(unlist(check.mixing(J1)$cv.test))==1){class(J1)="try-error"}
+  }
  
   # if the attempt fails try 10 more times
   w <- 1
@@ -95,40 +105,69 @@ fit.jagsNEC <- function(data,
                    n.chains   = 5,
                    n.burnin   = burnin,
                    n.iter     = n.iter), silent = T)  
+    if(class(J1)!="try-error"){ # make sure the fitted model had good mixing
+      all.Js <- c(all.Js, list(J1))   
+      if(max(unlist(check.mixing(J1)$cv.test))==1){class(J1)="try-error"}
+    }
   }
   
-  # if the attempt failts try without initial values
-  if(class(J1)=="try-error"){
+  # if the attempt fails try without initial values
+  w <- 1
+  while(class(J1)=="try-error" & w <= 10){
+    w <- w+1 
     J1 <- try(jags(data       = mod.dat,
-                   # inits      = init.fun,
                    parameters = params,
                    model      = "NECmod.txt",
                    n.thin     = 10,
                    n.chains   = 5,
                    n.burnin   = burnin,
                    n.iter     = n.iter), silent = T) 
+    if(class(J1)!="try-error"){ # make sure the fitted model had good mixing
+      all.Js <- c(all.Js, list(J1))   
+      if(max(unlist(check.mixing(J1)$cv.test))==1){class(J1)="try-error"}
+    }    
   }
   
-  out <- c(J1$BUGSoutput, list(mod.dat=mod.dat, y.type = y.type))
-  
-  NEC <-  quantile(out$sims.list$NEC,c(0.025, 0.5, 0.975))
-  top <-  quantile(out$sims.list$top,c(0.025, 0.5, 0.975))
-  beta <-  quantile(out$sims.list$beta,c(0.025, 0.5, 0.975)) 
-  
-  min.x <- min(mod.dat$x)
-  max.x <- max(mod.dat$x)
-  x.seq <- seq(min.x, max.x, length=100)
-  
-  y.pred.m <- predict_NECmod(x.vec=x.seq, NEC=NEC["50%"], top=top["50%"], beta=beta["50%"]) 
-  pred.vals <- c(predict_NECbugsmod(X=out), list(y.m=y.pred.m))  
-  
-  out <- c(out, list(
-     pred.vals = pred.vals,
-     NEC = NEC,
-     top =top,
-     beta = beta))
-  return(out)
-  
+  if(class(J1)=="try-error"){
+    if(length(all.Js)>0){
+      J1 <- all.Js[[ which.min(unlist(lapply(all.Js, FUN=function(x){check.mixing(x)$cv.ratio})))]]
+      warning("The function fit.jagsNEC was unable to find a set of starting parameters resulting in good chain mixing. This may be a result of a weakly defined threshold, in which case try calculating an ECx value instead. If the data show a clear NEC pattern, please send a reproducible example so we can try and improve our function. While a model has been returned, please evaluate the model using check.chains to assess the validity of the fit.")
+         } 
+    if(length(all.Js)==0){
+      stop("The function fit.jagsNEC was unable to fit this model. Please help us make this software better by emailing a self contained reproducible example to the developers")
+    } 
+  }else{
+    J2  <- update(J1, n.iter = n.iter.update, n.thin = floor((n.iter.update*0.01)))  
+    #J2 <- window(J2, start=)#(n.iter.update-burnin))
+    #extend.jags(J2,combine=FALSE)
+    
+    out <- c(J2$BUGSoutput, list(mod.dat=mod.dat, y.type = y.type))
+    
+    NEC <-  quantile(out$sims.list$NEC,c(0.025, 0.5, 0.975))
+    top <-  quantile(out$sims.list$top,c(0.025, 0.5, 0.975))
+    beta <-  quantile(out$sims.list$beta,c(0.025, 0.5, 0.975)) 
+    alpha <- rep(0,3)#rep(0, length(NEC))
+    if(y.type=="gaussian"){
+         alpha <-  quantile(out$sims.list$lapha,c(0.025, 0.5, 0.975)) 
+    }
+
+    min.x <- min(mod.dat$x)
+    max.x <- max(mod.dat$x)
+    x.seq <- seq(min.x, max.x, length=100)
+    
+    y.pred.m <- predict_NECmod(x.vec=x.seq, NEC=NEC["50%"], top=top["50%"], beta=beta["50%"]) 
+    pred.vals <- c(predict_NECbugsmod(X=out), list(y.m=y.pred.m))  
+    
+    out <- c(out, list(
+       pred.vals = pred.vals,
+       NEC = NEC,
+       top =top,
+       beta = beta,
+       alpha = alpha,
+       params = params))
+    return(out)    
+  }
+
 }
 
 

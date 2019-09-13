@@ -11,7 +11,7 @@
 #' @param beta the exponential decay rate
 #'
 #' @export
-#' @return The $BUGSoutput element of fitted jags model.
+#' @return A list caontaining x and fitted y, with up and lw values
 
 predict_NECmod <- function(x.vec, NEC, top, beta, alpha=0){
 

@@ -2,16 +2,15 @@
 #'
 #' Generates a plot of MCMC chains and ACF function for a Jags model output.
 #'
-#' @param  X a jag model fit as returned by a call to jags from R2jags
-#'
-#' @param  params A vector of names indicating the parameters that were traced during the jags fit. For the NEC jags model this is typically 'NEC','top' and 'beta', whicha are the defaults. 
+#' @param  X a jag model fit as returned by a call to jags from fit.jagsNEC
 #'
 #' @param name and optional character string indicating the label to be placed at the top of the plotting window
 #'
 #' @export
 #' @return A plot of MCMC chains and ACF diagrames for each element in params.
 
-check.chains <- function(X, params = c("top", "beta", "NEC"), name=""){
+check.chains <- function(X, name=""){
+  params <- X$params
   x <- X$sims.array
   num.chains <- ncol(x[,,params[1]])
 
