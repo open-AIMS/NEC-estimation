@@ -300,5 +300,36 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
     
   }
   
+  # gamma y; gamma x -----
+  if(x=="gamma" & y=="gamma"){
+    sink("NECmod.txt")
+    cat("
+        model
+        {
+        
+        # likelihood
+        for (i in 1:N)
+        {
+        theta[i]<-top*exp(-beta*((x[i])-NEC)*step(((x[i])-NEC)))
+        # response is gamma
+        y[i]~dgamma(shape, shape / (theta[i]))
+        }
+        
+        # specify model priors
+        top ~  dlnorm(0,0.001) #dgamma(1,0.001) # dnorm(0,0.001) #T(0,) #
+        beta ~ dgamma(0.0001,0.0001)
+        NEC~dgamma(0.0001,0.0001) #dnorm(3, 0.0001) T(0,) dnorm(30, 0.0001) T(0,) #
+        shape ~ dlnorm(0,0.001) #dunif(0,1000)
+        }
+        ", fill=TRUE)
+    sink()  #Make model in working directory
+    
+    init.fun <- function(mod.data=mod.data){list(
+      top = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.1),
+      beta = rgamma(1,0.2,0.001),
+      shape = runif(1,0,10),
+      NEC = rlnorm(1,log(mean(mod.dat$x)),1))}#rnorm(1,30,10))} #rgamma(1,0.2,0.001))} #
+  }
+  
  return(init.fun) 
 }
