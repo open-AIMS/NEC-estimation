@@ -22,6 +22,8 @@
 #'
 #' @param n.iter.burnin the number of interations to run overall. This should be large. Defaults to 10000.
 #'
+#' @param n.tries. If the initial model fit fails because it cannot be fit by jags (miss-specified priors, invalid initial values), or because there is poor chain mixing fit.jagsNEC will try n.tries many times using the init.fun defined by write.jags.NECmod. If all those attempts fail, fit.jagsNEC will then try using default values provided by jags. The function will only return an error if all n.tries fail.
+#'
 #' @export
 #' @return The $BUGSoutput element of fitted jags model.
 
@@ -35,6 +37,7 @@ fit.jagsNEC <- function(data,
                         burnin = 5000,
                         n.iter = burnin+500,
                         n.iter.update = 10000,
+                        n.tries=10,
                         ...){
   
   # check variable type x.var
@@ -97,7 +100,7 @@ fit.jagsNEC <- function(data,
  
   # if the attempt fails try 10 more times
   w <- 1
-    while(class(J1)=="try-error" & w <= 10){
+    while(class(J1)=="try-error" & w <= n.tries){
     w <- w+1      
     J1 <- try(jags(data       = mod.dat,
                    inits      = init.fun,
@@ -115,7 +118,7 @@ fit.jagsNEC <- function(data,
   
   # if the attempt fails try without initial values
   w <- 1
-  while(class(J1)=="try-error" & w <= 10){
+  while(class(J1)=="try-error" & w <= n.tries){
     w <- w+1 
     J1 <- try(jags(data       = mod.dat,
                    parameters = params,
@@ -133,7 +136,7 @@ fit.jagsNEC <- function(data,
   if(class(J1)=="try-error"){
     if(length(all.Js)>0){
       J1 <- all.Js[[ which.min(unlist(lapply(all.Js, FUN=function(x){check.mixing(x)$cv.ratio})))]]
-      warning("The function fit.jagsNEC was unable to find a set of starting parameters resulting in good chain mixing. This may be a result of a weakly defined threshold, in which case try calculating an ECx value instead. If the data show a clear NEC pattern, please send a reproducible example so we can try and improve our function. While a model has been returned, please evaluate the model using check.chains to assess the validity of the fit.")
+      warning("The function fit.jagsNEC was unable to find a set of starting parameters resulting in good chain mixing. This may be a result of a weakly defined threshold, in which case try calculating an ECx value instead. If the data show a clear NEC pattern that would normally be easy to fit, please send a reproducible example so we can try and improve our function. While a model has been returned, please evaluate the model using check.chains to assess the validity of the fit, as well as criticially evaluate the outcome of the estimated values. Extreme caution should be used in interpreting the model results.")
          } 
     if(length(all.Js)==0){
       stop("The function fit.jagsNEC was unable to fit this model. Please help us make this software better by emailing a self contained reproducible example to the developers")
