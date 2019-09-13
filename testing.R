@@ -54,7 +54,7 @@ measure.data$measure <- as.numeric(as.character(measure.data$measure))
 
 out <- fit.jagsNEC(data=measure.data, 
                    x.var="raw.x", 
-                   y.var="measure")
+                   y.var="measure", n.tries=1, prob.val=0.05)
 check.chains(out)
 
 par(mfrow=c(1,1))
