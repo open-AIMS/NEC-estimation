@@ -9,7 +9,7 @@ check.chains(X, name = "")
 \arguments{
 \item{X}{a jag model fit as returned by a call to jags from fit.jagsNEC}
 
-\item{name}{and optional character string indicating the label to be placed at the top of the plotting window}
+\item{name}{an optional character string indicating the label to be placed at the top of the plotting window}
 }
 \value{
 A plot of MCMC chains and ACF diagrames for each element in params.

@@ -4,9 +4,9 @@
 \alias{fit.jagsNEC}
 \title{fit.jagsNEC}
 \usage{
-fit.jagsNEC(data, x.var, y.var, trials.var = NA, x.type = "gamma",
-  y.type, params = c("top", "beta", "NEC"), burnin = 1000,
-  n.iter = burnin * 2)
+fit.jagsNEC(data, x.var, y.var, trials.var = NA, x.type = NA,
+  y.type = NA, params = NA, burnin = 5000, n.iter = burnin + 500,
+  n.iter.update = 10000, n.tries = 10, ...)
 }
 \arguments{
 \item{data}{a data.frame containing the data to use for the model}
@@ -15,17 +15,21 @@ fit.jagsNEC(data, x.var, y.var, trials.var = NA, x.type = "gamma",
 
 \item{y.var}{the column heading indicating the response (y) variable}
 
-\item{trials.var}{the column heading indicating the column for the number of "trials" for binomial response data}
+\item{trials.var}{the column heading indicating the column for the number of "trials" for binomial response data. If not supplied, the model may run but will not be the model you intended!}
 
-\item{x.type}{the statistical distribution to use for the x (concentration) data. The default is "gamma" as most concentration data are gamma (ie continuous on the scale of >0 to inf). As some experiments will use zero concentration, and there is no distribution on the continuous scale from 0 to in (ie tweedie) available in jags, a small offset is added (1/10^5 of the next lowest value) to zero values of concentration}
+\item{x.type}{the statistical distribution to use for the x (concentration) data. This will be guess based on the characteristic of the input data if not supplied. As some concentration-response data will use zero concentration, and there is no distribution on the continuous scale from 0 to in (ie tweedie) available in jags, a small offset is added (1/10^3 of the next lowest value) to zero values of concentration where these are gamma distributed.}
 
-\item{y.type}{the statistical distribution to use for the y (response) data. This may currently be one of  'binomial', 'poisson', or 'gamma'. Others can be added as required, please contact the package maintainer.}
+\item{y.type}{the statistical distribution to use for the y (response) data. This may currently be one of  'binomial', 'poisson',' 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer. If not supplied, the appropriate distribution will be guessed based on the distribution of the input data.}
 
-\item{params}{A vector of names indicating the parameters that were traced during the jags fit. For the NEC jags model this is typically 'NEC','top' and 'beta', whicha are the defaults.}
+\item{params}{A vector of names indicating the parameters that to trace during the jags fit. For the NEC jags model this is typically 'NEC','top' and 'beta'. If left NA, fit.jagsNEC will supply this based on the selected y.type and x.type.}
 
-\item{burnin}{the number of iterations to use as burning.}
+\item{burnin}{the number of iterations to use as burnin.}
 
-\item{n.iter}{the number of interations to run overall. Defaults to 2 times burnin.}
+\item{n.iter}{the number of interations to run following burnin for the initial jags fit. Defaults to 500 + burnin, but small values are good when the model may have trouble fitting and is updated by n.iter.update iterations anyway.}
+
+\item{n.iter.burnin}{the number of interations to run overall. This should be large. Defaults to 10000.}
+
+\item{n.tries.}{If the initial model fit fails because it cannot be fit by jags (miss-specified priors, invalid initial values), or because there is poor chain mixing fit.jagsNEC will try n.tries many times using the init.fun defined by write.jags.NECmod. If all those attempts fail, fit.jagsNEC will then try using default values provided by jags. The function will only return an error if all n.tries fail.}
 }
 \value{
 The $BUGSoutput element of fitted jags model.

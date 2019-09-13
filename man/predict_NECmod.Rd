@@ -16,7 +16,7 @@ predict_NECmod(x.vec, NEC, top, beta, alpha = 0)
 \item{beta}{the exponential decay rate}
 }
 \value{
-The $BUGSoutput element of fitted jags model.
+A list containing x and fitted y, with up and lw values
 }
 \description{
 Calculates predicted y (response) values for a supplied vector of x (concentration) values for a given set of NEC, top and beta values
