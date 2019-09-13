@@ -12,29 +12,79 @@
 #' }
 #' 
 #' @description 
-#' Baysian model fitting can be diffcult to generalise across a broad range of usage cases, particularly with respect to specifying valid initial 
-#' values and appropriately vauge priors. This is one reason the use of Bayesian statistics in NEC estimation is currently limited across broader 
-#' ecotoxicological community, who rarely have access to specialist statistical expertise. The jagsNEC package attempts to provide an accessible 
-#' interface to the R2jags package specifically for fitting NEC models, with a range of models specified based on the known distribution of the 
-#' "concentration"or "dose" variable (the predictor, x) as well as the "response" (y) variable. The model forumla, incuding priors and the required 
-#' init function required to call a jags model are automatically generated based on information contained in the supplied data, and the specified 
-#' variable types. See ?write.jags.NECmod for the currently available x and y data types.
+#' Baysian model fitting can be diffcult to generalise across a broad range of 
+#' usage cases, particularly with respect to specifying valid initial 
+#' values and appropriately vauge priors. This is one reason the use of Bayesian 
+#' statistics in NEC estimation is currently limited across broader 
+#' ecotoxicological community, who rarely have access to specialist statistical expertise. 
+#' The jagsNEC package attempts to provide an accessible 
+#' interface to the R2jags package specifically for fitting NEC models, with a range of models 
+#' specified based on the known distribution of the 
+#' "concentration"or "dose" variable (the predictor, x) as well as the "response" (y) variable. 
+#' The model forumla, incuding priors and the required 
+#' init function required to call a jags model are automatically generated based on information 
+#' contained in the supplied data. See ?write.jags.NECmod for the currently 
+#' available x and y data types supported. 
 #' 
 #' @details
-#' This package is currently under development. We are keen on any feedback regarding usage, and especially bug reporting that includes an easy self 
-#' contained reproducible example of either unexpected behaviour or example model fits that fail to converge (have poor chain mixing) or yield other 
-#' errors. Such information will hopefully help us towards building a more robust package. We cannot help troublshoot issues if an easy to run 
-#' reproducible example is not supplied.
-#' Please see the example file on github for usage examples at \url{https://github.com/AIMS/NEC-estimation}
+#' This package is currently under development. Your are using the beta version and there may
+#' be unexpected behaviour. Please do not use, report on, or otherwise rely on the outputs
+#' of this package unless they have been verified as valid by someone knowledgeable 
+#' in statistics.
+#' We are keen on any feedback regarding usage, 
+#' and especially bug reporting that includes an easy self 
+#' contained reproducible example of either unexpected behaviour or example model fits that 
+#' fail to converge (have poor chain mixing, yield other 
+#' errors or just simply don't provide a fit that is intuitively consistent with visual 
+#' inspection of the data. Such information will hopefully help us towards building a more 
+#' robust package. 
 #' 
-#' Note that jagsNEC by dafault assumes that the concentration (x) data are Gamma distributed (although this can be changed, see ?write.jags.NECmod). 
-#' If the x data contain 0, this is adjusted by adding 1/10^5 of the next smallest value.
+#' We cannot help troublshoot issues if an easy to run 
+#' reproducible example is not supplied.
+#' 
+#' Please see the example file on github for usage examples at 
+#' \url{https://github.com/AIMS/NEC-estimation}
+#' 
+#' Note that jagsNEC by dafault tries to guess the distribution of both the y and x data, however
+#' these can be manually supplied (see ?fit.jagsNEC).
+#' 
+#' Note if the x data contain 0 but are otherwise gamma distributed,
+#' the x data are adjusted by adding 1/10^3 of the next smallest value to 
+#' avoid errors in the jags fit.
+#' 
+#' Note that while an unsuported data type may run succesfully, especially
+#' if the default behaviour of estimating the data type used, it is unlikely that the 
+#' desired model
+#' specification has been fit. jagsNEC writes out the jags model file that has been used. 
+#' You can 
+#' find this in your project working directory labelled as NECmod.txt to inspect the 
+#' fitted model, including the likelood function used for the response variable as well as
+#' the values used for the priors on the parameters.
+#' 
+#' Note While jagsNEC tries to set sensible prior values and build robust initial
+#' starting functions, this is difficult achieve across a range of models in practice.
+#' You may have better results by adjusting these yourself directly in jags if you are able.
+#' 
+#' jagsNEC will first attempt to fit a model using the model file and init.fun generated by write.jags.NECmod.
+#' n.tries is used to specify the number of attempt to try with the cutom init.fun. If all n.tries
+#' fail, or do not meet the specified chain mixing criteria,
+#' jagsNEC will then try another n.tries times to fit the model using the default initial values in jags.
+#' If all attempts fail an error will be returned. If there are valid attempts, all are
+#' stored in a list and returned with the final model output (all.Js). The
+#' current behaviour is for the final selected model in that case to be
+#' either the first to meet the specified chain mixing criteria, or if none meet the criteria, the 
+#' fit with the best chain mixing (as defined as the lowest ratio of between to within chain coeffiecient
+#' of variation) is returned. 
+#' 
+#' As noted above, the package is in beta and entirely experimenal. Please provide
+#' any positive feedback, suggestions, requests and criticisms.
 #' 
 #' @name jagsNEC-package
 #' @aliases jagsNEC jagsNEC-package
 #' @docType package
 #' @author
-#' Rebecca Fisher and Gerard Ricardo (Australian Institue of Marine Science); David Fox (Environmetrics)
+#' Rebecca Fisher and Gerard Ricardo (Australian Institue of Marine Science); David Fox 
+#' (Environmetrics)
 #'
 #' Maintainer: Rebecca Fisher \email{r.fisher@@aims.gov.au}
 #' @references 
