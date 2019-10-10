@@ -2,7 +2,7 @@
 #'
 #' Generates a plot of a fitted jags NEC model, as returned by fit.jagsNEC.
 #' 
-#' @param X the jags NEC model fit (as returned by fit.jagsNEC)
+#' @param X the jags NEC model fit as returned by fit.jagsNEC.
 #' 
 #' @param CI a logical value indicating if confidence intervals on the model fit should be plotted, calculated as the upper and lower bounds of the individual predicted values from all posterior samples
 #'
