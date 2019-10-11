@@ -40,14 +40,20 @@ fit.jagsNEC <- function(data,
                         n.tries=10,
                         ...){
   
-
-  
-  
+  y.dat <- data[,y.var]
+  x.dat <- data[,x.var] 
+ 
+  # check the data are lower at high x compared to low x (ie the response variable declines within increase in the x)
+  if(mean(y.dat[which(x.dat<median(x.dat))])< mean(y.dat[which(x.dat>median(x.dat))])){
+    stop("The mean value of the response for the lower half of the 
+         concentration data are lower than that of the upper half of the concentration data. 
+         jagsNEC only fits concentration response data where the 
+         response declines with increasing values of concentration.")    
+  }
   
   # check variable type x.var
   if(is.na(x.type)==T){ # if the x.var is not specified, then guess
-    x.dat <- data[,x.var]
-    if(class(x.dat)=="integer"){
+     if(class(x.dat)=="integer"){
      stop("jagsNEC does not currently support integer concentration data. Please provide
          a numeric x.var")}    
     if(class(x.dat)=="numeric" & max(x.dat)>1 & min(x.dat)>=0){x.type="gamma"}
@@ -57,7 +63,6 @@ fit.jagsNEC <- function(data,
 
   # check variable type y.var
   if(is.na(y.type)==T){ # if the y.var is not specified, then guess
-    y.dat <- data[,y.var]
     if(class(y.dat)=="numeric" & max(y.dat)>1 & min(y.dat)>=0){y.type="gamma"}
     if(class(y.dat)=="numeric" & max(y.dat)<=1 & min(y.dat)>=0){y.type="gamma"} #y.type="beta"
     if(class(y.dat)=="numeric" & min(y.dat)<0){y.type="gaussian"}  
