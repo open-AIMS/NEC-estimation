@@ -40,9 +40,16 @@ fit.jagsNEC <- function(data,
                         n.tries=10,
                         ...){
   
+
+  
+  
+  
   # check variable type x.var
   if(is.na(x.type)==T){ # if the x.var is not specified, then guess
     x.dat <- data[,x.var]
+    if(class(x.dat)=="integer"){
+     stop("jagsNEC does not currently support integer concentration data. Please provide
+         a numeric x.var")}    
     if(class(x.dat)=="numeric" & max(x.dat)>1 & min(x.dat)>=0){x.type="gamma"}
     if(class(x.dat)=="numeric" & max(x.dat)<1 & min(x.dat)>0){x.type="beta"} 
     if(class(x.dat)=="numeric" & max(x.dat)>1 & min(x.dat)<0){x.type="gaussian"}    
@@ -55,7 +62,11 @@ fit.jagsNEC <- function(data,
     if(class(y.dat)=="numeric" & max(y.dat)<1 & min(y.dat)>0){y.type="gamma"} # "beta" # beta currently not implemented, use gamma
     if(class(y.dat)=="numeric" & min(y.dat)<0){y.type="gaussian"}  
     if(class(y.dat)=="integer" & min(y.dat)>=0 & is.na(trials.var) == TRUE){
-      y.type="poisson"}   
+      y.type="poisson"} 
+    if(is.na(trials.var)!= TRUE & class(y.dat)!="integer"){
+      stop("You have supplied a trials.var argument, suggesting you wish to model a binomial.
+           Please ensure y.var is an integer representing the number of successes.")}
+      
     if(class(y.dat)=="integer" & min(y.dat)>=0 & is.na(trials.var)!= TRUE){
       y.type="binomial"}   
   }   
@@ -71,7 +82,13 @@ fit.jagsNEC <- function(data,
    min.val <- min(tt[which(tt>0)])
    data[which(tt==0),x.var] <- tt[which(tt==0)]+(min.val/10^3) 
   } 
-
+  
+  if(min(data[,y.var])==0 & y.type=="gamma"){
+    tt <- data[,y.var]
+    min.val <- min(tt[which(tt>0)])
+    data[which(tt==0),y.var] <- tt[which(tt==0)]+(min.val/10^3) 
+  } 
+  
   mod.dat <<- list(
     x = data[,x.var],   # concentration
     y = data[,y.var], # response (successes)
