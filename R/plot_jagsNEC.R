@@ -17,7 +17,7 @@
 
 plot_jagsNEC <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=FALSE,  add.NEC=TRUE){
  
-  y.type <- out$y.type
+  y.type <- X$y.type
   
   if(y.type=="binomial"){
      plot(X$mod.dat$x,X$mod.dat$y/X$mod.dat$trials, ylab="response", pch=16, 
