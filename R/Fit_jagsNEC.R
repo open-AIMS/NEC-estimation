@@ -160,7 +160,7 @@ fit.jagsNEC <- function(data,
     } 
   }
   J2  <- update(J1, n.iter = n.iter.update, n.thin = floor((n.iter.update*0.01)))  
-  out <- c(J2$BUGSoutput, list(mod.dat=mod.dat, y.type = y.type))
+  out <- c(J2$BUGSoutput, list(mod.dat=mod.dat, y.type = y.type, x.type = x.type))
     
   NEC <-  quantile(out$sims.list$NEC,c(0.025, 0.5, 0.975))
   top <-  quantile(out$sims.list$top,c(0.025, 0.5, 0.975))
