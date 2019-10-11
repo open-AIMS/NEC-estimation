@@ -51,7 +51,7 @@ fit.jagsNEC <- function(data,
      stop("jagsNEC does not currently support integer concentration data. Please provide
          a numeric x.var")}    
     if(class(x.dat)=="numeric" & max(x.dat)>1 & min(x.dat)>=0){x.type="gamma"}
-    if(class(x.dat)=="numeric" & max(x.dat)<1 & min(x.dat)>0){x.type="beta"} 
+    if(class(x.dat)=="numeric" & max(x.dat)<=1 & min(x.dat)>=0){x.type="beta"} 
     if(class(x.dat)=="numeric" & max(x.dat)>1 & min(x.dat)<0){x.type="gaussian"}    
   }
 
@@ -59,7 +59,7 @@ fit.jagsNEC <- function(data,
   if(is.na(y.type)==T){ # if the y.var is not specified, then guess
     y.dat <- data[,y.var]
     if(class(y.dat)=="numeric" & max(y.dat)>1 & min(y.dat)>=0){y.type="gamma"}
-    if(class(y.dat)=="numeric" & max(y.dat)<1 & min(y.dat)>0){y.type="gamma"} # "beta" # beta currently not implemented, use gamma
+    if(class(y.dat)=="numeric" & max(y.dat)<=1 & min(y.dat)>=0){y.type="gamma"} #y.type="beta"
     if(class(y.dat)=="numeric" & min(y.dat)<0){y.type="gaussian"}  
     if(class(y.dat)=="integer" & min(y.dat)>=0 & is.na(trials.var) == TRUE){
       y.type="poisson"} 
@@ -76,19 +76,45 @@ fit.jagsNEC <- function(data,
   if(y.type=="gamma"){params=c(params,"shape")}
   if(y.type=="gaussian"){params=c(params,"alpha","sigma")}
     
-  # error catching for 0 concentration for gamma by adding very small value (no tweedie available in jags)
+  # error catching for 0 for gamma by adding very small value (no tweedie available in jags)
   if(min(data[,x.var])==0 & x.type=="gamma"){
    tt <- data[,x.var]
    min.val <- min(tt[which(tt>0)])
-   data[which(tt==0),x.var] <- tt[which(tt==0)]+(min.val/10^3) 
+   data[which(tt==0),x.var] <- tt[which(tt==0)]+(min.val/10^2) 
   } 
   
   if(min(data[,y.var])==0 & y.type=="gamma"){
     tt <- data[,y.var]
     min.val <- min(tt[which(tt>0)])
-    data[which(tt==0),y.var] <- tt[which(tt==0)]+(min.val/10^3) 
+    data[which(tt==0),y.var] <- tt[which(tt==0)]+(min.val/10^2) 
+  } 
+  # error catching for 0 for beta by adding very small value (beta does not take zero)
+  if(min(data[,x.var])==0 & x.type=="beta"){
+    tt <- data[,x.var]
+    min.val <- min(tt[which(tt>0)])
+    data[which(tt==0),x.var] <- tt[which(tt==0)]+(min.val/10^2) 
   } 
   
+  if(min(data[,y.var])==0 & y.type=="beta"){
+    tt <- data[,y.var]
+    min.val <- min(tt[which(tt>0)])
+    data[which(tt==0),y.var] <- tt[which(tt==0)]+(min.val/10^2) 
+  } 
+  
+  # error catching for 1 for beta by subtracting very small value (beta does not take 1)
+  if(min(data[,x.var])==1 & x.type=="beta"){
+    tt <- data[,x.var]
+    max.val <- max(tt[which(tt<1)])
+    data[which(tt==1),x.var] <- tt[which(tt==1)]-((max.val)/10^2) 
+  } 
+  
+  if(min(data[,y.var])==1 & y.type=="beta"){
+    tt <- data[,y.var]
+    max.val <- max(tt[which(tt<1)])
+    data[which(tt==1),y.var] <- tt[which(tt==1)]-(max.val/10^2) 
+  }
+  
+  # create jags model data list
   mod.dat <<- list(
     x = data[,x.var],   # concentration
     y = data[,y.var], # response (successes)
