@@ -16,7 +16,7 @@ plot_jagsNEC(X, CI = TRUE, posterior.median = TRUE,
 
 \item{median.model}{a logical value indicating of the fitted model caluclated from the median estimates of the NEC, top and beta parameters should be plotted. This is the fitted model as shown in Fox 2010.}
 
-\item{add.NEC}{a logocal value indicating if the estimated NEC values and 95% credible intervals should be added to the plot.}
+\item{add.NEC}{a logocal value indicating if the estimated NEC values and 95\% credible intervals should be added to the plot.}
 }
 \value{
 a plot of the fitted model
