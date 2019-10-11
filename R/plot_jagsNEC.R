@@ -46,5 +46,3 @@ plot_jagsNEC <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=FALS
   }
 
 }
-
-
