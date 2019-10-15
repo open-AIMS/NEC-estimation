@@ -9,10 +9,10 @@ y.type = NA #"poisson" # #binomial"#"gaussian" #
 params = c("top", "beta", "NEC")
 burnin = 1000
 n.iter = 2000
-n.iter.update = 10000
+n.iter.update = 5000
+n.trials=2
 
 name=""
-
 
 CI=TRUE
 posterior.median=TRUE
