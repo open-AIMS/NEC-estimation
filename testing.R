@@ -1,13 +1,17 @@
 
 library(R2jags)
+require(tidyverse)
 source("R/check_chains.R")
 source("R/check_mixing.R")
 source("R/Write_jags_model.R")
 source("R/Predict_fitted_vals.R")
 source("R/Fit_jagsNEC.R")
 source("R/plot_jagsNEC.R")
+path <- "C:/Users/rfisher/OneDrive - Australian Institute of Marine Science/Documents/AIMS/EcologicalRiskModelling/Ecotoxicology/Ecotox_stats/CR-examples"
 
-### Example from Gerards original NEC script (https://github.com/gerard-ricardo/NECs/blob/master/NECs)
+
+### Example from Gerards original NEC script ----
+### #(https://github.com/gerard-ricardo/NECs/blob/master/NECs)
 #1) NEC - binomial data  (a count out of a total, think %survival of individuals, % settlement)
 binom.data <-  read.table("https://pastebin.com/raw/zfrUha88", header= TRUE,dec=",")
 binom.data$raw.x <- as.numeric(as.character(binom.data$raw.x))
@@ -76,7 +80,6 @@ par(mfrow=c(1,1))
 plot_jagsNEC(out)
 
 ### now test all Heidi's examples
-path <- "C:/Users/rfisher/OneDrive - Australian Institute of Marine Science/Documents/AIMS/EcologicalRiskModelling/Ecotoxicology/Ecotox_stats/CR-examples"
 all.files <- list.files(path)
 files <- all.files[grep(".csv",all.files)]
 
@@ -98,5 +101,163 @@ for(f in 1:length(files)){
 }
 dev.off()
 
+### test Heidi's necrosis example as a binomial (100 trials) -----
 
+dat<-read.csv(paste(path,'results_CarterioAdultHCexp_noFWoutliers.csv',sep="/"), 
+                          header=T, sep=',', strip.white=T) %>%
+  mutate(Tr =Tr, #/100 deal with 0-1 x data later
+         T96_p.healthy=100-T96_p.necrosed,
+         Recov_p.healthy=100-Recov_p.necrosed,
+         concentration=as.numeric(Tr),
+         y.1=as.integer(floor(T96_p.healthy)),
+         y.2=as.integer(floor(Recov_p.healthy)), #        
+         trials=100)
+View(dat)
+str(dat)
+
+out1 <- fit.jagsNEC(data=dat, 
+                   x.var="concentration", 
+                   y.var="y.1",
+                   trials.var = "trials")
+
+
+check.chains(out1) 
+par(mfrow=c(1,1))
+plot_jagsNEC(out1) 
+
+out2 <- fit.jagsNEC(data=dat, 
+                   x.var="concentration", 
+                   y.var="y.2",
+                   trials.var = "trials")
+
+check.chains(out2)
+par(mfrow=c(1,1))
+plot_jagsNEC(out2) 
+
+
+### test Heidi's necrosis example as a beta ----
+dat<-read.csv(paste(path,'results_CarterioAdultHCexp_noFWoutliers.csv',sep="/"), 
+              header=T, sep=',', strip.white=T) %>%
+  mutate(Tr =Tr, # model x as beta
+         T96_p.healthy=100-T96_p.necrosed,
+         Recov_p.healthy=100-Recov_p.necrosed,
+         concentration=as.numeric(Tr),
+         y.1=T96_p.healthy/100,
+         y.2=Recov_p.healthy/100)
+
+# first for T96
+out1 <- fit.jagsNEC(data=dat, 
+                    x.var="concentration", 
+                    y.var="y.1",
+                    n.tries=2)
+
+
+check.chains(out1) 
+par(mfrow=c(1,1))
+plot_jagsNEC(out1)
+
+# second for Recovery
+out2 <- fit.jagsNEC(data=dat, 
+                    x.var="concentration", 
+                    y.var="y.2",
+                    n.tries=2)
+
+check.chains(out2)
+par(mfrow=c(1,1))
+plot_jagsNEC(out2) 
+
+
+#### test Beta using Gerard's example ----
+mydata <- read.table("https://pastebin.com/raw/123jq46d", header= TRUE,dec=",") %>%
+  mutate(raw.x=log(as.numeric(as.character(raw.x))+1),
+         re5*sp=as.numeric(as.character(resp)))
+
+out <- fit.jagsNEC(data=mydata, 
+                   x.var="raw.x", 
+                   y.var="resp",
+                   n.tries=1)
+
+check.chains(out) 
+par(mfrow=c(1,1))
+plot_jagsNEC(out)
+
+### test Heidi's necrosis example as a binomial (?? trials) ----
+dat<-read.csv(paste(path,'results_CarterioAdultHCexp_noFWoutliers.csv',sep="/"), 
+              header=T, sep=',', strip.white=T) %>%
+  mutate(Tr=Tr, # model x as beta
+         T96_p.healthy=100-T96_p.necrosed,
+         Recov_p.healthy=100-Recov_p.necrosed,
+         concentration=as.numeric(Tr),
+         y.1=as.integer(round(T96_p.healthy/100*50)),
+         y.2=as.integer(round(Recov_p.healthy/100*50)),
+         trials=50)
+
+# first for T96
+out1 <- fit.jagsNEC(data=dat, 
+                    x.var="concentration", 
+                    y.var="y.1",
+                    n.tries=2,
+                    trials.var="trials")
+
+
+check.chains(out1) 
+par(mfrow=c(1,1))
+plot_jagsNEC(out1)
+
+# second for Recovery
+out2 <- fit.jagsNEC(data=dat, 
+                    x.var="concentration", 
+                    y.var="y.2",
+                    n.tries=2,
+                    trials.var="trials")
+
+check.chains(out2)
+par(mfrow=c(1,1))
+plot_jagsNEC(out2) 
+
+
+#### test Beta using Gerard's example ----
+mydata <- read.table("https://pastebin.com/raw/123jq46d", header= TRUE,dec=",") %>%
+  mutate(raw.x=log(as.numeric(as.character(raw.x))+1),
+         resp=as.numeric(as.character(resp)))
+
+out <- fit.jagsNEC(data=mydata, 
+                   x.var="raw.x", 
+                   y.var="resp",
+                   n.tries=1)
+
+check.chains(out) 
+par(mfrow=c(1,1))
+plot_jagsNEC(out)
+
+### test Heidi's necrosis example as a binomial for any necrosis at all (0,1) ----
+dat<-read.csv(paste(path,'results_CarterioAdultHCexp_noFWoutliers.csv',sep="/"), 
+              header=T, sep=',', strip.white=T) %>%
+  mutate(Tr=Tr, # model x as beta
+         T96_p.healthy=100-T96_p.necrosed,
+         Recov_p.healthy=100-Recov_p.necrosed,
+         concentration=as.numeric(Tr),
+         y.1=as.integer(if_else(T96_p.healthy/100<1,0,1)),
+         y.2=as.integer(if_else(Recov_p.healthy/100<1,0,1)),
+         trials=1)
+
+# first for T96
+out1 <- fit.jagsNEC(data=dat, 
+                    x.var="concentration", 
+                    y.var="y.1",
+                    trials.var="trials")
+
+check.chains(out1) 
+par(mfrow=c(1,1))
+plot_jagsNEC(out1)
+
+# second for Recovery
+out2 <- fit.jagsNEC(data=dat, 
+                    x.var="concentration", 
+                    y.var="y.2",
+                    trials.var="trials")
+
+check.chains(out2)
+par(mfrow=c(1,1))
+plot_jagsNEC(out2) 
 
