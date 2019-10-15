@@ -64,7 +64,7 @@ fit.jagsNEC <- function(data,
   # check variable type y.var
   if(is.na(y.type)==T){ # if the y.var is not specified, then guess
     if(class(y.dat)=="numeric" & max(y.dat)>1 & min(y.dat)>=0){y.type="gamma"}
-    if(class(y.dat)=="numeric" & max(y.dat)<=1 & min(y.dat)>=0){y.type="gamma"} #y.type="beta"
+    if(class(y.dat)=="numeric" & max(y.dat)<=1 & min(y.dat)>=0){y.type="beta"}
     if(class(y.dat)=="numeric" & min(y.dat)<0){y.type="gaussian"}  
     if(class(y.dat)=="integer" & min(y.dat)>=0 & is.na(trials.var) == TRUE){
       y.type="poisson"} 
@@ -107,13 +107,13 @@ fit.jagsNEC <- function(data,
   } 
   
   # error catching for 1 for beta by subtracting very small value (beta does not take 1)
-  if(min(data[,x.var])==1 & x.type=="beta"){
+  if(max(data[,x.var])==1 & x.type=="beta"){
     tt <- data[,x.var]
     max.val <- max(tt[which(tt<1)])
     data[which(tt==1),x.var] <- tt[which(tt==1)]-((max.val)/10^2) 
   } 
   
-  if(min(data[,y.var])==1 & y.type=="beta"){
+  if(max(data[,y.var])==1 & y.type=="beta"){
     tt <- data[,y.var]
     max.val <- max(tt[which(tt<1)])
     data[which(tt==1),y.var] <- tt[which(tt==1)]-(max.val/10^2) 
@@ -184,10 +184,20 @@ fit.jagsNEC <- function(data,
   if(class(J1)=="try-error"){
     if(length(all.Js)>0){
       J1 <- all.Js[[ which.min(unlist(lapply(all.Js, FUN=function(x){check.mixing(x)$cv.ratio})))]]
-      warning("The function fit.jagsNEC was unable to find a set of starting parameters resulting in good chain mixing. This may be a result of a weakly defined threshold, in which case try calculating an ECx value instead. If the data show a clear NEC pattern that would normally be easy to fit, please send a reproducible example so we can try and improve our function. While a model has been returned, please evaluate the model using check.chains to assess the validity of the fit, as well as criticially evaluate the outcome of the estimated values. Extreme caution should be used in interpreting the model results.")
+      warning("The function fit.jagsNEC was unable to find a set of starting parameters 
+              resulting in good chain mixing. This may be a result of a weakly defined 
+              threshold, in which case try calculating an ECx value instead. If the data 
+              show a clear NEC pattern that would normally be easy to fit, please send a 
+              reproducible example so we can try and improve our function. 
+              While a model has been returned, please evaluate the model using check.chains 
+              to assess the validity of the fit, as well as criticially evaluate the outcome 
+              of the estimated values. Extreme caution should be used in interpreting the 
+              model results.")
          } 
     if(length(all.Js)==0){
-      stop("The function fit.jagsNEC was unable to fit this model. Please help us make this software better by emailing a self contained reproducible example to the developers")
+      stop("The function fit.jagsNEC was unable to fit this model. Please help us make 
+           this software better by emailing a self contained reproducible example to the 
+           developers")
     } 
   }
   J2  <- update(J1, n.iter = n.iter.update, n.thin = floor((n.iter.update*0.01)))  
