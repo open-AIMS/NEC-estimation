@@ -226,6 +226,8 @@ fit.jagsNEC <- function(data,
      alpha = alpha,
      params = params,
      all.Js = all.Js))
+  
+  message(paste("Response variable ", y.var, " modelled using a ", y.type, " distribution.", sep=""))
   return(out)    
 }
 
