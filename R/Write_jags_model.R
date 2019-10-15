@@ -11,7 +11,7 @@
 
 write.jags.NECmod <- function(x="gamma", y, mod.dat){  
   
-   # binomial y; gamma x ----
+  # binomial y; gamma x ----
    if(x=="gamma" & y=="binomial"){
     sink("NECmod.txt")
     cat("
@@ -43,7 +43,7 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
    }
 
     
-    # poisson y; gamma x ----
+  # poisson y; gamma x ----
   if(x=="gamma" & y=="poisson"){
     sink("NECmod.txt")
     cat("
@@ -191,8 +191,37 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
       shape = dlnorm(1,1/mean(mod.dat$y),1),
       NEC = rnorm(1, mean(mod.dat$x), 1))}
   }
-
-# gaussian y; gamma x ----
+  # gamma y; gamma x -----
+  if(x=="gamma" & y=="gamma"){
+    sink("NECmod.txt")
+    cat("
+        model
+        {
+        
+        # likelihood
+        for (i in 1:N)
+        {
+        theta[i]<-top*exp(-beta*((x[i])-NEC)*step(((x[i])-NEC)))
+        # response is gamma
+        y[i]~dgamma(shape, shape / (theta[i]))
+        }
+        
+        # specify model priors
+        top ~  dlnorm(0,0.001) #dgamma(1,0.001) # dnorm(0,0.001) #T(0,) #
+        beta ~ dgamma(0.0001,0.0001)
+        NEC~dgamma(0.0001,0.0001) #dnorm(3, 0.0001) T(0,) dnorm(30, 0.0001) T(0,) #
+        shape ~ dlnorm(0,0.001) #dunif(0,1000)
+        }
+        ", fill=TRUE)
+    sink()  #Make model in working directory
+    
+    init.fun <- function(mod.data=mod.data){list(
+      top = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.1),
+      beta = rgamma(1,0.2,0.001),
+      shape = runif(1,0,10),
+      NEC = rlnorm(1,log(mean(mod.dat$x)),1))}#rnorm(1,30,10))} #rgamma(1,0.2,0.001))} #
+  }
+  # gaussian y; gamma x ----
  if(x=="gamma" & y=="gaussian"){
   sink("NECmod.txt")
   cat("
@@ -300,8 +329,8 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
     
   }
   
-  # gamma y; gamma x -----
-  if(x=="gamma" & y=="gamma"){
+  # beta y; beta x ----
+  if(x=="beta" & y=="beta"){
     sink("NECmod.txt")
     cat("
         model
@@ -310,16 +339,20 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
+
+        # response is beta
+        y[i]~dbeta(shape1[i], shape2[i])
+        shape1[i] <- theta[i] * phi
+        shape2[i]  <- (1-theta[i]) * phi
         theta[i]<-top*exp(-beta*((x[i])-NEC)*step(((x[i])-NEC)))
-        # response is gamma
-        y[i]~dgamma(shape, shape / (theta[i]))
         }
         
         # specify model priors
-        top ~  dlnorm(0,0.001) #dgamma(1,0.001) # dnorm(0,0.001) #T(0,) #
+        top ~  dunif(0.001,0.999)
         beta ~ dgamma(0.0001,0.0001)
-        NEC~dgamma(0.0001,0.0001) #dnorm(3, 0.0001) T(0,) dnorm(30, 0.0001) T(0,) #
-        shape ~ dlnorm(0,0.001) #dunif(0,1000)
+        NEC ~  dunif(0.001,0.999) #dbeta(1,1)
+        t0 ~ dnorm(0, 0.010)
+        phi <- exp(t0)
         }
         ", fill=TRUE)
     sink()  #Make model in working directory
@@ -327,8 +360,8 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
     init.fun <- function(mod.data=mod.data){list(
       top = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.1),
       beta = rgamma(1,0.2,0.001),
-      shape = runif(1,0,10),
-      NEC = rlnorm(1,log(mean(mod.dat$x)),1))}#rnorm(1,30,10))} #rgamma(1,0.2,0.001))} #
+      phi = runif(1,0,10),
+      NEC = runif(1, 0.3, 0.6))}
   }
   
  return(init.fun) 
