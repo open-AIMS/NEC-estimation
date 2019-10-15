@@ -386,7 +386,7 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         # specify model priors
         top ~  dunif(0.001,0.999)
         beta ~ dgamma(0.0001,0.0001)
-        NEC ~  dunif(0.001,0.999) #dbeta(1,1)
+        NEC ~ dgamma(0.0001,0.0001) 
         t0 ~ dnorm(0, 0.010)
         phi <- exp(t0)
         }
