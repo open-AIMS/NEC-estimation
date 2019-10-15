@@ -42,7 +42,6 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
       NEC = rlnorm(1,log(mean(mod.dat$x)),1))}#rgamma(1,0.2,0.001))}  
    }
 
-    
   # poisson y; gamma x ----
   if(x=="gamma" & y=="poisson"){
     sink("NECmod.txt")
@@ -191,6 +190,7 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
       shape = dlnorm(1,1/mean(mod.dat$y),1),
       NEC = rnorm(1, mean(mod.dat$x), 1))}
   }
+  
   # gamma y; gamma x -----
   if(x=="gamma" & y=="gamma"){
     sink("NECmod.txt")
@@ -221,6 +221,7 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
       shape = runif(1,0,10),
       NEC = rlnorm(1,log(mean(mod.dat$x)),1))}#rnorm(1,30,10))} #rgamma(1,0.2,0.001))} #
   }
+  
   # gaussian y; gamma x ----
  if(x=="gamma" & y=="gaussian"){
   sink("NECmod.txt")
@@ -360,9 +361,44 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
     init.fun <- function(mod.data=mod.data){list(
       top = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.1),
       beta = rgamma(1,0.2,0.001),
-      phi = runif(1,0,10),
+      t0 = rnorm(0,100),
       NEC = runif(1, 0.3, 0.6))}
   }
   
- return(init.fun) 
+  # beta y; gamma x ----
+  if(x=="gamma" & y=="beta"){
+    sink("NECmod.txt")
+    cat("
+        model
+        {
+        
+        # likelihood
+        for (i in 1:N)
+        {
+        
+        # response is beta
+        y[i]~dbeta(shape1[i], shape2[i])
+        shape1[i] <- theta[i] * phi
+        shape2[i]  <- (1-theta[i]) * phi
+        theta[i]<-top*exp(-beta*((x[i])-NEC)*step(((x[i])-NEC)))
+        }
+        
+        # specify model priors
+        top ~  dunif(0.001,0.999)
+        beta ~ dgamma(0.0001,0.0001)
+        NEC ~  dunif(0.001,0.999) #dbeta(1,1)
+        t0 ~ dnorm(0, 0.010)
+        phi <- exp(t0)
+        }
+        ", fill=TRUE)
+    sink()  #Make model in working directory
+    
+    init.fun <- function(mod.data=mod.data){list(
+      top = dunif(0.001,0.999),
+      beta = rgamma(1,0.2,0.001),
+      t0 = rnorm(0,100),
+      NEC = rlnorm(1,log(mean(mod.dat$x)),1))}
+  }
+  
+  return(init.fun)   
 }
