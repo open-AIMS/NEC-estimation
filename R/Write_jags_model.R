@@ -399,6 +399,49 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
       t0 = rnorm(0,100),
       NEC = rlnorm(1,log(mean(mod.dat$x)),1))}
   }
+
+  # beta y; gaussian x ----
+  if(x=="gaussian" & y=="beta"){
+    sink("NECmod.txt")
+    cat("
+        model
+        {
+        
+        # likelihood
+        for (i in 1:N)
+        {
+        
+        # response is beta
+        y[i]~dbeta(shape1[i], shape2[i])
+        shape1[i] <- theta[i] * phi
+        shape2[i]  <- (1-theta[i]) * phi
+        theta[i]<-top*exp(-beta*((x[i])-NEC)*step(((x[i])-NEC)))
+        }
+        
+        # specify model priors
+        top ~  dunif(0.001,0.999)
+        beta ~ dgamma(0.0001,0.0001)
+        NEC ~ dnorm(0, 0.0001)
+        t0 ~ dnorm(0, 0.010)
+        phi <- exp(t0)
+        }
+        ", fill=TRUE)
+    sink()  #Make model in working directory
+    
+    init.fun <- function(mod.data=mod.data){list(
+      top = dunif(0.001,0.999),
+      beta = rgamma(1,0.2,0.001),
+      t0 = rnorm(0,100),
+      NEC = rnorm(1, 0, 2))}
+  }
   
-  return(init.fun)   
+  # return the initial function
+  if(exists("init.fun")){
+      return(init.fun) 
+  }
+  else{
+    stop(paste("jagsNEC does not currently support ", x, " distributed concentration data with ", y, 
+                 " distributed response data. Please check this is the correct distribution to use, and if so
+          feel free to contact the developers to request to add this distribution", sep=""))
+  }
 }
