@@ -27,7 +27,7 @@ plot_jagsNEC <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=FALS
        col=adjustcolor(1, alpha=0.25), cex=1.5, xlab="concentration")     
   }
 
-  abline(v=X$NEC, col = "red", lty=c(3,2,3))   
+  abline(v=X$NEC, col = "red", lty=c(3,1,3))   
   
   if(CI==TRUE){
     lines(X$pred.vals$x, X$pred.vals$up, lty=2) 
