@@ -42,6 +42,37 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
       NEC = rlnorm(1,log(mean(mod.dat$x)),1))}#rgamma(1,0.2,0.001))}  
    }
 
+  # binomial y; gaussian x ----
+  if(x=="gaussian" & y=="binomial"){
+    sink("NECmod.txt")
+    cat("
+        model
+        {
+        
+        # likelihood
+        for (i in 1:N)
+        {
+        theta[i]<-top*exp(-beta*(x[i]-NEC)*step((x[i]-NEC)))
+        # response is binomial
+        y[i]~dbin(theta[i],trials[i])
+        }
+        
+        # specify model priors
+        top ~  dunif(0.0001,0.999) 
+        beta ~ dgamma(0.0001,0.0001)
+        NEC ~ dnorm(0,0.0001) 
+        
+        }
+        ", fill=TRUE)
+    sink()  #Make model in working directory
+    
+    init.fun <- function(mod.data=mod.data){list(
+      top = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.75))/
+        round(mean(mod.dat$trials)), 
+      beta = runif(1,0.0001,0.999),
+      NEC = rnorm(1,mean(mod.dat$x),2))} 
+  }
+  
   # poisson y; gamma x ----
   if(x=="gamma" & y=="poisson"){
     sink("NECmod.txt")
@@ -79,7 +110,7 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         model
         {
         # specify model priors
-        top ~  dgamma(1,0.001) # dnorm(0,0.001) #T(0,) #
+        top ~  dgamma(1,0.001)
         beta~dgamma(0.0001,0.0001)
         NEC~dnorm(0, 0.0001)
         
@@ -97,7 +128,7 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
     init.fun <- function(mod.data=mod.data){list(
       top = rpois(1,max(mod.dat$y)), 
       beta = rgamma(1,0.2,0.001),
-      NEC = rnorm(1, 0, 2))}
+      NEC = rnorm(1, mean(mod.dat$x), 2))}
   }
     
   # poisson y; beta x----
