@@ -14,9 +14,9 @@ knitr::opts_chunk$set(echo = TRUE, include=T, message = TRUE, warnings = FALSE, 
 
 ## Background
 
-This document contains examples for running the NEC-estimation package currently under development. This code is being worked up by Rebecca Fisher and Gerard Ricardo (AIMS), and David Fox.  The package is being developed at  <https://github.com/AIMS/NEC-estimation> and is a No-Effect-Concentration (NEC) model specific wrapper for the R2jags package available in R. The NEC mode fit is based on the model described in [@Fox2010].
+This document contains examples for running the NEC-estimation package 'jagsNEC' currently under development. This code is being worked up by Rebecca Fisher and Gerard Ricardo (AIMS), and David Fox (Environmentrics).  The package is being developed at  <https://github.com/AIMS/NEC-estimation> and is a No-Effect-Concentration (NEC) model specific wrapper for the R2jags package available in R. The NEC mode fit is based on the model described in [@Fox2010], althought we have generalised the package to allow a large range of response variables to be modelled using the appropriate statistical distribution.
 
-Baysian model fitting can be difficult to generalise across a broad range of usage cases, particularly with respect to specifying valid initial values and appropriately vauge priors. This is one reason the use of Bayesian statistics in NEC estimation is currently limited across broader ecotoxicological community, who rarely have access to specialist statistical expertise. The jagsNEC package attempts to provide an accessible interface to the R2jags package specifically for fitting NEC models, with a range of models specified based on the known distribution of the "concentration"or "dose" variable (the predictor, x) as well as the "response" (y) variable. The model forumla, incuding priors and the required init function required to call a jags model are automatically generated based on information contained in the supplied data, and the specified variable types. See ?write.jags.NECmod for the currently available x and y data types.
+Baysian model fitting can be difficult to automate across a broad range of usage cases, particularly with respect to specifying valid initial values and appropriately vauge priors. This is one reason the use of Bayesian statistics for NEC estimation is not currently widely adopted across the broader ecotoxicological community, who rarely have access to specialist statistical expertise. The jagsNEC package attempts to provide an accessible interface to the R2jags package specifically for fitting NEC models, with a range of models specified based on the known distribution of the "concentration" or "dose" variable (the predictor, x) as well as the "response" (y) variable. The model forumla, incuding priors and the required init function required to call a jags model are automatically generated based on information contained in the supplied data. While the distribution of the x and y variables can be specified directly, jagsNEC will automatically 'guess' the correct distribution to use, based on the characteristics of the provided data. See ?write.jags.NECmod for the currently available x and y data types.
 
 Inportant information on the current package is contained in the jagsNEC helpfile (see ?jagsNEC).
 
@@ -35,7 +35,7 @@ require(tidyverse)
 
 ## Examples
 
-Here we include some examples showing how to use the package to fit an NEC model to binomial, count and continuous response (y) data. The examples are those used by Gerard Ricardo at: <https://github.com/gerard-ricardo/NECs/blob/master/NECs>. Here we show how to run the same jags models using the jagsNEC wrapper package currently under development.
+Here we include some examples showing how to use the package to fit an NEC model to binomial, proportional, count and continuous response (y) data. The examples are those used by Gerard Ricardo at: <https://github.com/gerard-ricardo/NECs/blob/master/NECs>. Here we show how to run the same jags models using the jagsNEC wrapper package currently under development.
 
 ### Binomial data
 
@@ -52,7 +52,7 @@ hist(binom.data$raw.x)
 hist(binom.data$suc/binom.data$tot)
 ```
 
-In this case for x, lowest concentration is 0.1 and the highest is 400. The data are right skewed and on the continuous scale. This type of distribution for the x data are common for concentration response experiments, where the x "concentration" data are the concentration of contaminants, or dilutions. In general we can model x as gamma. The current default in jagsNEC is to estimate the appropriate distribution for both the *y.type*and *x.type* arguments, but it is possible to supply these arguments directly.
+In this case for x, lowest concentration is 0.1 and the highest is 400. The data are right skewed and on the continuous scale. This type of distribution for the x data are common for concentration response experiments, where the x "concentration" data are the concentration of contaminants, or dilutions. In general we can model x as gamma. The current default in jagsNEC is to estimate the appropriate distribution for both the *y.type* and *x.type* arguments, but it is possible to supply these arguments directly.
 
 The data are clearly binomial, with the header "suc" - indicating the number of 'successes' in the binomial call, with 'tot' clearly indicating the number of trials.
 
@@ -67,16 +67,16 @@ out <- fit.jagsNEC(data=binom.data,
                         trials.var="tot")
 ```
 
-The function shows the progress of the jags fit and returns the usual jags output (with a few other additions to this list). The function *check.chains* can be used to plot the chains and the chain ACF, so we can assess mixing and looks for other potential issues with the model fit.
+The function shows the progress of the jags fit and returns the usual jags output (with a few other additions to this list). The function *check.chains* can be used to plot the chains and the chain ACF, so we can assess mixing and looks for other potential issues with the model fit. Initially jagsNEC will attempt to use starting values generated by the init function that we have specified for that type of model fit. It will run a small number of iterations and then test for good mixing. If the model fails to fit or the mixing is not very good (among chain variance is a lot bigger than within chain variance) jagsNEC with try up to *n.tries* more times to fit the data using the generated *init* function to try and obtain a successfully fitted model with good mixing. If this still fails to yield a successfull and/or well mixed model, jagsNEC will try up to *n.tries* more times using the default initial values as generated by R2jags. If no model is successfully fit an error will be returned indicating the model could not be fit succesfully. If a model is fit but still has poor mixing even after *n.tries* attempts, the model with the best mixing will be returned, with a warning to cautiously interpret the results and inspect the chain mixing diagnostic plot.
 
 ```{r check-binomial-NEC}
 check.chains(out)
 ```
 
-In our example, the chains are well mixed and our ACF plot looks good, we we can go ahead and interpret this model.
+In our example, the chains are well mixed and our ACF plot looks good, so we we can go ahead and interpret this model.
 
 
-The function *plot_jagsNEC* can be used to plot the fitted model. Alternatively you can make your own plot from the data included in the returned list from the call the fit.jagsNEC. In this example, this could be extracted using *out$pred.vals*
+The function *plot_jagsNEC* can be used to plot the fitted model. Alternatively you can make your own plot from the data included in the returned list from the call to fit.jagsNEC. In this example, this could be extracted using *out$pred.vals*
 
 ```{r plot-binomial-NEC}
 par(mfrow=c(1,1))
@@ -85,7 +85,7 @@ plot_jagsNEC(out)
 
 ### Beta data
 
-Sometimes we have a response variable that is distributed between 0 and 1 that is not binomial. A common example in coral ecology is maximum quantum yield (the proportion of light used for photosynthesis when all reaction centres are open) which is a measure of photosynthetic efficiency calculated from PAM data. Here we have a proportion value that is not based on trials and successes. In this case there are no theoretical 'trial' and the data must be modelled using a beta distribution.
+Sometimes the response variable is distributed between *0* and *1* but is not a straight forward binomial. A common example in coral ecology is maximum quantum yield (the proportion of light used for photosynthesis when all reaction centres are open) which is a measure of photosynthetic efficiency calculated from PAM data. Here we have a proportion value that is not based on trials and successes. In this case there are no theoretical 'trials' and the data must be modelled using a beta distribution.
 
 ```{r fit-beta-NEC}
 prop.data <- read.table("https://pastebin.com/raw/123jq46d", header= TRUE,dec=",") %>%
@@ -108,7 +108,7 @@ plot_jagsNEC(out)
 
 ### Poisson data
 
-Where data are a count (of, for example, individuals or cells)  y is poisson. Such data are distributed from 0 to inf and are integers. First we read in the count data example from pastebin, and then plot the "concentration" or x data, Again, this is raw.x, and distributed as in our binomial example above.
+Where data are a count (of, for example, individuals or cells) y is poisson. Such data are distributed from *0* to *Inf* and are integers. First we read in the count data example from pastebin, and then plot the "concentration" or x data, Again, this is raw.x, and distributed as in our binomial example above.
 
 
 ```{r get-poisson-data}
@@ -124,7 +124,7 @@ hist(count.data$count)
 ```
 
 
-First we supply *fit.jagsNEC* with *data* (count.data), and specify *x.var* and *y.var*. As we have concentration data, our *x.type* would be the gamma distribution, and *y.type* is "poisson". Again, the default behaviour to guess the variable types works for this example.
+First we supply *fit.jagsNEC* with *data* (count.data), and specify *x.var* and *y.var*. As we have concentration data, our *x.type* would be the gamma distribution, and *y.type* is "poisson". The default behaviour to guess the variable types works for this example.
 
 
 
@@ -150,7 +150,7 @@ plot_jagsNEC(out)
 
 ### Measure data
 
-Where data are a measured variable (ie length or size)  y is gamma. Such data are distributed from 0+ to inf and are continuous. First we read in the count data example from pastebin, and then plot the "concentration" or x data, Again, this is raw.x, and distributed as in our binomial example above.
+Where data are a measured variable (ie length or size)  y is gamma. Such data are distributed from *0+* to *Inf* and are continuous. First we read in the count data example from pastebin, and then plot the "concentration" or x data, Again, this is raw.x, and distributed as in our binomial example above.
 
 ```{r get-measure-data}
 measure.data = read.table("https://pastebin.com/raw/pWeS6x0n", header= TRUE,dec=",")
