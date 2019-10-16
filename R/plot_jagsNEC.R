@@ -8,16 +8,24 @@
 #'
 #' @param posterior.median a logical value indicating if the posterior median of the model fit should be plotted, calculated as the median of the individual predicted values from all posterior samples
 #'
-#' @param median.model a logical value indicating of the fitted model caluclated from the median estimates of the NEC, top and beta parameters should be plotted. This is the fitted model as shown in Fox 2010.
+#' @param median.model a logical value indicating if the fitted model calculated from the median estimates of the NEC, top and beta parameters should be plotted. This is the fitted model as shown in Fox 2010.
 #'
 #' @param add.NEC a logocal value indicating if the estimated NEC values and 95\% credible intervals should be added to the plot.
+#'
+#' @param x.jitter a logical value indicating if the x data points on the plot should be jittered.
+#'
+#' @param y.jitter a logical value indicating if the y data points on the plot should be jittered.
 #'
 #' @export
 #' @return a plot of the fitted model
 
-plot_jagsNEC <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=FALSE,  add.NEC=TRUE){
+plot_jagsNEC <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=FALSE,  add.NEC=TRUE, 
+                         jitter.x=FALSE, jitter.y=FALSE){
  
   y.type <- X$y.type
+  
+  if(jitter.x==TRUE){X$mod.dat$x <- jitter(X$mod.dat$x)}
+  if(jitter.y==TRUE){X$mod.dat$y <- jitter(X$mod.dat$y)}
   
   if(y.type=="binomial"){
      plot(X$mod.dat$x,X$mod.dat$y/X$mod.dat$trials, ylab="response", pch=16, 
