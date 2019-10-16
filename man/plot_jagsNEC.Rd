@@ -5,7 +5,8 @@
 \title{plot.jagsNEC}
 \usage{
 plot_jagsNEC(X, CI = TRUE, posterior.median = TRUE,
-  median.model = FALSE, add.NEC = TRUE)
+  median.model = FALSE, add.NEC = TRUE, jitter.x = FALSE,
+  jitter.y = FALSE)
 }
 \arguments{
 \item{X}{the jags NEC model fit as returned by fit.jagsNEC.}
@@ -14,9 +15,13 @@ plot_jagsNEC(X, CI = TRUE, posterior.median = TRUE,
 
 \item{posterior.median}{a logical value indicating if the posterior median of the model fit should be plotted, calculated as the median of the individual predicted values from all posterior samples}
 
-\item{median.model}{a logical value indicating of the fitted model caluclated from the median estimates of the NEC, top and beta parameters should be plotted. This is the fitted model as shown in Fox 2010.}
+\item{median.model}{a logical value indicating if the fitted model calculated from the median estimates of the NEC, top and beta parameters should be plotted. This is the fitted model as shown in Fox 2010.}
 
 \item{add.NEC}{a logocal value indicating if the estimated NEC values and 95\% credible intervals should be added to the plot.}
+
+\item{x.jitter}{a logical value indicating if the x data points on the plot should be jittered.}
+
+\item{y.jitter}{a logical value indicating if the y data points on the plot should be jittered.}
 }
 \value{
 a plot of the fitted model

@@ -9,7 +9,7 @@ write.jags.NECmod(x = "gamma", y, mod.dat)
 \arguments{
 \item{x}{the statistical distribution to use for the x (concentration) data. This may currently be one of  'beta', 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer.}
 
-\item{y}{the statistical distribution to use for the y (response) data. This may currently be one of  'binomial', 'poisson', or 'gamma'. Others can be added as required, please contact the package maintainer.}
+\item{y}{the statistical distribution to use for the y (response) data. This may currently be one of  'binomial', 'beta', 'poisson', 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer.}
 }
 \value{
 an init function to pass to jags
