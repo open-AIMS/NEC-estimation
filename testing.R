@@ -167,30 +167,17 @@ par(mfrow=c(1,1))
 plot_jagsNEC(out2) 
 
 
-#### test Beta using Gerard's example ----
-mydata <- read.table("https://pastebin.com/raw/123jq46d", header= TRUE,dec=",") %>%
-  mutate(raw.x=log(as.numeric(as.character(raw.x))+1),
-         re5*sp=as.numeric(as.character(resp)))
-
-out <- fit.jagsNEC(data=mydata, 
-                   x.var="raw.x", 
-                   y.var="resp",
-                   n.tries=1)
-
-check.chains(out) 
-par(mfrow=c(1,1))
-plot_jagsNEC(out)
-
-### test Heidi's necrosis example as a binomial (?? trials) ----
+### test Heidi's necrosis example as a binomial (trials as a function of area) ----
 dat<-read.csv(paste(path,'results_CarterioAdultHCexp_noFWoutliers.csv',sep="/"), 
               header=T, sep=',', strip.white=T) %>%
-  mutate(Tr=Tr, # model x as beta
+  mutate(Tr=Tr/100,
+         trials=round(TotalArea*10),
          T96_p.healthy=100-T96_p.necrosed,
          Recov_p.healthy=100-Recov_p.necrosed,
          concentration=as.numeric(Tr),
-         y.1=as.integer(round(T96_p.healthy/100*50)),
-         y.2=as.integer(round(Recov_p.healthy/100*50)),
-         trials=50)
+         y.1=as.integer(round(T96_p.healthy/100*trials)),
+         y.2=as.integer(round(Recov_p.healthy/100*trials))
+        )
 
 # first for T96
 out1 <- fit.jagsNEC(data=dat, 
@@ -217,11 +204,10 @@ plot_jagsNEC(out2)
 
 
 #### test Beta using Gerard's example ----
-mydata <- read.table("https://pastebin.com/raw/123jq46d", header= TRUE,dec=",") %>%
+prop.data <- read.table("https://pastebin.com/raw/123jq46d", header= TRUE,dec=",") %>%
   mutate(raw.x=log(as.numeric(as.character(raw.x))+1),
          resp=as.numeric(as.character(resp)))
-
-out <- fit.jagsNEC(data=mydata, 
+out <- fit.jagsNEC(data=prop.data, 
                    x.var="raw.x", 
                    y.var="resp",
                    n.tries=1)
@@ -233,7 +219,7 @@ plot_jagsNEC(out)
 ### test Heidi's necrosis example as a binomial for any necrosis at all (0,1) ----
 dat<-read.csv(paste(path,'results_CarterioAdultHCexp_noFWoutliers.csv',sep="/"), 
               header=T, sep=',', strip.white=T) %>%
-  mutate(Tr=Tr, # model x as beta
+  mutate(Tr=Tr/100, # model x as beta
          T96_p.healthy=100-T96_p.necrosed,
          Recov_p.healthy=100-Recov_p.necrosed,
          concentration=as.numeric(Tr),
@@ -259,5 +245,5 @@ out2 <- fit.jagsNEC(data=dat,
 
 check.chains(out2)
 par(mfrow=c(1,1))
-plot_jagsNEC(out2) 
+plot_jagsNEC(out2, jitter.x=T) 
 
