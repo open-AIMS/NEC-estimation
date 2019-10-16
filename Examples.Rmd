@@ -9,7 +9,7 @@ bibliography: 'C:/Users/rfisher/OneDrive - Australian Institute of Marine Scienc
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, include=T, message = FALSE, warnings = FALSE, warn.conflicts = FALSE)
+knitr::opts_chunk$set(echo = TRUE, include=T, message = TRUE, warnings = FALSE, warn.conflicts = FALSE)
 ```
 
 ## Background
@@ -30,6 +30,7 @@ With the R package 'devtools' jagsNEC can be installed straight from github. Onc
 #devtools::install_github("AIMS/NEC-estimation")
 library(jagsNEC)
 library(R2jags)
+require(tidyverse)
 ```
 
 ## Examples
@@ -72,7 +73,7 @@ The function shows the progress of the jags fit and returns the usual jags outpu
 check.chains(out)
 ```
 
-In our example, the chauns are well mixed and our ACF plot looks good, we we can go ahead and interpret this model.
+In our example, the chains are well mixed and our ACF plot looks good, we we can go ahead and interpret this model.
 
 
 The function *plot_jagsNEC* can be used to plot the fitted model. Alternatively you can make your own plot from the data included in the returned list from the call the fit.jagsNEC. In this example, this could be extracted using *out$pred.vals*
@@ -82,6 +83,28 @@ par(mfrow=c(1,1))
 plot_jagsNEC(out)
 ```
 
+### Beta data
+
+Sometimes we have a response variable that is distributed between 0 and 1 that is not binomial. A common example in coral ecology is maximum quantum yield (the proportion of light used for photosynthesis when all reaction centres are open) which is a measure of photosynthetic efficiency calculated from PAM data. Here we have a proportion value that is not based on trials and successes. In this case there are no theoretical 'trial' and the data must be modelled using a beta distribution.
+
+```{r fit-beta-NEC}
+prop.data <- read.table("https://pastebin.com/raw/123jq46d", header= TRUE,dec=",") %>%
+  mutate(raw.x=log(as.numeric(as.character(raw.x))+1),
+         resp=as.numeric(as.character(resp)))
+out <- fit.jagsNEC(data=prop.data, 
+                   x.var="raw.x", 
+                   y.var="resp",
+                   n.tries=1)
+```
+
+```{r check-beta-NEC}
+check.chains(out)
+```
+
+```{r plot-beta-NEC}
+par(mfrow=c(1,1))
+plot_jagsNEC(out)
+```
 
 ### Poisson data
 
