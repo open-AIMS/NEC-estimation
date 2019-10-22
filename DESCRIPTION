@@ -1,7 +1,7 @@
 Package: jagsNEC
 Title: A Bayesian No Effect Concentration (NEC) package. R package version 1. https://github.com/AIMS/NEC-estimation
 Version: 1.0
-Authors@R: c(person("Rebecca", "Fisher", person("Gerard", "Ricardo"),person("David", "Fox"),
+Authors@R: c(person("Rebecca", "Fisher"), person("Gerard", "Ricardo"),person("David", "Fox"),
 email = "r.fisher@aims.gov.au", role = c("aut", "cre")))
 Description: jagsNEC is a No-Effect-Concentration estimation package that is a wrapper for the R2jags package that enables the NEC model as defined by Fox 2010 to be fit via jags. Please see ?jagsNEC for more details.
 Depends:
