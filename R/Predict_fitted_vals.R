@@ -33,15 +33,17 @@ predict_NECmod <- function(x.vec, NEC, top, beta, alpha=0){
 #' Calculates predicted y (response) values for a supplied vector of x (concentration) values for a jags fitted NEC model fit (as returned by fit.jagsNEC)
 #' 
 #' @param X the jags NEC model fit (as returned by fit.jagsNEC)
+#' 
+#' @param precision the number of x values over which to predict values
 #'
 #' @export
 #' @return a list containing x (the x.seq), y (the median predicted y values at each value of x), up.vals (the upper 97.5% percentile of the predicted y values at each value of x), and lw (the lower 2.5% percentile of the predicted y values at each value of x)
 
-predict_NECbugsmod <- function(X){
+predict_NECbugsmod <- function(X, precision=100){
   mod.dat <- X$mod.dat
   min.x <- min(mod.dat$x)
   max.x <- max(mod.dat$x)
-  x.seq <- seq(min.x, max.x, length=100)
+  x.seq <- seq(min.x, max.x, length=precision)
 
   if(X$y.type != "gaussian"){
    pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
