@@ -4,10 +4,12 @@
 \alias{predict_NECbugsmod}
 \title{predict_NECbugsmod}
 \usage{
-predict_NECbugsmod(X)
+predict_NECbugsmod(X, precision = 100)
 }
 \arguments{
 \item{X}{the jags NEC model fit (as returned by fit.jagsNEC)}
+
+\item{precision}{the number of x values over which to predict values}
 }
 \value{
 a list containing x (the x.seq), y (the median predicted y values at each value of x), up.vals (the upper 97.5% percentile of the predicted y values at each value of x), and lw (the lower 2.5% percentile of the predicted y values at each value of x)
