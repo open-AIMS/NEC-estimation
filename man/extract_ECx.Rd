@@ -17,3 +17,6 @@ A vector containing the estimated ECx value, including upper and lower 95% Credi
 \description{
 Extracts the predicted ECx value as desired from a jagsNEC model fit obeject
 }
+\details{
+Please note that the estimated ECx value is based on the equivalent percentage decrease from the range of the highest to the lowest estimate value across the range of the observed concentration (x) values. If the concentration response relationship is such that the full range of observed responses is not captured (ie a complete decline response at the highest level of exposure), the estimated ECx values may be lower than if the full concentration-response curve were available. Note this is therefore a conservative value.
+}
