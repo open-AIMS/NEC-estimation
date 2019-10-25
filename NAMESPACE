@@ -2,6 +2,7 @@
 
 export(check.chains)
 export(check.mixing)
+export(extract_ECx)
 export(fit.jagsNEC)
 export(plot_jagsNEC)
 export(predict_NECbugsmod)
