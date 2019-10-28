@@ -7,6 +7,7 @@ source("R/Write_jags_model.R")
 source("R/Predict_fitted_vals.R")
 source("R/Fit_jagsNEC.R")
 source("R/plot_jagsNEC.R")
+source("R/extract_ECx.R")
 path <- "C:/Users/rfisher/OneDrive - Australian Institute of Marine Science/Documents/AIMS/EcologicalRiskModelling/Ecotoxicology/Ecotox_stats/CR-examples"
 
 
@@ -246,4 +247,21 @@ out2 <- fit.jagsNEC(data=dat,
 check.chains(out2)
 par(mfrow=c(1,1))
 plot_jagsNEC(out2, jitter.x=T) 
+
+### Paul's sea urchins ----
+binom.data <-  read.table(paste(path,"Data source R NEC and ECs sea urchin fertilization (Fisher, Ricardo, Fox).txt", sep="/"), header= TRUE,dec=",")
+str(binom.data)
+binom.data$raw.x <- as.numeric(as.character(binom.data$raw.x))
+range(binom.data$raw.x)
+par(mfrow=c(2,1))
+hist(binom.data$raw.x)
+hist(binom.data$suc/binom.data$tot)
+out <- fit.jagsNEC(data=binom.data,
+                   x.var="raw.x",
+                   y.var="suc",
+                   trials.var="tot")
+check.chains(out)
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot_jagsNEC(out, x.lab = "WAF (%)", y.lab = "Fertilization success (%)",log.x = "x")
+extract_ECx(out)
 
