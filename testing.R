@@ -265,3 +265,162 @@ par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot_jagsNEC(out, x.lab = "WAF (%)", y.lab = "Fertilization success (%)",log.x = "x")
 extract_ECx(out)
 
+
+### Gerard - 28/10/2019 example list ----
+#hav4
+data1 = read.table("https://pastebin.com/raw/v7Uy4iXs", header= TRUE,dec=",") %>% 
+  mutate(raw.x=as.numeric(as.character(raw.x)))
+out <- fit.jagsNEC(data=data1,
+                   x.var="raw.x",
+                   y.var="suc",
+                   trials.var="tot")
+check.chains(out)
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot_jagsNEC(out)
+extract_ECx(out)
+
+data1 = read.table("https://pastebin.com/raw/zfrUha88", header= TRUE,dec=",") %>%
+mutate(raw.x=as.numeric(as.character(raw.x)))
+out <- fit.jagsNEC(data=data1,
+                   x.var="raw.x",
+                   y.var="suc",
+                   trials.var="tot")
+check.chains(out)
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot_jagsNEC(out)
+extract_ECx(out)
+
+
+#paul
+# note this example was a bit problematic (failed to have good chain mixing). Modelling as a % of WAF improved the outcome substantially.
+data1 = read.table("https://pastebin.com/raw/dKVi6L3t", header= TRUE,dec=",") %>% 
+mutate(raw.x=as.numeric(as.character(raw.x))/100)
+out <- fit.jagsNEC(data=data1,
+                   x.var="raw.x",
+                   y.var="suc",
+                   trials.var="tot", n.tries=1)
+check.chains(out)
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot_jagsNEC(out, x.lab = "Proportion WAF")
+extract_ECx(out)
+
+#bent4  * #
+data1 = read.table("https://pastebin.com/raw/dUMSAvYi", header= TRUE,dec=",") %>%
+mutate(raw.x=as.numeric(as.character(raw.x)))
+out <- fit.jagsNEC(data=data1,
+                   x.var="raw.x",
+                   y.var="suc",
+                   trials.var="tot", n.tries=1)
+check.chains(out)
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot_jagsNEC(out)
+extract_ECx(out)
+
+#orp4 ## No NEC
+# note this example was a bit problematic (failed to have good chain mixing). Modelling as a % of WAF improved the outcome substantially.
+data1 = read.table("https://pastebin.com/raw/BaCAP3Sr", header= TRUE,dec=",") %>% 
+mutate(raw.x=as.numeric(as.character(raw.x))/100)
+out.1 <- fit.jagsNEC(data=data1,
+                   x.var="raw.x",
+                   y.var="suc",
+                   trials.var="tot", n.tries=1)
+check.chains(out.1)
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot_jagsNEC(out.1)
+extract_ECx(out.1)
+# backtransform NEC
+(out.1$NEC)*100
+
+# run the same example on a log scale - works a bit better.
+data1 = read.table("https://pastebin.com/raw/BaCAP3Sr", header= TRUE,dec=",") %>%
+  mutate(raw.x=log(as.numeric(as.character(raw.x))+1))
+out.2 <- fit.jagsNEC(data=data1,
+                   x.var="raw.x",
+                   y.var="suc",
+                   trials.var="tot", n.tries=1)
+check.chains(out.2)
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot_jagsNEC(out.2)
+extract_ECx(out.2)
+# backtransform NEC
+exp(out.2$NEC)-1
+
+#flo1  * 
+### would not converge - try on log scale
+data1 = read.table("https://pastebin.com/raw/CgYVQp6f", header= TRUE,dec=",") %>% 
+mutate(raw.x=log(as.numeric(as.character(raw.x))))
+out <- fit.jagsNEC(data=data1,
+                   x.var="raw.x",
+                   y.var="suc",
+                   trials.var="tot", n.tries=1)
+check.chains(out)
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot_jagsNEC(out)
+extract_ECx(out)
+
+#flo2 
+## would not converge - try on log scale
+data1 = read.table("https://pastebin.com/raw/2jsiuqP2", header= TRUE,dec=",") %>% 
+mutate(raw.x=log(as.numeric(as.character(raw.x))))
+out <- fit.jagsNEC(data=data1,
+                   x.var="raw.x",
+                   y.var="suc",
+                   trials.var="tot", n.tries=1)
+check.chains(out)
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot_jagsNEC(out)
+extract_ECx(out)
+
+#flo3
+### would not converge - try on log scale
+data1 = read.table("https://pastebin.com/raw/my6xYhfG", header= TRUE,dec=",") %>% 
+mutate(raw.x=log(as.numeric(as.character(raw.x))))
+out <- fit.jagsNEC(data=data1,
+                   x.var="raw.x",
+                   y.var="suc",
+                   trials.var="tot", n.tries=1)
+check.chains(out)
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot_jagsNEC(out)
+extract_ECx(out)
+
+#flo4
+### would not converge - try on log scale
+data1 = read.table("https://pastebin.com/raw/atPPnT8v", header= TRUE,dec=",") %>% 
+mutate(raw.x=log(as.numeric(as.character(raw.x))))
+out <- fit.jagsNEC(data=data1,
+                   x.var="raw.x",
+                   y.var="suc",
+                   trials.var="tot", n.tries=1)
+check.chains(out)
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot_jagsNEC(out)
+extract_ECx(out)
+
+#flo5
+### would not run at all - try on log scale. Added error catching to jagsNEC for when a model won't fit and there is a large concentration range in x
+data1 = read.table("https://pastebin.com/raw/C7U2JcSS", header= TRUE,dec=",") %>% 
+mutate(raw.x=log(as.numeric(as.character(raw.x))))
+out <- fit.jagsNEC(data=data1,
+                   x.var="raw.x",
+                   y.var="suc",
+                   trials.var="tot", n.tries=1)
+check.chains(out)
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot_jagsNEC(out)
+extract_ECx(out)
+
+#flo6
+data1 = read.table("https://pastebin.com/raw/Fp0uLBNX", header= TRUE,dec=",") %>% 
+mutate(raw.x=as.numeric(as.character(raw.x)))
+out <- fit.jagsNEC(data=data1,
+                   x.var="raw.x",
+                   y.var="suc",
+                   trials.var="tot", n.tries=1)
+check.chains(out)
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot_jagsNEC(out)
+extract_ECx(out)
+
+
+
