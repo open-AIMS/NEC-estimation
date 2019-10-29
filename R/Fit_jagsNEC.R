@@ -200,7 +200,12 @@ fit.jagsNEC <- function(data,
               of the estimated values. Extreme caution should be used in interpreting the 
               model results.")
          } 
-    if(length(all.Js)==0){
+    if(length(all.Js)==0 & nchar(round(diff(range(x.dat))))>=3){
+      stop(paste("The function fit.jagsNEC was unable to fit this model. Your x.var variable ", 
+                 x.var," covers more than ", nchar(round(diff(range(x.dat))))," orders of magnitude. 
+                 Try fitting the model with x.var on a log scale.", se=""))
+    } 
+    if(length(all.Js)==0 & nchar(round(diff(range(x.dat))))<3){
       stop("The function fit.jagsNEC was unable to fit this model. Please help us make 
            this software better by emailing a self contained reproducible example to the 
            developers")
