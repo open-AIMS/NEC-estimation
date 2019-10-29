@@ -4,12 +4,16 @@
 \alias{extract_ECx}
 \title{extract_ECx}
 \usage{
-extract_ECx(X, ECx.val = 10)
+extract_ECx(X, ECx.val = 10, precision = 1000, posterior = FALSE)
 }
 \arguments{
 \item{X}{a jag model fit as returned by a call to jags from fit.jagsNEC}
 
 \item{ECx.val}{the desired percentage effect value. This must be a value between 1 and 99, defaults to 10.}
+
+\item{precision}{The number of unique x values over which to find ECx - large values will make the ECx estimate more precise.}
+
+\item{posterior}{A logical value indicating if the full posterior sample of calculated ECx values should be returned instead of just the median and 95% credible intervals..}
 }
 \value{
 A vector containing the estimated ECx value, including upper and lower 95% Credible Interval bounds
