@@ -42,7 +42,13 @@ fit.jagsNEC <- function(data,
   
   y.dat <- data[,y.var]
   x.dat <- data[,x.var] 
- 
+  
+  # check the x data are numeric
+  if(class(x.dat)!="numeric"){
+    stop(paste("Your indicated x.var column ",x.var," contains data that is class ",class(x.dat),". 
+               The function jagsNEC requires the concentration data (argument x.var) to be numeric.",sep=""))    
+  } 
+  
   # check the data are lower at high x compared to low x (ie the response variable declines within increase in the x)
   if(mean(y.dat[which(x.dat<mean(x.dat))])< mean(y.dat[which(x.dat>mean(x.dat))])){
     stop("The mean value of the response for the lower half of the 
@@ -50,7 +56,7 @@ fit.jagsNEC <- function(data,
          jagsNEC only fits concentration response data where the 
          response declines with increasing values of concentration.")    
   }
-  
+
   # check variable type x.var
   if(is.na(x.type)==T){ # if the x.var is not specified, then guess
      if(class(x.dat)=="integer"){
