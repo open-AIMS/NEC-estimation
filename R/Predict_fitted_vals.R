@@ -68,6 +68,7 @@ predict_NECbugsmod <- function(X, precision=100){
     x=x.seq,
     y=m.vals,
     up=up.vals,
-    lw=lw.vals
+    lw=lw.vals,
+    posterior=pred.vals.out
   ))
 }
