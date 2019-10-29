@@ -11,32 +11,30 @@
 #' @return A vector containing the estimated ECx value, including upper and lower 95% Credible Interval bounds
 #' @details Please note that the estimated ECx value is based on the equivalent percentage decrease from the range of the highest to the lowest estimate value across the range of the observed concentration (x) values. If the concentration response relationship is such that the full range of observed responses is not captured (ie a complete decline response at the highest level of exposure), the estimated ECx values may be lower than if the full concentration-response curve were available. Note this is therefore a conservative value.
 
-extract_ECx <- function(X, ECx.val=10){
+extract_ECx <- function(X, ECx.val=10, precision=1000, posterior = FALSE){
   if(ECx.val<1 | ECx.val>99){
     stop("Supplied ECx.val is not in the required range. Please supply a percentage value between 1 and 99.")}  
 
-  x.vec <- X$pred.vals$'x' 
-  y <- X$pred.vals$y
-  up <- X$pred.vals$up
-  lw <- X$pred.vals$lw
+  pred.vals <- predict_NECbugsmod(X, precision=precision)
   
-  range.y <- range(y)
-  range.up <- range(up)
-  range.lw <- range(lw)
+  x.vec <- pred.vals$'x' 
   
-  ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
-  ECx.x <- x.vec[which.min(abs(y-ECx.y))]
+  ECx.out <- apply(pred.vals$posterior, MARGIN=2, FUN=function(y){
+    range.y <- range(y)
+    ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
+    ECx.x <- x.vec[which.min(abs(y-ECx.y))]
+    return(ECx.x)
   
-  ECx.y.up <- max(range.up)-diff(range.up)*(ECx.val/100)
-  ECx.x.up <- x.vec[which.min(abs(up-ECx.y.up))]
- 
-  ECx.y.lw <- max(range.lw)-diff(range.lw)*(ECx.val/100)
-  ECx.x.lw <- x.vec[which.min(abs(lw-ECx.y.lw))] 
+  })
+  
   label <- paste("EC",ECx.val,sep="")
   
-  ECx.estimate <- c(ECx.x,ECx.x.lw,ECx.x.up)
+  ECx.estimate <- quantile(ECx.out, probs=c(0.5, 0.025, 0.975))
   names(ECx.estimate) <- c(label, paste(label, "lw", sep="_"), paste(label, "up", sep="_"))
-  return(ECx.estimate)
+  if(posterior==FALSE){
+    return(ECx.estimate)
+  }else{  return(list(ECx.estimate=ECx.estimate, ECx.posterior=ECx.out))}
+
   
 }
 
