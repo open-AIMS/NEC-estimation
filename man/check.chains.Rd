@@ -12,7 +12,7 @@ check.chains(X, name = "")
 \item{name}{an optional character string indicating the label to be placed at the top of the plotting window}
 }
 \value{
-A plot of MCMC chains and ACF diagrames for each element in params.
+A plot of MCMC chains and ACF diagrams for each element in params.
 }
 \description{
 Generates a plot of MCMC chains and ACF function for a Jags model output.
