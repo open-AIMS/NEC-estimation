@@ -7,7 +7,7 @@
 #' @param name an optional character string indicating the label to be placed at the top of the plotting window
 #'
 #' @export
-#' @return A plot of MCMC chains and ACF diagrames for each element in params.
+#' @return A plot of MCMC chains and ACF diagrams for each element in params.
 
 check.chains <- function(X, name=""){
   params <- X$params
