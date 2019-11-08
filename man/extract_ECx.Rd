@@ -16,7 +16,7 @@ extract_ECx(X, ECx.val = 10, precision = 1000, posterior = FALSE)
 \item{posterior}{A logical value indicating if the full posterior sample of calculated ECx values should be returned instead of just the median and 95% credible intervals..}
 }
 \value{
-A vector containing the estimated ECx value, including upper and lower 95 percent Credible Interval bounds
+A vector containing the estimated ECx value.
 }
 \description{
 Extracts the predicted ECx value as desired from a jagsNEC model fit obeject
