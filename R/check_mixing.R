@@ -1,13 +1,14 @@
 #' check.mixing
 #'
-#' Calculates the within and between chain mixing and tests of the between is greater than within based on the supplied quantile probability value.
+#' Calculates the within and between chain mixing and tests if the between is greater than within based on the supplied quantile probability value.
 #'
-#' @param  J a jag model fit as returned by a call to jags fit.jagsNEC
+#' @param  J a jag model fit as returned by a call to jags
 #'
 #' @param  prob.val the probability value to pass to quantile to assess the between chain coefficient of variation against the within chain coefficient of variation. Please inspect the model code for more details.
 #'
 #' @export
-#' @return A list of within and between coefficient of variations for parameter, the outcome of the test if between is greater than within, and the ratio ratio.
+#' @return A list of within and between coefficient of variations for parameter, 
+#' the outcome of the test if between is greater than within, and the ratio.
 
 
 check.mixing <- function(J, prob.val=0.75){
