@@ -151,7 +151,9 @@ fit.jagsNEC <- function(data,
     all.Js <- c(all.Js, list(J1))   
     if(max(unlist(check.mixing(J1)$cv.test))==1){class(J1)="try-error"}
   }
- 
+  if(class(J1)=="try-error"){ 
+   warning("The generated init.fun failed to yield a valid model. Model based on default jags initial values")
+  }
   # if the attempt fails try 10 more times
   w <- 1
     while(class(J1)=="try-error" & w <= n.tries){
