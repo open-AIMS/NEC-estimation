@@ -1,4 +1,5 @@
 
+#devtools::install_github("AIMS/NEC-estimation")
 library(R2jags)
 require(tidyverse)
 source("R/check_chains.R")
@@ -9,7 +10,6 @@ source("R/Fit_jagsNEC.R")
 source("R/plot_jagsNEC.R")
 source("R/extract_ECx.R")
 path <- "C:/Users/rfisher/OneDrive - Australian Institute of Marine Science/Documents/AIMS/EcologicalRiskModelling/Ecotoxicology/Ecotox_stats/CR-examples"
-
 
 ### Example from Gerards original NEC script ----
 ### #(https://github.com/gerard-ricardo/NECs/blob/master/NECs)
@@ -204,7 +204,7 @@ par(mfrow=c(1,1))
 plot_jagsNEC(out2) 
 
 
-#### test Beta using Gerard's example ----
+### test Beta using Gerard's example ----
 prop.data <- read.table("https://pastebin.com/raw/123jq46d", header= TRUE,dec=",") %>%
   mutate(raw.x=log(as.numeric(as.character(raw.x))+1),
          resp=as.numeric(as.character(resp)))
@@ -422,5 +422,143 @@ par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot_jagsNEC(out)
 extract_ECx(out)
 
+### Marie pesticide MS ------
+t0.dat <- unlist(list(
+  Diuron= 3440,
+  Metribuzin= 3320,
+  Hexazinone= 3353,
+  Bromacil= 3120,
+  Tebuthiuron= 3971,
+  Simazine= 2837,
+  Propazine= 3114,
+  Imazapic= 4966,
+  Haloxyfop= 7255,
+  H2.4.D= 3067))
+
+t0.dat
+
+path <- "C:/Users/rfisher/OneDrive - Australian Institute of Marine Science/Documents/AIMS/EcologicalRiskModelling/Ecotoxicology/Marie_Thomas/"
+all.files <- list.files(path)
+dat.files <- all.files[grep("_Rs.txt", all.files)]
+names.vec <- gsub("2,4-D", "H2.4.D", gsub("_growth_Rs.txt","",dat.files))
+dat.list <- list()
+pdf(file="Marie_herbicides.pdf", onefile = T)
+for(d in 1:length(dat.files)){
+  t0.d <- t0.dat[names.vec[d]]
+  dat.d <- read.table(paste(path, dat.files[d], sep=""), sep="\t", header=T) %>% 
+    dplyr::select(raw.x, count) %>%
+    mutate(SGR=(log(count)-log(t0.d))/3,
+           log.x=log(raw.x))
+  
+  out <- try(fit.jagsNEC(data=na.omit(dat.d),
+                     x.var="log.x",
+                     y.var="SGR"), silent=T)
+  if(class(out)!="try-error"){
+     check.chains(out)
+  par(mfrow=c(1,1), mar=c(4,4,1,1))
+  plot_jagsNEC(out, x.lab = names.vec[d], y.lab = "Specific growth rate") 
+  }else{
+    plot(dat.d$log.x, dat.d$SGR, xlab=names.vec[d], "Specific growth rate")
+  }
+ dat.list <- c(dat.list, list(dat.d))
+}
+dev.off()
+names(dat.list) <- names.vec
+
+### Marie pesticide MS - indivually tweaked ----
+path <- "C:/Users/rfisher/OneDrive - Australian Institute of Marine Science/Documents/AIMS/EcologicalRiskModelling/Ecotoxicology/Marie_Thomas/"
+
+## H2.4.D  
+dat <- read.table(paste(path, "2,4-D_growth_Rs.txt" , sep=""), sep="\t", header=T) %>% 
+  dplyr::select(raw.x, count) %>%
+  mutate(SGR=(log(count)-log(3067))/3,
+         log.x=log(raw.x))
+
+out <- fit.jagsNEC(data=na.omit(dat),
+                       x.var="log.x",
+                       y.var="SGR")
+# note gives error message - data not a decreasing function
+plot(dat$log.x, dat$SGR, xlab="2,4-D", ylab="Specific growth rate", pch=16)
+
+## Bromacil 
+dat <- read.table(paste(path, "Bromacil_growth_Rs.txt" , sep=""), sep="\t", header=T) %>% 
+  dplyr::select(raw.x, count) %>%
+  mutate(SGR=(log(count)-log(3120))/3,
+         log.x=log(raw.x))
+
+out <- fit.jagsNEC(data=na.omit(dat),
+                   x.var="log.x",
+                   y.var="SGR")
+check.chains(out)
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot_jagsNEC(out, x.lab = "Bromacil", y.lab = "Specific growth rate") 
+
+# note this model fit is horrible. Try on the raw count data
+out <- fit.jagsNEC(data=na.omit(dat),
+                   x.var="log.x",
+                   y.var="count")
+check.chains(out)
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot_jagsNEC(out, x.lab = "Bromacil", y.lab = "Count") 
+ 
+#"Diuron"   
+Diuron= 3440
+"Diuron_growth_Rs.txt"                                                             
+
+#"Haloxyfop" 
+Haloxyfop= 7255
+"Haloxyfop_growth_Rs.txt"                                                          
+ 
+#"Hexazinone" 
+Hexazinone= 3353
+"Hexazinone_growth_Rs.txt"                                                         
+ 
+#"Imazapic"   
+Imazapic= 4966
+"Imazapic_growth_Rs.txt"                                                           
+ 
+#"Metribuzin"  
+Metribuzin= 3320
+"Metribuzin_growth_Rs.txt"                                                         
+
+#"Propazine"  
+Propazine= 3114
+"Propazine_growth_Rs.txt"                                                          
+
+#"Simazine"  
+Simazine= 2837
+"Simazine_growth_Rs.txt"                                                           
+
+#"Tebuthiuron"
+Tebuthiuron= 3971
+"Tebuthiuron_growth_Rs.txt"
+
+### Flo Diazinon ----
+
+dat <- read.table(paste(path,"NECEstimation_Diazinon.txt", sep="/"), header = T) %>%
+  mutate(log.x=log(raw.x))
+out1 <- fit.jagsNEC(data=dat, 
+                   x.var="raw.x", 
+                   y.var="suc",
+                   trials.var="tot",
+                   burnin=100000,
+                   n.iter.update = 10000)
 
 
+check.chains(out1)
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot_jagsNEC(out1)
+extract_ECx(out1, precision = 10000)
+
+out2 <- fit.jagsNEC(data=dat, 
+                    x.var="log.x", 
+                    y.var="suc",
+                    trials.var="tot",
+                    burnin=100000,
+                    n.iter.update = 10000)
+
+
+check.chains(out2)
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot_jagsNEC(out2)
+extract_ECx(out2)
