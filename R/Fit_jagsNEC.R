@@ -128,10 +128,14 @@ fit.jagsNEC <- function(data,
   mod.dat <<- list(
     x = data[,x.var],   # concentration
     y = data[,y.var], # response (successes)
+
     N = nrow(data))  # Sample size
+
+  response = data[,y.var]
  
   if(y.type=="binomial"){
    mod.dat$trials = data[,trials.var] # number of "trials"
+   response = data[,y.var]/data[,trials.var]
   }
    
   init.fun <- write.jags.NECmod(x=x.type,y=y.type, mod.dat=mod.dat)
@@ -230,6 +234,9 @@ fit.jagsNEC <- function(data,
   y.pred.m <- predict_NECmod(x.vec=x.seq, NEC=NEC["50%"], top=top["50%"], beta=beta["50%"]) 
   pred.vals <- c(predict_NECbugsmod(X=out), list(y.m=y.pred.m))  
   
+  predicted.y <- predict_NECmod(x.vec=mod.dat$x, NEC=NEC["50%"], top=top["50%"], beta=beta["50%"]) 
+  residuals <-  response - predicted.y
+  
   #overdispersion estimate
   od <- mean(out$sims.list$SS > out$sims.list$SSsim)
   
@@ -241,7 +248,9 @@ fit.jagsNEC <- function(data,
      alpha = alpha,
      params = params,
      over.disp = od,
-     all.Js = all.Js))
+     all.Js = all.Js,
+     predicted.y = predicted.y,
+     residuals = residuals))
   
   message(paste("Response variable ", y.var, " modelled using a ", y.type, " distribution.", sep=""))
   return(out)    
