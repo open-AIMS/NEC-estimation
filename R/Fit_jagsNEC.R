@@ -230,13 +230,17 @@ fit.jagsNEC <- function(data,
   y.pred.m <- predict_NECmod(x.vec=x.seq, NEC=NEC["50%"], top=top["50%"], beta=beta["50%"]) 
   pred.vals <- c(predict_NECbugsmod(X=out), list(y.m=y.pred.m))  
   
+  #overdispersion estimate
+  od <- mean(out$sims.list$SS > out$sims.list$SSsim)
+  
   out <- c(out, list(
      pred.vals = pred.vals,
      NEC = NEC,
-     top =top,
+     top = top,
      beta = beta,
      alpha = alpha,
      params = params,
+     over.disp = od,
      all.Js = all.Js))
   
   message(paste("Response variable ", y.var, " modelled using a ", y.type, " distribution.", sep=""))
