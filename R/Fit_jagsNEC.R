@@ -33,11 +33,11 @@ fit.jagsNEC <- function(data,
                         trials.var = NA,
                         x.type = NA, 
                         y.type = NA,
-                        params = NA,
                         burnin = 5000,
                         n.iter = burnin+500,
                         n.iter.update = 10000,
                         n.tries=10,
+                        params=c("top", "beta", "NEC", "SS", "SSsim"),
                         ...){
   
   y.dat <- data[,y.var]
@@ -82,8 +82,7 @@ fit.jagsNEC <- function(data,
       y.type="binomial"}   
   }   
   
-  params <- c("top", "beta", "NEC")
-  
+
   if(y.type=="gamma"){params=c(params,"shape")}
   if(y.type=="gaussian"){params=c(params,"alpha","sigma")}
     

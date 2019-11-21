@@ -30,6 +30,12 @@ check.chains(out)
 par(mfrow=c(1,1))
 plot_jagsNEC(out)
 
+out <- fit.jagsNEC(data=binom.data, 
+                   x.var="raw.x", 
+                   y.var="suc", 
+                   trials.var="tot",
+                   params=c("top", "beta", "NEC", "SS", "SSsim"))
+mean(out$sims.list$SS > out$sims.list$SSsim)
 
 ####################################################
 #2) NEC - count data  (think invidivuals, cells etc
@@ -44,8 +50,10 @@ hist(count.data$raw.x)
 hist(count.data$count)
 out <- fit.jagsNEC(data=count.data, 
                    x.var="raw.x", 
-                   y.var="count")
+                   y.var="count", 
+                   params=c("top", "beta", "NEC", "SS", "SSsim"))
 check.chains(out)
+mean(out$sims.list$SS > out$sims.list$SSsim)
 
 par(mfrow=c(1,1))
 plot_jagsNEC(out)
@@ -60,7 +68,12 @@ measure.data$measure <- as.numeric(as.character(measure.data$measure))
 out <- fit.jagsNEC(data=measure.data, 
                    x.var="raw.x", 
                    y.var="measure", n.tries=1, prob.val=0.05)
+out <- fit.jagsNEC(data=measure.data, 
+                   x.var="raw.x", 
+                   y.var="measure", n.tries=1, prob.val =0.05,
+                   params=c("top", "beta", "NEC", "SS", "SSsim"))
 check.chains(out)
+mean(out$sims.list$SS > out$sims.list$SSsim)
 
 par(mfrow=c(1,1))
 plot_jagsNEC(out)
@@ -74,7 +87,7 @@ require(car)
 binom.data$logit.prop <- logit(binom.data$prop)
 out <- fit.jagsNEC(data=binom.data, 
                    x.var="raw.x", 
-                   y.var="logit.prop")
+                   y.var="logit.prop", params=c("top", "beta", "NEC", "SS", "SSsim"))
 check.chains(out)
 
 par(mfrow=c(1,1))
@@ -151,6 +164,8 @@ out1 <- fit.jagsNEC(data=dat,
                     x.var="concentration", 
                     y.var="y.1",
                     n.tries=2)
+check.chains(out)
+mean(out1$sims.list$SS > out1$sims.list$SSsim)
 
 
 check.chains(out1) 
@@ -161,12 +176,13 @@ plot_jagsNEC(out1)
 out2 <- fit.jagsNEC(data=dat, 
                     x.var="concentration", 
                     y.var="y.2",
-                    n.tries=2)
+                    n.tries=2,
+                    params=c("top", "beta", "NEC", "SS", "SSsim"))
 
 check.chains(out2)
 par(mfrow=c(1,1))
 plot_jagsNEC(out2) 
-
+mean(out2$sims.list$SS > out2$sims.list$SSsim)
 
 ### test Heidi's necrosis example as a binomial (trials as a function of area) ----
 dat<-read.csv(paste(path,'results_CarterioAdultHCexp_noFWoutliers.csv',sep="/"), 
@@ -216,6 +232,7 @@ out <- fit.jagsNEC(data=prop.data,
 check.chains(out) 
 par(mfrow=c(1,1))
 plot_jagsNEC(out)
+mean(out$sims.list$SS > out$sims.list$SSsim)
 
 ### test Heidi's necrosis example as a binomial for any necrosis at all (0,1) ----
 dat<-read.csv(paste(path,'results_CarterioAdultHCexp_noFWoutliers.csv',sep="/"), 
@@ -237,6 +254,7 @@ out1 <- fit.jagsNEC(data=dat,
 check.chains(out1) 
 par(mfrow=c(1,1))
 plot_jagsNEC(out1)
+mean(out1$sims.list$SS > out2$sims.list$SSsim)
 
 # second for Recovery
 out2 <- fit.jagsNEC(data=dat, 
@@ -247,6 +265,7 @@ out2 <- fit.jagsNEC(data=dat,
 check.chains(out2)
 par(mfrow=c(1,1))
 plot_jagsNEC(out2, jitter.x=T) 
+mean(out2$sims.list$SS > out2$sims.list$SSsim)
 
 ### Paul's sea urchins ----
 binom.data <-  read.table(paste(path,"Data source R NEC and ECs sea urchin fertilization (Fisher, Ricardo, Fox).txt", sep="/"), header= TRUE,dec=",")
@@ -264,7 +283,7 @@ check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot_jagsNEC(out, x.lab = "WAF (%)", y.lab = "Fertilization success (%)",log.x = "x")
 extract_ECx(out)
-
+mean(out$sims.list$SS > out$sims.list$SSsim)
 
 ### Gerard - 28/10/2019 example list ----
 #hav4
@@ -278,6 +297,7 @@ check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot_jagsNEC(out)
 extract_ECx(out)
+mean(out$sims.list$SS > out$sims.list$SSsim)
 
 data1 = read.table("https://pastebin.com/raw/zfrUha88", header= TRUE,dec=",") %>%
 mutate(raw.x=as.numeric(as.character(raw.x)))
@@ -289,7 +309,7 @@ check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot_jagsNEC(out)
 extract_ECx(out)
-
+mean(out$sims.list$SS > out$sims.list$SSsim)
 
 #paul
 # note this example was a bit problematic (failed to have good chain mixing). Modelling as a % of WAF improved the outcome substantially.
@@ -303,6 +323,7 @@ check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot_jagsNEC(out, x.lab = "Proportion WAF")
 extract_ECx(out)
+mean(out$sims.list$SS > out$sims.list$SSsim)
 
 #bent4  * #
 data1 = read.table("https://pastebin.com/raw/dUMSAvYi", header= TRUE,dec=",") %>%
@@ -315,6 +336,7 @@ check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot_jagsNEC(out)
 extract_ECx(out)
+mean(out$sims.list$SS > out$sims.list$SSsim)
 
 #orp4 ## No NEC
 # note this example was a bit problematic (failed to have good chain mixing). Modelling as a % of WAF improved the outcome substantially.
@@ -330,6 +352,7 @@ plot_jagsNEC(out.1)
 extract_ECx(out.1)
 # backtransform NEC
 (out.1$NEC)*100
+mean(out.1$sims.list$SS > out.1$sims.list$SSsim)
 
 # run the same example on a log scale - works a bit better.
 data1 = read.table("https://pastebin.com/raw/BaCAP3Sr", header= TRUE,dec=",") %>%
@@ -344,6 +367,7 @@ plot_jagsNEC(out.2)
 extract_ECx(out.2)
 # backtransform NEC
 exp(out.2$NEC)-1
+mean(out.2$sims.list$SS > out.2$sims.list$SSsim)
 
 #flo1  * 
 ### would not converge - try on log scale
@@ -357,6 +381,7 @@ check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot_jagsNEC(out)
 extract_ECx(out)
+mean(out$sims.list$SS > out$sims.list$SSsim)
 
 #flo2 
 ## would not converge - try on log scale
@@ -370,6 +395,7 @@ check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot_jagsNEC(out)
 extract_ECx(out)
+mean(out$sims.list$SS > out$sims.list$SSsim)
 
 #flo3
 ### would not converge - try on log scale
@@ -383,6 +409,7 @@ check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot_jagsNEC(out)
 extract_ECx(out)
+mean(out$sims.list$SS > out$sims.list$SSsim)
 
 #flo4
 ### would not converge - try on log scale
@@ -396,6 +423,7 @@ check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot_jagsNEC(out)
 extract_ECx(out)
+mean(out$sims.list$SS > out$sims.list$SSsim)
 
 #flo5
 ### would not run at all - try on log scale. Added error catching to jagsNEC for when a model won't fit and there is a large concentration range in x
@@ -409,6 +437,7 @@ check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot_jagsNEC(out)
 extract_ECx(out)
+mean(out$sims.list$SS > out$sims.list$SSsim)
 
 #flo6
 data1 = read.table("https://pastebin.com/raw/Fp0uLBNX", header= TRUE,dec=",") %>% 
@@ -421,6 +450,7 @@ check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot_jagsNEC(out)
 extract_ECx(out)
+mean(out$sims.list$SS > out$sims.list$SSsim)
 
 ### Marie pesticide MS ------
 t0.dat <- unlist(list(
@@ -465,76 +495,7 @@ for(d in 1:length(dat.files)){
 dev.off()
 names(dat.list) <- names.vec
 
-### Marie pesticide MS - indivually tweaked ----
-path <- "C:/Users/rfisher/OneDrive - Australian Institute of Marine Science/Documents/AIMS/EcologicalRiskModelling/Ecotoxicology/Marie_Thomas/"
-
-## H2.4.D  
-dat <- read.table(paste(path, "2,4-D_growth_Rs.txt" , sep=""), sep="\t", header=T) %>% 
-  dplyr::select(raw.x, count) %>%
-  mutate(SGR=(log(count)-log(3067))/3,
-         log.x=log(raw.x))
-
-out <- fit.jagsNEC(data=na.omit(dat),
-                       x.var="log.x",
-                       y.var="SGR")
-# note gives error message - data not a decreasing function
-plot(dat$log.x, dat$SGR, xlab="2,4-D", ylab="Specific growth rate", pch=16)
-
-## Bromacil 
-dat <- read.table(paste(path, "Bromacil_growth_Rs.txt" , sep=""), sep="\t", header=T) %>% 
-  dplyr::select(raw.x, count) %>%
-  mutate(SGR=(log(count)-log(3120))/3,
-         log.x=log(raw.x))
-
-out <- fit.jagsNEC(data=na.omit(dat),
-                   x.var="log.x",
-                   y.var="SGR")
-check.chains(out)
-par(mfrow=c(1,1), mar=c(4,4,1,1))
-plot_jagsNEC(out, x.lab = "Bromacil", y.lab = "Specific growth rate") 
-
-# note this model fit is horrible. Try on the raw count data
-out <- fit.jagsNEC(data=na.omit(dat),
-                   x.var="log.x",
-                   y.var="count")
-check.chains(out)
-par(mfrow=c(1,1), mar=c(4,4,1,1))
-plot_jagsNEC(out, x.lab = "Bromacil", y.lab = "Count") 
- 
-#"Diuron"   
-Diuron= 3440
-"Diuron_growth_Rs.txt"                                                             
-
-#"Haloxyfop" 
-Haloxyfop= 7255
-"Haloxyfop_growth_Rs.txt"                                                          
- 
-#"Hexazinone" 
-Hexazinone= 3353
-"Hexazinone_growth_Rs.txt"                                                         
- 
-#"Imazapic"   
-Imazapic= 4966
-"Imazapic_growth_Rs.txt"                                                           
- 
-#"Metribuzin"  
-Metribuzin= 3320
-"Metribuzin_growth_Rs.txt"                                                         
-
-#"Propazine"  
-Propazine= 3114
-"Propazine_growth_Rs.txt"                                                          
-
-#"Simazine"  
-Simazine= 2837
-"Simazine_growth_Rs.txt"                                                           
-
-#"Tebuthiuron"
-Tebuthiuron= 3971
-"Tebuthiuron_growth_Rs.txt"
-
 ### Flo Diazinon ----
-
 dat <- read.table(paste(path,"NECEstimation_Diazinon.txt", sep="/"), header = T) %>%
   mutate(log.x=log(raw.x))
 out1 <- fit.jagsNEC(data=dat, 
@@ -549,16 +510,18 @@ check.chains(out1)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot_jagsNEC(out1)
 extract_ECx(out1, precision = 10000)
+mean(out1$sims.list$SS > out1$sims.list$SSsim)
 
 out2 <- fit.jagsNEC(data=dat, 
                     x.var="log.x", 
                     y.var="suc",
                     trials.var="tot",
-                    burnin=100000,
-                    n.iter.update = 10000)
+                    burnin=10000,
+                    n.iter.update = 1000)
 
 
 check.chains(out2)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot_jagsNEC(out2)
 extract_ECx(out2)
+mean(out2$sims.list$SS > out2$sims.list$SSsim)

@@ -30,7 +30,24 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         top ~  dunif(0.0001,0.999) 
         beta ~ dgamma(0.0001,0.0001)
         NEC ~ dgamma(0.0001,0.0001) #d norm(3, 0.0001) T(0,)
+         
+        # pearson residuals
+        for (i in 1:N) {
+         ExpY[i] <- theta[i]*trials[i] 
+         VarY[i] <- trials[i]*theta[i] * (1 - theta[i])
+         E[i] <- (y[i] - ExpY[i]) / sqrt(VarY[i])
+        }
         
+        # overdispersion
+        for (i in 1:N) {
+         ysim[i] ~  dbin(theta[i],trials[i])
+         Esim[i] <- (ysim[i] - ExpY[i]) / sqrt(VarY[i])
+         D[i]    <- E[i]^2     #Squared residuals for original data
+         Dsim[i] <- Esim[i]^2  #Squared residuals for simulated data
+        }
+        SS    <- sum(D[1:N])
+        SSsim <- sum(Dsim[1:N])
+
         }
         ", fill=TRUE)
     sink()  #Make model in working directory
@@ -61,6 +78,23 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         top ~  dunif(0.0001,0.999) 
         beta ~ dgamma(0.0001,0.0001)
         NEC ~ dnorm(0,0.0001) 
+         
+        # pearson residuals
+        for (i in 1:N) {
+         ExpY[i] <- theta[i]*trials[i] 
+         VarY[i] <- trials[i]*theta[i] * (1 - theta[i])
+         E[i] <- (y[i] - ExpY[i]) / sqrt(VarY[i])
+        }
+        
+        # overdispersion
+        for (i in 1:N) {
+         ysim[i] ~  dbin(theta[i],trials[i])
+         Esim[i] <- (ysim[i] - ExpY[i]) / sqrt(VarY[i])
+         D[i]    <- E[i]^2     #Squared residuals for original data
+         Dsim[i] <- Esim[i]^2  #Squared residuals for simulated data
+        }
+        SS    <- sum(D[1:N])
+        SSsim <- sum(Dsim[1:N])
         
         }
         ", fill=TRUE)
@@ -92,7 +126,23 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         top ~  dunif(0.0001,0.999) 
         beta ~ dgamma(0.0001,0.0001)
         NEC ~ dunif(0.0001,0.9999) 
+         
+        # pearson residuals
+        for (i in 1:N) {
+        ExpY[i] <- theta[i]*trials[i] 
+        VarY[i] <- trials[i]*theta[i] * (1 - theta[i])
+        E[i] <- (y[i] - ExpY[i]) / sqrt(VarY[i])
+        }
         
+        # overdispersion
+        for (i in 1:N) {
+        ysim[i] ~  dbin(theta[i],trials[i])
+        Esim[i] <- (ysim[i] - ExpY[i]) / sqrt(VarY[i])
+        D[i]    <- E[i]^2     #Squared residuals for original data
+        Dsim[i] <- Esim[i]^2  #Squared residuals for simulated data
+        }
+        SS    <- sum(D[1:N])
+        SSsim <- sum(Dsim[1:N])        
         }
         ", fill=TRUE)
     sink()  #Make model in working directory
@@ -124,6 +174,23 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         beta~dgamma(0.0001,0.0001)
         NEC~dgamma(0.0001,0.0001) #dnorm(3, 0.0001) T(0,) dnorm(30, 0.0001) T(0,) #
         
+        # pearson residuals
+        for (i in 1:N) {
+         ExpY[i] <- theta[i] 
+         VarY[i] <- theta[i]
+         E[i]    <- (y[i] - ExpY[i]) / sqrt(VarY[i])
+        }
+
+        # overdispersion
+        for (i in 1:N) {
+         ysim[i] ~  dpois(theta[i])
+         Esim[i] <- (ysim[i] - ExpY[i]) / sqrt(VarY[i])
+         D[i]    <- E[i]^2     #Squared residuals for original data
+         Dsim[i] <- Esim[i]^2  #Squared residuals for simulated data
+         }
+         SS    <- sum(D[1:N])
+         SSsim <- sum(Dsim[1:N])
+
         }
         ", fill=TRUE)
     sink()  #Make model in working directory
@@ -140,11 +207,7 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
     cat("
         model
         {
-        # specify model priors
-        top ~  dgamma(1,0.001)
-        beta~dgamma(0.0001,0.0001)
-        NEC~dnorm(0, 0.0001)
-        
+
         # likelihood
         for (i in 1:N)
         {
@@ -152,6 +215,28 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         # response is poisson
         y[i]~dpois(theta[i])
         }
+
+        # specify model priors
+        top ~  dgamma(1,0.001)
+        beta~dgamma(0.0001,0.0001)
+        NEC~dnorm(0, 0.0001)
+
+        # pearson residuals
+        for (i in 1:N) {
+         ExpY[i] <- theta[i] 
+         VarY[i] <- theta[i]
+         E[i]    <- (y[i] - ExpY[i]) / sqrt(VarY[i])
+        }
+
+        # overdispersion
+        for (i in 1:N) {
+         ysim[i] ~  dpois(theta[i])
+         Esim[i] <- (ysim[i] - ExpY[i]) / sqrt(VarY[i])
+         D[i]    <- E[i]^2     #Squared residuals for original data
+         Dsim[i] <- Esim[i]^2  #Squared residuals for simulated data
+         }
+         SS    <- sum(D[1:N])
+         SSsim <- sum(Dsim[1:N])
         }
         ", fill=TRUE)
     sink()  #Make model in working directory
@@ -181,6 +266,23 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         top ~  dgamma(1,0.001) # dnorm(0,0.001) #T(0,) #
         beta ~ dgamma(0.0001,0.0001)
         NEC ~  dunif(0.0001,0.9999) 
+
+        # pearson residuals
+        for (i in 1:N) {
+         ExpY[i] <- theta[i] 
+         VarY[i] <- theta[i]
+         E[i]    <- (y[i] - ExpY[i]) / sqrt(VarY[i])
+        }
+
+        # overdispersion
+        for (i in 1:N) {
+         ysim[i] ~  dpois(theta[i])
+         Esim[i] <- (ysim[i] - ExpY[i]) / sqrt(VarY[i])
+         D[i]    <- E[i]^2     #Squared residuals for original data
+         Dsim[i] <- Esim[i]^2  #Squared residuals for simulated data
+         }
+         SS    <- sum(D[1:N])
+         SSsim <- sum(Dsim[1:N])
         }
         ", fill=TRUE)
     sink()  #Make model in working directory
@@ -211,6 +313,23 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         beta ~ dgamma(0.0001,0.0001)
         NEC ~  dunif(0.001,0.999) #dbeta(1,1)
         shape ~ dlnorm(0,0.001) #dunif(0,1000)
+
+        # pearson residuals
+        for (i in 1:N) {
+         ExpY[i] <- theta[i] 
+         VarY[i] <- shape/((shape/(shape / (theta[i])))^2)
+         E[i]    <- (y[i] - ExpY[i]) / sqrt(VarY[i])
+        }
+        
+        # overdispersion
+        for (i in 1:N) {
+         ysim[i] ~  dgamma(shape, shape / (theta[i]))
+         Esim[i] <- (ysim[i] - ExpY[i]) / sqrt(VarY[i])
+         D[i]    <- E[i]^2     #Squared residuals for original data
+         Dsim[i] <- Esim[i]^2  #Squared residuals for simulated data
+        }
+        SS    <- sum(D[1:N])
+        SSsim <- sum(Dsim[1:N])
         }
         ", fill=TRUE)
     sink()  #Make model in working directory
@@ -242,6 +361,23 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         beta ~ dgamma(0.0001,0.0001)
         NEC ~ dnorm(0, 0.0001)
         shape ~ dlnorm(0,0.001) #dunif(0,1000)
+
+        # pearson residuals
+        for (i in 1:N) {
+         ExpY[i] <- theta[i] 
+         VarY[i] <- shape/((shape/(shape / (theta[i])))^2)
+         E[i]    <- (y[i] - ExpY[i]) / sqrt(VarY[i])
+        }
+        
+        # overdispersion
+        for (i in 1:N) {
+         ysim[i] ~  dgamma(shape, shape / (theta[i]))
+         Esim[i] <- (ysim[i] - ExpY[i]) / sqrt(VarY[i])
+         D[i]    <- E[i]^2     #Squared residuals for original data
+         Dsim[i] <- Esim[i]^2  #Squared residuals for simulated data
+        }
+        SS    <- sum(D[1:N])
+        SSsim <- sum(Dsim[1:N])
         }
         ", fill=TRUE)
     sink()  #Make model in working directory
@@ -273,6 +409,24 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         beta ~ dgamma(0.0001,0.0001)
         NEC~dgamma(0.0001,0.0001) #dnorm(3, 0.0001) T(0,) dnorm(30, 0.0001) T(0,) #
         shape ~ dlnorm(0,0.001) #dunif(0,1000)
+
+        # pearson residuals
+        for (i in 1:N) {
+         ExpY[i] <- theta[i] 
+         VarY[i] <- shape/((shape/(shape / (theta[i])))^2)
+         E[i]    <- (y[i] - ExpY[i]) / sqrt(VarY[i])
+        }
+        
+        # overdispersion
+        for (i in 1:N) {
+         ysim[i] ~  dgamma(shape, shape / (theta[i]))
+         Esim[i] <- (ysim[i] - ExpY[i]) / sqrt(VarY[i])
+         D[i]    <- E[i]^2     #Squared residuals for original data
+         Dsim[i] <- Esim[i]^2  #Squared residuals for simulated data
+        }
+        SS    <- sum(D[1:N])
+        SSsim <- sum(Dsim[1:N])
+
         }
         ", fill=TRUE)
     sink()  #Make model in working directory
@@ -306,7 +460,24 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
       alpha ~ dnorm(0,0.1)
       NEC ~ dnorm(0, 0.0001) T(0,) #dgamma(0.0001,0.0001) Note we haven't used gamma here as the example didn't result in chain missing.
       sigma ~ dunif(0, 20)  #sigma is the SD
-      tau  = 1 / (sigma * sigma)  #tau is the reciprical of the variance     
+      tau  = 1 / (sigma * sigma)  #tau is the reciprical of the variance 
+
+      # pearson residuals
+      for (i in 1:N) {
+       ExpY[i] <- theta[i] 
+       VarY[i] <- tau^2
+       E[i]    <- (y[i] - ExpY[i]) / sqrt(VarY[i])
+      }
+
+      # overdispersion
+      for (i in 1:N) {
+       ysim[i] ~  dnorm(theta[i],tau)
+       Esim[i] <- (ysim[i] - ExpY[i]) / sqrt(VarY[i])
+       D[i]    <- E[i]^2     #Squared residuals for original data
+       Dsim[i] <- Esim[i]^2  #Squared residuals for simulated data
+       }
+       SS    <- sum(D[1:N])
+       SSsim <- sum(Dsim[1:N])
       }
       ", fill=TRUE)
   sink()  #Make model in working directory
@@ -342,7 +513,24 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         alpha ~ dnorm(0,0.1)
         NEC ~  dunif(0.001,0.999) #dbeta(1,1)
         sigma ~ dunif(0, 20)  #sigma is the SD
-        tau  = 1 / (sigma * sigma)  #tau is the reciprical of the variance     
+        tau  = 1 / (sigma * sigma)  #tau is the reciprical of the variance  
+
+      # pearson residuals
+        for (i in 1:N) {
+        ExpY[i] <- theta[i] 
+        VarY[i] <- tau^2
+        E[i]    <- (y[i] - ExpY[i]) / sqrt(VarY[i])
+        }
+        
+        # overdispersion
+        for (i in 1:N) {
+        ysim[i] ~  dnorm(theta[i],tau)
+        Esim[i] <- (ysim[i] - ExpY[i]) / sqrt(VarY[i])
+        D[i]    <- E[i]^2     #Squared residuals for original data
+        Dsim[i] <- Esim[i]^2  #Squared residuals for simulated data
+        }
+        SS    <- sum(D[1:N])
+        SSsim <- sum(Dsim[1:N])
         }
         ", fill=TRUE)
     sink()  #Make model in working directory
@@ -378,7 +566,24 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         alpha ~ dnorm(0,0.1)
         NEC ~  dnorm(0,0.01)
         sigma ~ dunif(0, 20)  #sigma is the SD
-        tau  = 1 / (sigma * sigma)  #tau is the reciprical of the variance     
+        tau  = 1 / (sigma * sigma)  #tau is the reciprical of the variance 
+
+      # pearson residuals
+        for (i in 1:N) {
+        ExpY[i] <- theta[i] 
+        VarY[i] <- tau^2
+        E[i]    <- (y[i] - ExpY[i]) / sqrt(VarY[i])
+        }
+        
+        # overdispersion
+        for (i in 1:N) {
+        ysim[i] ~  dnorm(theta[i],tau)
+        Esim[i] <- (ysim[i] - ExpY[i]) / sqrt(VarY[i])
+        D[i]    <- E[i]^2     #Squared residuals for original data
+        Dsim[i] <- Esim[i]^2  #Squared residuals for simulated data
+        }
+        SS    <- sum(D[1:N])
+        SSsim <- sum(Dsim[1:N])
         }
         ", fill=TRUE)
     sink()  #Make model in working directory
@@ -416,6 +621,23 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         NEC ~  dunif(0.001,0.999) #dbeta(1,1)
         t0 ~ dnorm(0, 0.010)
         phi <- exp(t0)
+
+        # pearson residuals
+        for (i in 1:N) {
+         ExpY[i] <- theta[i] 
+         VarY[i] <- (shape1[i]*shape2[i])/((shape1[i]+shape2[i])^2*(shape1[i]+shape2[i]+1))
+         E[i] <- (y[i] - ExpY[i]) / sqrt(VarY[i])
+        }
+        
+        # overdispersion
+        for (i in 1:N) {
+         ysim[i] ~ dbeta(shape1[i], shape2[i])
+         Esim[i] <- (ysim[i] - ExpY[i]) / sqrt(VarY[i])
+         D[i]    <- E[i]^2     #Squared residuals for original data
+         Dsim[i] <- Esim[i]^2  #Squared residuals for simulated data
+        }
+        SS    <- sum(D[1:N])
+        SSsim <- sum(Dsim[1:N])
         }
         ", fill=TRUE)
     sink()  #Make model in working directory
@@ -439,7 +661,7 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         {
         
         # response is beta
-        y[i]~dbeta(shape1[i], shape2[i])
+        y[i] ~ dbeta(shape1[i], shape2[i])
         shape1[i] <- theta[i] * phi
         shape2[i]  <- (1-theta[i]) * phi
         theta[i]<-top*exp(-beta*((x[i])-NEC)*step(((x[i])-NEC)))
@@ -451,6 +673,23 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         NEC ~ dgamma(0.0001,0.0001) 
         t0 ~ dnorm(0, 0.010)
         phi <- exp(t0)
+
+        # pearson residuals
+        for (i in 1:N) {
+         ExpY[i] <- theta[i] 
+         VarY[i] <- (shape1[i]*shape2[i])/((shape1[i]+shape2[i])^2*(shape1[i]+shape2[i]+1))
+         E[i] <- (y[i] - ExpY[i]) / sqrt(VarY[i])
+        }
+        
+        # overdispersion
+        for (i in 1:N) {
+         ysim[i] ~ dbeta(shape1[i], shape2[i])
+         Esim[i] <- (ysim[i] - ExpY[i]) / sqrt(VarY[i])
+         D[i]    <- E[i]^2     #Squared residuals for original data
+         Dsim[i] <- Esim[i]^2  #Squared residuals for simulated data
+        }
+        SS    <- sum(D[1:N])
+        SSsim <- sum(Dsim[1:N])
         }
         ", fill=TRUE)
     sink()  #Make model in working directory
@@ -486,6 +725,23 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
         NEC ~ dnorm(0, 0.0001)
         t0 ~ dnorm(0, 0.010)
         phi <- exp(t0)
+
+        # pearson residuals
+        for (i in 1:N) {
+        ExpY[i] <- theta[i] 
+        VarY[i] <- (shape1[i]*shape2[i])/((shape1[i]+shape2[i])^2*(shape1[i]+shape2[i]+1))
+        E[i] <- (y[i] - ExpY[i]) / sqrt(VarY[i])
+  }
+        
+        # overdispersion
+        for (i in 1:N) {
+        ysim[i] ~ dbeta(shape1[i], shape2[i])
+        Esim[i] <- (ysim[i] - ExpY[i]) / sqrt(VarY[i])
+        D[i]    <- E[i]^2     #Squared residuals for original data
+        Dsim[i] <- Esim[i]^2  #Squared residuals for simulated data
+        }
+        SS    <- sum(D[1:N])
+        SSsim <- sum(Dsim[1:N])
         }
         ", fill=TRUE)
     sink()  #Make model in working directory
