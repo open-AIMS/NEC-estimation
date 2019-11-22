@@ -83,7 +83,13 @@ fit.jagsNEC <- function(data,
       y.type="binomial"}   
   }   
   
-  if(y.type=="poisson" & over.disp==TRUE){y.type="negbin"}
+  if(y.type=="poisson" & over.disp==TRUE){
+          y.type="negbin"}
+  if(y.type=="binomial" & over.disp==TRUE){
+          y.type <- "beta"
+          data[,y.var] <-  data[,y.var]/data[,trials.var]  
+          
+          }  
 
   if(y.type=="gamma"){params=c(params,"shape")}
   if(y.type=="gaussian"){params=c(params,"alpha","sigma")}
