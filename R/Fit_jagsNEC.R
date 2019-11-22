@@ -38,6 +38,7 @@ fit.jagsNEC <- function(data,
                         n.iter.update = 10000,
                         n.tries=10,
                         params=c("top", "beta", "NEC", "SS", "SSsim"),
+                        over.disp=FALSE,
                         ...){
   
   y.dat <- data[,y.var]
@@ -82,9 +83,11 @@ fit.jagsNEC <- function(data,
       y.type="binomial"}   
   }   
   
+  if(y.type=="poisson" & over.disp==TRUE){y.type="negbin"}
 
   if(y.type=="gamma"){params=c(params,"shape")}
   if(y.type=="gaussian"){params=c(params,"alpha","sigma")}
+  if(y.type=="negbin"){params=c(params,"size")}  
     
   # error catching for 0 for gamma by adding very small value (no tweedie available in jags)
   if(min(data[,x.var])==0 & x.type=="gamma"){

@@ -753,6 +753,153 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
       NEC = rnorm(1, 0, 2))}
   }
   
+  # negbin y; gaussian x ----
+  if(x=="gaussian" & y=="negbin"){
+    sink("NECmod.txt")
+    cat("
+        model
+        {
+        
+        # likelihood
+        for (i in 1:N)
+        {
+        theta[i]<-size/(size+top*exp(-beta*(x[i]-NEC)*step((x[i]-NEC))))
+        # response is begative binomial
+        y[i]~dnegbin(theta[i], size)
+        }
+        
+        # specify model priors
+        top ~ dgamma(1,0.001) # dnorm(0,0.001) T(0,) dnorm(100,0.0001)T(0,) #
+        beta ~ dgamma(0.0001,0.0001)
+        NEC ~ dnorm(0.0001,0.0001) #dnorm(3, 0.0001) T(0,) dnorm(30, 0.0001) T(0,) #
+        size ~ dunif(0,50)
+        
+        # pearson residuals
+        for (i in 1:N) {
+        ExpY[i] <- theta[i] 
+        VarY[i] <- theta[i] + theta[i] * theta[i] / size
+        E[i]    <- (y[i] - ExpY[i]) / sqrt(VarY[i])
+        }
+        
+        # overdispersion
+        for (i in 1:N) {
+        ysim[i] ~  dnegbin(theta[i], size)
+        Esim[i] <- (ysim[i] - ExpY[i]) / sqrt(VarY[i])
+        D[i]    <- E[i]^2     #Squared residuals for original data
+        Dsim[i] <- Esim[i]^2  #Squared residuals for simulated data
+        }
+        SS    <- sum(D[1:N])
+        SSsim <- sum(Dsim[1:N])
+        
+        }
+        ", fill=TRUE)
+    sink()  #Make model in working directory
+    
+    init.fun <- function(mod.data=mod.data){list(
+      top = rpois(1,max(mod.dat$y)), 
+      beta = runif(1,0.0001,0.999), #rlnorm(1,0,1), #rgamma(1,0.2,0.001),
+      NEC =  rnorm(1,mean(mod.dat$x),1),#rnorm(1,30,10))} #rgamma(1,0.2,0.001)),
+      size=runif(1, 0.1, 40))} #
+  } 
+
+    # negbin y; gamma x ----
+  if(x=="gamma" & y=="negbin"){
+    sink("NECmod.txt")
+    cat("
+        model
+        {
+        
+        # likelihood
+        for (i in 1:N)
+        {
+        theta[i]<-size/(size+top*exp(-beta*(x[i]-NEC)*step((x[i]-NEC))))
+        # response is begative binomial
+        y[i]~dnegbin(theta[i], size)
+        }
+        
+        # specify model priors
+        top ~ dgamma(1,0.001) # dnorm(0,0.001) T(0,) dnorm(100,0.0001)T(0,) #
+        beta ~ dgamma(0.0001,0.0001)
+        NEC~dgamma(0.0001,0.0001) #dnorm(3, 0.0001) T(0,) dnorm(30, 0.0001) T(0,) #
+        size ~ dunif(0,50)
+        
+        # pearson residuals
+        for (i in 1:N) {
+        ExpY[i] <- theta[i] 
+        VarY[i] <- theta[i] + theta[i] * theta[i] / size
+        E[i]    <- (y[i] - ExpY[i]) / sqrt(VarY[i])
+        }
+        
+        # overdispersion
+        for (i in 1:N) {
+        ysim[i] ~  dnegbin(theta[i], size)
+        Esim[i] <- (ysim[i] - ExpY[i]) / sqrt(VarY[i])
+        D[i]    <- E[i]^2     #Squared residuals for original data
+        Dsim[i] <- Esim[i]^2  #Squared residuals for simulated data
+        }
+        SS    <- sum(D[1:N])
+        SSsim <- sum(Dsim[1:N])
+        
+        }
+        ", fill=TRUE)
+    sink()  #Make model in working directory
+    
+    init.fun <- function(mod.data=mod.data){list(
+      top = rpois(1,max(mod.dat$y)), 
+      beta = runif(1,0.0001,0.999), #rlnorm(1,0,1), #rgamma(1,0.2,0.001),
+      NEC = rlnorm(1,log(mean(mod.dat$x)),1),#rnorm(1,30,10))} #rgamma(1,0.2,0.001)),
+      size=runif(1, 0.1, 40))} #
+  }  
+ 
+  # negbin y; beta x ----
+  if(x=="beta" & y=="negbin"){
+    sink("NECmod.txt")
+    cat("
+        model
+        {
+        
+        # likelihood
+        for (i in 1:N)
+        {
+        theta[i]<-size/(size+top*exp(-beta*(x[i]-NEC)*step((x[i]-NEC))))
+        # response is begative binomial
+        y[i]~dnegbin(theta[i], size)
+        }
+        
+        # specify model priors
+        top ~ dgamma(1,0.001) # dnorm(0,0.001) T(0,) dnorm(100,0.0001)T(0,) #
+        beta ~ dgamma(0.0001,0.0001)
+        NEC ~  dunif(0.001,0.999) #dbeta(1,1)
+        size ~ dunif(0,50)
+        
+        # pearson residuals
+        for (i in 1:N) {
+        ExpY[i] <- theta[i] 
+        VarY[i] <- theta[i] + theta[i] * theta[i] / size
+        E[i]    <- (y[i] - ExpY[i]) / sqrt(VarY[i])
+        }
+        
+        # overdispersion
+        for (i in 1:N) {
+        ysim[i] ~  dnegbin(theta[i], size)
+        Esim[i] <- (ysim[i] - ExpY[i]) / sqrt(VarY[i])
+        D[i]    <- E[i]^2     #Squared residuals for original data
+        Dsim[i] <- Esim[i]^2  #Squared residuals for simulated data
+        }
+        SS    <- sum(D[1:N])
+        SSsim <- sum(Dsim[1:N])
+        
+        }
+        ", fill=TRUE)
+    sink()  #Make model in working directory
+    
+    init.fun <- function(mod.data=mod.data){list(
+      top = rpois(1,max(mod.dat$y)), 
+      beta = runif(1,0.0001,0.999),
+      NEC =  NEC = runif(1, 0.3, 0.6),
+      size=runif(1, 0.1, 40))} 
+  }  
+  
   # return the initial function
   if(exists("init.fun")){
       return(init.fun) 
