@@ -896,7 +896,7 @@ write.jags.NECmod <- function(x="gamma", y, mod.dat){
     init.fun <- function(mod.data=mod.data){list(
       top = rpois(1,max(mod.dat$y)), 
       beta = runif(1,0.0001,0.999),
-      NEC =  NEC = runif(1, 0.3, 0.6),
+      NEC = runif(1, 0.3, 0.6),
       size=runif(1, 0.1, 40))} 
   }  
   
