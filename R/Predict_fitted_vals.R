@@ -15,17 +15,19 @@
 #' @export
 #' @return A list containing x and fitted y, with up and lw values
 
-predict_NECmod <- function(x.vec, NEC, top, beta, alpha=0){
-
+predict_NECmod <- function(x.vec, NEC, top, beta, alpha=0, size=NA){
+  
   x.seq.pre <-  x.vec[which(x.vec<=NEC)] #seq(min.x, NEC.m, length=20)
   x.seq.post <- x.vec[which(x.vec>NEC)] # seq(NEC.m, max.x, length=20)
   
   y.pred.pre <- (rep(top, length(x.seq.pre)))-alpha
-  y.pred.post <- (top*exp(-beta*(x.seq.post-NEC)))-alpha    
-
+  y.pred.post <- (top*exp(-beta*(x.seq.post-NEC)))-alpha  
+  
   y.pred <- c(y.pred.pre, y.pred.post)
+  if(is.na(size)!=TRUE){ y.pred <- size/(size+y.pred)}
+  
   return(y.pred)
-
+  
 }
 
 #' predict_NECbugsmod
@@ -44,26 +46,36 @@ predict_NECbugsmod <- function(X, precision=100){
   min.x <- min(mod.dat$x)
   max.x <- max(mod.dat$x)
   x.seq <- seq(min.x, max.x, length=precision)
-
-  if(X$y.type != "gaussian"){
-   pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
-    predict_NECmod(x.vec=x.seq,
-                   NEC=X$sims.list$NEC[x],
-                   top=X$sims.list$top[x],
-                   beta=X$sims.list$beta[x])}))}else{
-   pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
-    predict_NECmod(x.vec=x.seq,
-                   NEC=X$sims.list$NEC[x],
-                   top=X$sims.list$top[x],
-                   beta=X$sims.list$beta[x],
-                   alpha=X$sims.list$alpha[x])
-     }))                    
+  
+  if(X$y.type != "gaussian" &  X$y.type != "negbin"){
+    pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
+      predict_NECmod(x.vec=x.seq,
+                     NEC=X$sims.list$NEC[x],
+                     top=X$sims.list$top[x],
+                     beta=X$sims.list$beta[x])}))
+  }
+  
+  if(X$y.type == "gaussian"){
+    pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
+      predict_NECmod(x.vec=x.seq,
+                     NEC=X$sims.list$NEC[x],
+                     top=X$sims.list$top[x],
+                     beta=X$sims.list$beta[x],
+                     alpha=X$sims.list$alpha[x]) }))
+  }
+  if(X$y.type == "negbin"){
+    pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){    
+      predict_NECmod(x.vec=x.seq,
+                     NEC=X$sims.list$NEC[x],
+                     top=X$sims.list$top[x],
+                     beta=X$sims.list$beta[x],
+                     size=X$sims.list$size[x])}))
   }
   
   m.vals <- apply(pred.vals.out, MARGIN=1, FUN=quantile, probs=0.5)
   up.vals <- apply(pred.vals.out, MARGIN=1, FUN=quantile, probs=0.975)
   lw.vals <- apply(pred.vals.out, MARGIN=1, FUN=quantile, probs=0.025)
-
+  
   return(list(
     x=x.seq,
     y=m.vals,
