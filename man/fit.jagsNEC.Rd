@@ -5,8 +5,9 @@
 \title{fit.jagsNEC}
 \usage{
 fit.jagsNEC(data, x.var, y.var, trials.var = NA, x.type = NA,
-  y.type = NA, params = NA, burnin = 5000, n.iter = burnin + 500,
-  n.iter.update = 10000, n.tries = 10, ...)
+  y.type = NA, burnin = 5000, n.iter = burnin + 500,
+  n.iter.update = 10000, n.tries = 10, params = c("top", "beta",
+  "NEC", "SS", "SSsim"), over.disp = FALSE, ...)
 }
 \arguments{
 \item{data}{a data.frame containing the data to use for the model}
@@ -21,15 +22,17 @@ fit.jagsNEC(data, x.var, y.var, trials.var = NA, x.type = NA,
 
 \item{y.type}{the statistical distribution to use for the y (response) data. This may currently be one of  'binomial', 'poisson',' 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer. If not supplied, the appropriate distribution will be guessed based on the distribution of the input data.}
 
-\item{params}{A vector of names indicating the parameters that to trace during the jags fit. For the NEC jags model this is typically 'NEC','top' and 'beta'. If left NA, fit.jagsNEC will supply this based on the selected y.type and x.type.}
-
 \item{burnin}{the number of iterations to use as burnin.}
 
 \item{n.iter}{the number of interations to run following burnin for the initial jags fit. Defaults to 500 + burnin, but small values are good when the model may have trouble fitting and is updated by n.iter.update iterations anyway.}
 
+\item{params}{A vector of names indicating the parameters that to trace during the jags fit. For the NEC jags model this is typically 'NEC','top' and 'beta'. If left out, fit.jagsNEC will supply this based on the selected y.type and x.type.}
+
 \item{n.iter.burnin}{the number of interations to run overall. This should be large. Defaults to 10000.}
 
 \item{n.tries.}{If the initial model fit fails because it cannot be fit by jags (miss-specified priors, invalid initial values), or because there is poor chain mixing fit.jagsNEC will try n.tries many times using the init.fun defined by write.jags.NECmod. If all those attempts fail, fit.jagsNEC will then try using default values provided by jags. The function will only return an error if all n.tries fail.}
+
+\item{over.disp.}{If an overdispersed model should be used. Only changes the model fit for poisson and binomial y.type data. For poisson, a negative binomial model will be fit. For binomial a beta model will be fit.}
 }
 \value{
 The $BUGSoutput element of fitted jags model.

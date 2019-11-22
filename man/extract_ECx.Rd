@@ -4,7 +4,7 @@
 \alias{extract_ECx}
 \title{extract_ECx}
 \usage{
-extract_ECx(X, ECx.val = 10, precision = 1000, posterior = FALSE)
+extract_ECx(X, ECx.val = 10, precision = 10000, posterior = FALSE)
 }
 \arguments{
 \item{X}{a jag model fit as returned by a call to jags from fit.jagsNEC}
