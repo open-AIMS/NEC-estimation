@@ -26,7 +26,7 @@
 #' @return a plot of the fitted model
 
 plot_jagsNEC <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=FALSE,  add.NEC=TRUE, 
-                         jitter.x=FALSE, jitter.y=FALSE, y.lab="response", x.lab="concentration", log.x=""){
+                         jitter.x=FALSE, jitter.y=FALSE, y.lab="response", x.lab="concentration", log.x="", ...){
  
   y.type <- X$y.type
   
