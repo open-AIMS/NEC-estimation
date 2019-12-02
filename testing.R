@@ -1,5 +1,6 @@
 
 #devtools::install_github("AIMS/NEC-estimation")
+#require(jagsNEC)
 library(R2jags)
 require(tidyverse)
 source("R/check_chains.R")
@@ -16,6 +17,7 @@ path <- "C:/Users/rfisher/OneDrive - Australian Institute of Marine Science/Docu
 #1) NEC - binomial data  (a count out of a total, think %survival of individuals, % settlement)
 binom.data <-  read.table("https://pastebin.com/raw/zfrUha88", header= TRUE,dec=",")
 binom.data$raw.x <- as.numeric(as.character(binom.data$raw.x))
+binom.data$log.x <- log(binom.data$raw.x)
 range(binom.data$raw.x)
 hist(binom.data$raw.x)
 # for x, lowest concentration is 0.1, highest is 400, right skewed and on the continuous scale. Model x as gamma (current default).
@@ -28,14 +30,24 @@ out <- fit.jagsNEC(data=binom.data,
 check.chains(out)
 
 par(mfrow=c(1,1))
-plot_jagsNEC(out)
+plot_jagsNEC(out, axes=FALSE)
 
-out <- fit.jagsNEC(data=binom.data, 
-                   x.var="raw.x", 
-                   y.var="suc", 
-                   trials.var="tot",
-                   params=c("top", "beta", "NEC", "SS", "SSsim"))
+out$over.disp
 mean(out$sims.list$SS > out$sims.list$SSsim)
+
+# try log x
+out <- fit.jagsNEC(data=binom.data, 
+                   x.var="log.x", 
+                   y.var="suc", 
+                   trials.var="tot")
+
+check.chains(out)
+
+par(mfrow=c(1,1))
+plot_jagsNEC(out, axes=FALSE, xform=exp)
+
+out$over.disp
+
 
 ####################################################
 #2) NEC - count data  (think invidivuals, cells etc
@@ -283,7 +295,47 @@ check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot_jagsNEC(out, x.lab = "WAF (%)", y.lab = "Fertilization success (%)",log.x = "x")
 extract_ECx(out)
-mean(out$sims.list$SS > out$sims.list$SSsim)
+out$over.disp
+out$summary
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot(binom.data$raw.x, out$predicted.y-(binom))
+
+### Paul's sea urchins as beta
+binom.data <-  read.table(paste(path,"Data source R NEC and ECs sea urchin fertilization (Fisher, Ricardo, Fox).txt", sep="/"), header= TRUE,dec=",")
+str(binom.data)
+binom.data$raw.x <- as.numeric(as.character(binom.data$raw.x))
+binom.data$prop <- binom.data$suc/binom.data$tot
+out <- fit.jagsNEC(data=binom.data,
+                   x.var="raw.x",
+                   y.var="prop", n.tries=1)
+check.chains(out)
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot_jagsNEC(out, x.lab = "WAF (%)", y.lab = "Fertilization success (%)",log.x = "x")
+extract_ECx(out)
+out$over.disp
+out$summary
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot(binom.data$raw.x, out$residuals)
+
+### Paul's sea urchins as beta using over.disp=TRUE
+binom.data <-  read.table(paste(path,"Data source R NEC and ECs sea urchin fertilization (Fisher, Ricardo, Fox).txt", sep="/"), header= TRUE,dec=",")
+str(binom.data)
+binom.data$raw.x <- as.numeric(as.character(binom.data$raw.x))
+binom.data$prop <- binom.data$suc/binom.data$tot
+out <- fit.jagsNEC(data=binom.data,
+                   x.var="raw.x",
+                   y.var="suc",
+                   trials.var="tot", 
+                   over.disp=T)
+check.chains(out)
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot_jagsNEC(out, x.lab = "WAF (%)", y.lab = "Fertilization success (%)",log.x = "x")
+extract_ECx(out)
+out$over.disp
+out$summary
+par(mfrow=c(1,1), mar=c(4,4,1,1))
+plot(binom.data$raw.x, out$residuals)
+
 
 ### Gerard - 28/10/2019 example list ----
 #hav4
