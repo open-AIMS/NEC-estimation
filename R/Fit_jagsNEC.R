@@ -41,6 +41,7 @@ fit.jagsNEC <- function(data,
                         n.tries=10,
                         params=c("top", "beta", "NEC", "SS", "SSsim"),
                         over.disp=FALSE,
+                        model="",
                         ...){
   
   y.dat <- data[,y.var]
@@ -149,7 +150,13 @@ fit.jagsNEC <- function(data,
    response = data[,y.var]/data[,trials.var]
   }
    
-  init.fun <- write.jags.NECmod(x=x.type,y=y.type, mod.dat=mod.dat)
+  if(model=="Hockey"){
+    init.fun <- write.jags.Hockey.NECmod(x=x.type,y=y.type, mod.dat=mod.dat)
+    params <- c(params, "d")
+  }else{
+     init.fun <- write.jags.NECmod(x=x.type,y=y.type, mod.dat=mod.dat) 
+  }
+
   
   all.Js <- list()
   

@@ -6,11 +6,61 @@ require(tidyverse)
 source("R/check_chains.R")
 source("R/check_mixing.R")
 source("R/Write_jags_model.R")
+source("R/Write_jags_Hockey_model.R")
 source("R/Predict_fitted_vals.R")
 source("R/Fit_jagsNEC.R")
 source("R/plot_jagsNEC.R")
 source("R/extract_ECx.R")
 path <- "C:/Users/rfisher/OneDrive - Australian Institute of Marine Science/Documents/AIMS/EcologicalRiskModelling/Ecotoxicology/Ecotox_stats/CR-examples"
+
+### Testing/troubleshooting the Hockey Model v1
+
+data1 <-  read.table("https://pastebin.com/raw/dUMSAvYi", header= TRUE,dec=",")  %>%
+  mutate(raw.x=as.numeric(as.character(raw.x)),
+         log.x=log(raw.x))
+
+out <- fit.jagsNEC(data=data1,
+                   x.var="log.x",
+                   y.var="suc",
+                   trials.var = "tot",
+                   model="Hockey",                   
+                   n.tries=2)
+check.chains(out)
+
+par(mfrow=c(1,1))
+plot_jagsNEC(out, axes=FALSE)
+
+### Testing/troubleshooting the Hockey Model v1
+
+data1 <-  read.table("https://pastebin.com/raw/dKVi6L3t", header= TRUE,dec=",")  %>%
+  mutate(raw.x=as.numeric(as.character(raw.x)),
+         log.x=log(raw.x))
+
+out <- fit.jagsNEC(data=data1,
+                   x.var="log.x",
+                   y.var="suc",
+                   trials.var = "tot",
+                   model="Hockey",                   
+                   n.tries=2)
+check.chains(out)
+
+par(mfrow=c(1,1))
+plot_jagsNEC(out, axes=FALSE)
+
+
+### Testing/troubleshooting the Hockey Model v3
+dat <- read.table(paste(path,'marie_test_hockey.txt',sep="/"), sep="\t", header=T) %>% 
+  dplyr::select(raw.x, count) %>%
+  mutate(SGR=(log(count)-log10(3353))/3,
+         log.x=log(raw.x)) %>%
+  na.omit()
+
+out <- fit.jagsNEC(data=dat,
+                   x.var="raw.x",
+                   y.var="SGR",
+                   model="Hockey",                   
+                   n.tries=2)
+
 
 ### Example from Gerards original NEC script ----
 ### #(https://github.com/gerard-ricardo/NECs/blob/master/NECs)
