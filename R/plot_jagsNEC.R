@@ -10,7 +10,9 @@
 #'
 #' @param median.model a logical value indicating if the fitted model calculated from the median estimates of the NEC, top and beta parameters should be plotted. This is the fitted model as shown in Fox 2010.
 #'
-#' @param add.NEC a logocal value indicating if the estimated NEC values and 95\% credible intervals should be added to the plot.
+#' @param add.NEC a logical value indicating if the estimated NEC values and 95\% credible intervals should be added to the plot.
+#'
+#' @param xform a function to be applied as a transformation of the x data.
 #'
 #' @param x.jitter a logical value indicating if the x data points on the plot should be jittered.
 #'
@@ -25,38 +27,51 @@
 #' @export
 #' @return a plot of the fitted model
 
-plot_jagsNEC <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=FALSE,  add.NEC=TRUE, 
-                         jitter.x=FALSE, jitter.y=FALSE, y.lab="response", x.lab="concentration", log.x="", ...){
- 
+plot_jagsNEC <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=FALSE,  
+                         add.NEC=TRUE, xform=NA,
+                         jitter.x=FALSE, jitter.y=FALSE, 
+                         y.lab="response", 
+                         x.lab="concentration", log.x="", ...){
+  
+  # check if y.type is binomial
   y.type <- X$y.type
-  
-  if(jitter.x==TRUE){X$mod.dat$x <- jitter(X$mod.dat$x)}
-  if(jitter.y==TRUE){X$mod.dat$y <- jitter(X$mod.dat$y)}
-  
   if(y.type=="binomial"){
-     plot(X$mod.dat$x,X$mod.dat$y/X$mod.dat$trials, ylab=y.lab, pch=16, 
-       col=adjustcolor(1, alpha=0.25), cex=1.5, xlab=x.lab, log=log.x) 
+    y.dat <- X$mod.dat$y/X$mod.dat$trials}else{
+    y.dat <- X$mod.dat$y}
+  
+  # check if a transformation is required for x
+  if(class(xform)=="function"){
+    x.dat <- xform(X$mod.dat$x)
+    NEC <- xform(X$NEC)
+    x.vec <- xform(X$pred.vals$x)
   }else{
-    plot(X$mod.dat$x,X$mod.dat$y, ylab=y.lab, pch=16, 
-       col=adjustcolor(1, alpha=0.25), cex=1.5, xlab=x.lab, log=log.x)     
+    x.dat <- X$mod.dat$x
+    NEC <- X$NEC
+    x.vec <- X$pred.vals$x
   }
-
-  abline(v=X$NEC, col = "red", lty=c(3,1,3))   
+  
+  if(jitter.x==TRUE){x.dat <- jitter(x.dat)}
+  if(jitter.y==TRUE){y.dat <- jitter(y.dat)}  
+  
+  plot(x.dat, y.dat, ylab=y.lab, pch=16, 
+       col=adjustcolor(1, alpha=0.25), cex=1.5, xlab=x.lab, log=log.x)   
+  
+  abline(v=NEC, col = "red", lty=c(3,1,3))   
   
   if(CI==TRUE){
-    lines(X$pred.vals$x, X$pred.vals$up, lty=2) 
-    lines(X$pred.vals$x, X$pred.vals$lw, lty=2)  
+    lines(x.vec, X$pred.vals$up, lty=2) 
+    lines(x.vec, X$pred.vals$lw, lty=2)  
   }
   if(posterior.median==TRUE){
-    lines(X$pred.vals$x, X$pred.vals$y)
+    lines(x.vec, X$pred.vals$y)
   }
   if(median.model==TRUE){
-    lines(X$pred.vals$x, X$pred.vals$y.m, col="red")  
+    lines(x.vec, X$pred.vals$y.m, col="red")  
   }
   if(add.NEC==TRUE){
         legend("topright", bty="n",
-           legend=paste("NEC: ", signif(X$NEC[2],3), 
-                        " (", signif(X$NEC[1],3),"-", signif(X$NEC[3],3),")",sep=""))
+           legend=paste("NEC: ", signif(NEC[2],3), 
+                        " (", signif(NEC[1],3),"-", signif(NEC[3],3),")",sep=""))
   }
 
 }
