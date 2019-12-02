@@ -5,9 +5,9 @@
 \title{plot.jagsNEC}
 \usage{
 plot_jagsNEC(X, CI = TRUE, posterior.median = TRUE,
-  median.model = FALSE, add.NEC = TRUE, jitter.x = FALSE,
-  jitter.y = FALSE, y.lab = "response", x.lab = "concentration",
-  log.x = "")
+  median.model = FALSE, add.NEC = TRUE, xform = NA,
+  jitter.x = FALSE, jitter.y = FALSE, y.lab = "response",
+  x.lab = "concentration", log.x = "", ...)
 }
 \arguments{
 \item{X}{the jags NEC model fit as returned by fit.jagsNEC.}
@@ -18,7 +18,9 @@ plot_jagsNEC(X, CI = TRUE, posterior.median = TRUE,
 
 \item{median.model}{a logical value indicating if the fitted model calculated from the median estimates of the NEC, top and beta parameters should be plotted. This is the fitted model as shown in Fox 2010.}
 
-\item{add.NEC}{a logocal value indicating if the estimated NEC values and 95\% credible intervals should be added to the plot.}
+\item{add.NEC}{a logical value indicating if the estimated NEC values and 95\% credible intervals should be added to the plot.}
+
+\item{xform}{a function to be applied as a transformation of the x data.}
 
 \item{y.lab}{A character string containing a label for the y-axis label}
 
