@@ -4,7 +4,8 @@
 \alias{extract_ECx}
 \title{extract_ECx}
 \usage{
-extract_ECx(X, ECx.val = 10, precision = 10000, posterior = FALSE)
+extract_ECx(X, ECx.val = 10, precision = 10000, posterior = FALSE,
+  type = "relative")
 }
 \arguments{
 \item{X}{a jag model fit as returned by a call to jags from fit.jagsNEC}
@@ -14,6 +15,8 @@ extract_ECx(X, ECx.val = 10, precision = 10000, posterior = FALSE)
 \item{precision}{The number of unique x values over which to find ECx - large values will make the ECx estimate more precise.}
 
 \item{posterior}{A logical value indicating if the full posterior sample of calculated ECx values should be returned instead of just the median and 95 credible intervals.}
+
+\item{type}{a character vector indicating if relative or absolute values for the ECx should be calculated. Takes either "relative" or "absolute"}
 }
 \value{
 A vector containing the estimated ECx value, including upper and lower 95 percent Credible Interval bounds
