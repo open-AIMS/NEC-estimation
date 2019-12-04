@@ -269,7 +269,7 @@ fit.jagsNEC <- function(data,
      all.Js = all.Js,
      predicted.y = predicted.y,
      residuals = residuals))
-  class(out) <- jagsNEC.fit
+  class(out) <- "jagsNECfit"
   
   message(paste("Response variable ", y.var, " modelled using a ", y.type, " distribution.", sep=""))
   return(out)    

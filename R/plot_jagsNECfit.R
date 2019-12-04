@@ -27,7 +27,7 @@
 #' @export
 #' @return a plot of the fitted model
 
-plot_jagsNEC <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=FALSE,  
+plot.jagsNECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=FALSE,  
                          add.NEC=TRUE, xform=NA,
                          jitter.x=FALSE, jitter.y=FALSE, 
                          y.lab="response", 
@@ -73,8 +73,5 @@ plot_jagsNEC <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=FALS
            legend=paste("NEC: ", signif(NEC[2],3), 
                         " (", signif(NEC[1],3),"-", signif(NEC[3],3),")",sep=""))
   }
-  
-  
-  warning("The function plot_jagsNEC has been replaced with a generic plot function. You can now just call plot()")
 
 }
