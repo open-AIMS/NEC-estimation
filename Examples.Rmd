@@ -76,11 +76,11 @@ check.chains(out)
 In our example, the chains are well mixed and our ACF plot looks good, so we can go ahead and interpret this model.
 
 
-The function *plot_jagsNEC* can be used to plot the fitted model. Alternatively you can make your own plot from the data included in the returned list from the call to fit.jagsNEC. In this example, this could be extracted using *out$pred.vals*
+The function *plot* can be used to plot the fitted model. Alternatively you can make your own plot from the data included in the returned list from the call to fit.jagsNEC. In this example, this could be extracted using *out$pred.vals*
 
 ```{r plot-binomial-NEC}
 par(mfrow=c(1,1))
-plot_jagsNEC(out)
+plot(out)
 ```
 
 ### Beta data
@@ -103,7 +103,7 @@ check.chains(out)
 
 ```{r plot-beta-NEC}
 par(mfrow=c(1,1))
-plot_jagsNEC(out)
+plot(out)
 ```
 
 ### Poisson data
@@ -145,7 +145,7 @@ In our example, the chains are well mixed and our ACF plot looks good, we we can
 
 ```{r plot-poisson-NEC}
 par(mfrow=c(1,1))
-plot_jagsNEC(out)
+plot(out)
 ```
 
 ### Measure data
@@ -170,12 +170,12 @@ out <- fit.jagsNEC(data=measure.data,
 check.chains(out)
 ```
 
-The function *plot_jagsNEC* can be used to plot the fitted model.
+The function *plot* can be used to plot the fitted model.
 
 
 ```{r plot-measure-NEC}
 par(mfrow=c(1,1))
-plot_jagsNEC(out)
+plot(out)
 ```
 
 
