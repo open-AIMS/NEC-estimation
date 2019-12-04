@@ -24,7 +24,8 @@
 #' @return a plot of the fitted model
 
 plot.jagsNECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=FALSE,  
-                         add.NEC=TRUE, xform=NA, lxform=NA,
+                         add.NEC=TRUE, NEC.loc="topright",
+                         xform=NA, lxform=NA,
                          jitter.x=FALSE, jitter.y=FALSE, 
                          ylab="response", 
                          xlab="concentration",  ...){
@@ -81,7 +82,7 @@ plot.jagsNECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=F
     lines(x.vec, X$pred.vals$y.m, col="red")  
   }
   if(add.NEC==TRUE){
-        legend("topright", bty="n",
+        legend(NEC.loc, bty="n",
            legend=NEC.legend)
   }
 
