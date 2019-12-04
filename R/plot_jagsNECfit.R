@@ -14,24 +14,20 @@
 #'
 #' @param xform a function to be applied as a transformation of the x data.
 #'
+#' @param lxform a function to be applied as a transformation only to axis labels and the annoted NEC value.
+#'
 #' @param x.jitter a logical value indicating if the x data points on the plot should be jittered.
 #'
 #' @param y.jitter a logical value indicating if the y data points on the plot should be jittered.
-#' 
-#' @param y.lab A character string containing a label for the y-axis label
-#' 
-#' @param x.lab A character string containing a label for the x-axis
-#' 
-#' @param log.x A character string indicating if the x-axis should be plotted on a log scale. Leave as the default for a plot without a log x-axis, or "x" will provide a plot with the x-axis on the log scale.
 #'
 #' @export
 #' @return a plot of the fitted model
 
 plot.jagsNECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=FALSE,  
-                         add.NEC=TRUE, xform=NA,
+                         add.NEC=TRUE, xform=NA, lxform=NA,
                          jitter.x=FALSE, jitter.y=FALSE, 
-                         y.lab="response", 
-                         x.lab="concentration", log.x="", ...){
+                         ylab="response", 
+                         xlab="concentration",  ...){
   
   # check if y.type is binomial
   y.type <- X$y.type
@@ -53,8 +49,24 @@ plot.jagsNECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=F
   if(jitter.x==TRUE){x.dat <- jitter(x.dat)}
   if(jitter.y==TRUE){y.dat <- jitter(y.dat)}  
   
-  plot(x.dat, y.dat, ylab=y.lab, pch=16, 
-       col=adjustcolor(1, alpha=0.25), cex=1.5, xlab=x.lab, log=log.x)   
+  plot(x.dat, y.dat, 
+       ylab=ylab, 
+       xlab=xlab,        
+       pch=16, xaxt="n",
+       col=adjustcolor(1, alpha=0.25), 
+       cex=1.5) 
+  if(class(lxform)!="function"){
+    axis(side=1)
+    NEC.legend <- paste("NEC: ", signif(NEC[2],3), 
+                        " (", signif(NEC[1],3),"-", signif(NEC[3],3),")",sep="")
+    }else{
+    x.ticks <- seq(min(x.dat), max(x.dat), length=7)
+    x.labs <- signif(lxform(x.ticks),2)
+    axis(side=1, at=x.ticks, labels = x.labs)
+    NEC.legend <- paste("NEC: ", signif(lxform(NEC[2]),3), 
+                        " (",    signif(lxform(NEC[1]),3),"-", 
+                                 signif(lxform(NEC[3]),3),")",sep="")    
+  }
   
   abline(v=NEC, col = "red", lty=c(3,1,3))   
   
@@ -70,8 +82,7 @@ plot.jagsNECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=F
   }
   if(add.NEC==TRUE){
         legend("topright", bty="n",
-           legend=paste("NEC: ", signif(NEC[2],3), 
-                        " (", signif(NEC[1],3),"-", signif(NEC[3],3),")",sep=""))
+           legend=NEC.legend)
   }
 
 }
