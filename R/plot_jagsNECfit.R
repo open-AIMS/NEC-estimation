@@ -11,6 +11,8 @@
 #' @param median.model a logical value indicating if the fitted model calculated from the median estimates of the NEC, top and beta parameters should be plotted. This is the fitted model as shown in Fox 2010.
 #'
 #' @param add.NEC a logical value indicating if the estimated NEC values and 95\% credible intervals should be added to the plot.
+#' 
+#' @param NEC.loc a vector indicating the location of the NEC, as per a call to legend.
 #'
 #' @param xform a function to be applied as a transformation of the x data.
 #'

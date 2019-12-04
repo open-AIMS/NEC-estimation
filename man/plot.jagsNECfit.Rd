@@ -5,9 +5,9 @@
 \title{plot.jagsNEC}
 \usage{
 \method{plot}{jagsNECfit}(X, CI = TRUE, posterior.median = TRUE,
-  median.model = FALSE, add.NEC = TRUE, xform = NA,
-  jitter.x = FALSE, jitter.y = FALSE, y.lab = "response",
-  x.lab = "concentration", log.x = "", ...)
+  median.model = FALSE, add.NEC = TRUE, NEC.loc = "topright",
+  xform = NA, lxform = NA, jitter.x = FALSE, jitter.y = FALSE,
+  ylab = "response", xlab = "concentration", ...)
 }
 \arguments{
 \item{X}{the jags NEC model fit as returned by fit.jagsNEC.}
@@ -20,13 +20,11 @@
 
 \item{add.NEC}{a logical value indicating if the estimated NEC values and 95\% credible intervals should be added to the plot.}
 
+\item{NEC.loc}{a vector indicating the location of the NEC, as per a call to legend.}
+
 \item{xform}{a function to be applied as a transformation of the x data.}
 
-\item{y.lab}{A character string containing a label for the y-axis label}
-
-\item{x.lab}{A character string containing a label for the x-axis}
-
-\item{log.x}{A character string indicating if the x-axis should be plotted on a log scale. Leave as the default for a plot without a log x-axis, or "x" will provide a plot with the x-axis on the log scale.}
+\item{lxform}{a function to be applied as a transformation only to axis labels and the annoted NEC value.}
 
 \item{x.jitter}{a logical value indicating if the x data points on the plot should be jittered.}
 
