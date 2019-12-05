@@ -46,7 +46,7 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
   if(type=="absolute"){
     ECx.out <- apply(pred.vals$posterior, MARGIN=2, FUN=function(y){
       range.y <- range(y)
-      ECx.y <- ECx.val/100
+      ECx.y <- 1-(ECx.val/100)
       ECx.x <- x.vec[which.min(abs(y-ECx.y))]
       return(ECx.x)
       
