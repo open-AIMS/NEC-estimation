@@ -2,7 +2,7 @@
 % Please edit documentation in R/Write_jags_4param_model.R
 \name{write.jags.4param.NECmod}
 \alias{write.jags.4param.NECmod}
-\title{write.jags.NECmod}
+\title{write.jags.4param.NECmod}
 \usage{
 write.jags.4param.NECmod(x = "gamma", y, mod.dat)
 }

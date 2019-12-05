@@ -2,7 +2,7 @@
 % Please edit documentation in R/Write_jags_Hockey_model.R
 \name{write.jags.Hockey.NECmod}
 \alias{write.jags.Hockey.NECmod}
-\title{write.jags.NECmod}
+\title{write.jags.Hockey.NECmod}
 \usage{
 write.jags.Hockey.NECmod(x = "gamma", y, mod.dat)
 }

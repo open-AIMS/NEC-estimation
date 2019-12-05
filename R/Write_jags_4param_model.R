@@ -1,4 +1,4 @@
-#' write.jags.Hockey.NECmod
+#' write.jags.4param.NECmod
 #'
 #' Writes an NEC model file and generates a function for initial values to pass to jags
 #' 
@@ -9,7 +9,7 @@
 #' @export
 #' @return an init function to pass to jags
 
-write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){  
+write.jags.4param.NECmod <- function(x="gamma", y, mod.dat){  
   
   # binomial y; gamma x ----
    if(x=="gamma" & y=="binomial"){
@@ -21,7 +21,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top*exp(-beta*(x[i]-NEC)^d*step((x[i]-NEC)))
+        theta[i]<-bot + (top-bot)*exp(-beta*(x[i]-NEC)*step((x[i]-NEC)))
         # response is binomial
         y[i]~dbin(theta[i],trials[i])
         }
@@ -30,7 +30,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         top ~  dunif(0.0001,0.999) 
         beta ~ dgamma(0.0001,0.0001)
         NEC ~ dgamma(0.0001,0.0001) #d norm(3, 0.0001) T(0,)
-        d ~ dnorm(1, 0.0001)  T(0,)
+        bot ~  dunif(0.0001,0.99)
          
         # pearson residuals
         for (i in 1:N) {
@@ -58,7 +58,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
       round(mean(mod.dat$trials)), 
       beta = runif(1,0.0001,0.999),#rlnorm(1,0,1), #
       NEC = rlnorm(1,log(mean(mod.dat$x)),1),
-      d =1)}#ceiling(runif(1, 0.1, 2.5)))}#rgamma(1,0.2,0.001))}  
+      bot =runif(1, 0.01, 0.09))}#rgamma(1,0.2,0.001))}  
    }
 
   # binomial y; gaussian x ----
@@ -71,16 +71,16 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top*exp(-beta*(x[i]-NEC)^d*step((x[i]-NEC)))
+        theta[i]<-bot + (top-bot)*exp(-beta*(x[i]-NEC)*step((x[i]-NEC)))
         # response is binomial
         y[i]~dbin(theta[i],trials[i])
         }
         
         # specify model priors
-        top ~  dnorm(0.9,0.0001)T(0,1)#dunif(0.0001,0.999) 
+        top ~  dunif(0.0001,0.999) 
         beta ~ dgamma(0.0001,0.0001)
-        NEC ~ dnorm(5,0.0001) T(0,)
-        d ~ dnorm(1, 0.0001)  T(0,) #dunif(1, 7) #dnorm(1, 0.0001)  T(1,) #dunif(1, 3) #
+        NEC ~ dnorm(0,0.0001) 
+        bot ~  dunif(0.0001,0.99)
          
         # pearson residuals
         for (i in 1:N) {
@@ -106,9 +106,9 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
     init.fun <- function(mod.data=mod.data){list(
       top = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.75))/
         round(mean(mod.dat$trials)), 
-      beta = runif(1, 0.0001, 0.999),
-      NEC = rnorm(1, mean(mod.dat$x), 2),
-      d = 1)} #runif(1, 1, 3))} 
+      beta = runif(1,0.0001,0.999),
+      NEC = rnorm(1,mean(mod.dat$x),2),
+      bot =runif(1, 0.01, 0.09))} 
   }
   
   # binomial y; beta x ----
@@ -121,7 +121,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top*exp(-beta*(x[i]-NEC)^d*step((x[i]-NEC)))
+        theta[i]<-bot + (top-bot)*exp(-beta*(x[i]-NEC)*step((x[i]-NEC)))
         # response is binomial
         y[i]~dbin(theta[i],trials[i])
         }
@@ -130,7 +130,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         top ~  dunif(0.0001,0.999) 
         beta ~ dgamma(0.0001,0.0001)
         NEC ~ dunif(0.0001,0.9999) 
-        d~dnorm(1, 0.0001)  T(0,)
+        bot ~  dunif(0.0001,0.99)
          
         # pearson residuals
         for (i in 1:N) {
@@ -157,7 +157,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         round(mean(mod.dat$trials)), 
       beta = runif(1,0.0001,0.999),
       NEC = runif(1, 0.01, 0.9),
-      d = 1)} #runif(1, 1, 1))}
+      bot =runif(1, 0.01, 0.09))} 
   }
   
   # poisson y; gamma x ----
@@ -170,7 +170,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top*exp(-beta*(x[i]-NEC)^d*step((x[i]-NEC)))
+        theta[i]<-bot + (top-bot)*exp(-beta*(x[i]-NEC)*step((x[i]-NEC)))
         # response is poisson
         y[i]~dpois(theta[i])
         }
@@ -179,7 +179,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         top ~ dgamma(1,0.001) # dnorm(0,0.001) T(0,) dnorm(100,0.0001)T(0,) #
         beta~dgamma(0.0001,0.0001)
         NEC~dgamma(0.0001,0.0001) #dnorm(3, 0.0001) T(0,) dnorm(30, 0.0001) T(0,) #
-        d~dnorm(1, 0.0001)  T(0,)
+        bot ~  dgamma(1,0.001)
         
         # pearson residuals
         for (i in 1:N) {
@@ -206,7 +206,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
       top = rpois(1,max(mod.dat$y)), 
       beta = runif(1,0.0001,0.999), #rlnorm(1,0,1), #rgamma(1,0.2,0.001),
       NEC =  rlnorm(1,log(mean(mod.dat$x)),1),
-      d = 1)} #runif(1, 1, 1))}#rnorm(1,30,10))} #rgamma(1,0.2,0.001))} #
+      bot =rpois(1,round(mean(mod.dat$y))))} 
   }
   
   # poisson y; gaussian x----
@@ -219,7 +219,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top*exp(-beta*(x[i]-NEC)^d*step((x[i]-NEC)))
+        theta[i]<-bot + (top-bot)*exp(-beta*(x[i]-NEC)*step((x[i]-NEC)))
         # response is poisson
         y[i]~dpois(theta[i])
         }
@@ -228,7 +228,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         top ~  dgamma(1,0.001)
         beta~dgamma(0.0001,0.0001)
         NEC~dnorm(0, 0.0001)
-        d~dnorm(1, 0.0001)  T(0,)
+        bot ~  dgamma(1,0.001)
 
         # pearson residuals
         for (i in 1:N) {
@@ -254,7 +254,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
       top = rpois(1,max(mod.dat$y)), 
       beta = rgamma(1,0.2,0.001),
       NEC = rnorm(1, mean(mod.dat$x), 2),
-      d = 1)} #runif(1, 1, 1))}
+      bot =rpois(1,round(mean(mod.dat$y))))} 
   }
     
   # poisson y; beta x----
@@ -267,7 +267,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top*exp(-beta*(x[i]-NEC)^d*step((x[i]-NEC)))
+        theta[i]<-bot + (top-bot)*exp(-beta*(x[i]-NEC)*step((x[i]-NEC)))
         # response is poisson
         y[i]~dpois(theta[i])
         }
@@ -276,7 +276,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         top ~  dgamma(1,0.001) # dnorm(0,0.001) #T(0,) #
         beta ~ dgamma(0.0001,0.0001)
         NEC ~  dunif(0.0001,0.9999) 
-        d~dnorm(1, 0.0001)  T(0,)
+        bot ~  dgamma(1,0.001)
 
         # pearson residuals
         for (i in 1:N) {
@@ -302,7 +302,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
       top = rpois(1,max(mod.dat$y)), #rnorm(1,0,1),#
       beta = rgamma(1,0.2,0.001),
       NEC = runif(1, 0.01, 0.9),
-      d = 1)} #runif(1, 1, 1))}
+      bot =rpois(1,round(mean(mod.dat$y))))} 
   }
     
   # gamma y; beta x -----
@@ -315,7 +315,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top*exp(-beta*((x[i])-NEC)^d*step(((x[i])-NEC)))
+        theta[i]<-bot + (top-bot)*exp(-beta*(x[i]-NEC)*step((x[i]-NEC)))
         # response is gamma
         y[i]~dgamma(shape, shape / (theta[i]))
         }
@@ -325,7 +325,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         beta ~ dgamma(0.0001,0.0001)
         NEC ~  dunif(0.001,0.999) #dbeta(1,1)
         shape ~ dlnorm(0,0.001) #dunif(0,1000)        
-        d~dnorm(1, 0.0001)  T(0,)
+        bot ~  dlnorm(0,0.001)
 
         # pearson residuals
         for (i in 1:N) {
@@ -352,7 +352,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
       beta = rgamma(1,0.2,0.001),
       shape = runif(1,0,10),
       NEC = runif(1, 0.3, 0.6),
-      d = 1)} #runif(1, 1, 1))}
+      bot =rlnorm(1,log(quantile(mod.dat$y,probs = 0.25)),0.1))} 
   }
     
   # gamma y; gaussian x -----
@@ -365,7 +365,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top*exp(-beta*((x[i])-NEC)^d*step(((x[i])-NEC)))
+        theta[i]<-bot + (top-bot)*exp(-beta*(x[i]-NEC)*step((x[i]-NEC)))
         # response is gamma
         y[i]~dgamma(shape, shape / (theta[i]))
         }
@@ -375,7 +375,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         beta ~ dgamma(0.0001,0.0001)
         NEC ~ dnorm(0, 0.0001)
         shape ~ dlnorm(0,0.001) #dunif(0,1000)
-        d~dnorm(1, 0.0001)  T(0,)
+        bot ~  dlnorm(0,0.001)
 
         # pearson residuals
         for (i in 1:N) {
@@ -402,7 +402,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
       beta = rgamma(1,0.2,0.001),
       shape = dlnorm(1,1/mean(mod.dat$y),1),
       NEC = rnorm(1, mean(mod.dat$x), 1),
-      d = 1)} #runif(1, 1, 1))}
+      bot =rlnorm(1,log(quantile(mod.dat$y,probs = 0.25)),0.1))} 
   }
   
   # gamma y; gamma x -----
@@ -415,7 +415,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top*exp(-beta*((x[i])-NEC)^d*step(((x[i])-NEC)))
+        theta[i]<-bot + (top-bot)*exp(-beta*(x[i]-NEC)*step((x[i]-NEC)))
         # response is gamma
         y[i]~dgamma(shape, shape / (theta[i]))
         }
@@ -425,7 +425,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         beta ~ dgamma(0.0001,0.0001)
         NEC~dgamma(0.0001,0.0001) #dnorm(3, 0.0001) T(0,) dnorm(30, 0.0001) T(0,) #
         shape ~ dlnorm(0,0.001) #dunif(0,1000)
-        d~dnorm(1, 0.0001)  T(0,)
+        bot ~  dlnorm(0,0.001)
 
         # pearson residuals
         for (i in 1:N) {
@@ -453,7 +453,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
       beta = rgamma(1,0.2,0.001),
       shape = runif(1,0,10),
       NEC = rlnorm(1,log(mean(mod.dat$x)),1),
-      d = 1)} #runif(1, 1, 1))}#rnorm(1,30,10))} #rgamma(1,0.2,0.001))} #
+      bot =rlnorm(1,log(quantile(mod.dat$y,probs = 0.25)),0.1))} 
   }
   
   # gaussian y; gamma x ----
@@ -466,7 +466,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
       # likelihood
       for (i in 1:N)
       {
-      theta[i]<-top*exp(-beta*(x[i]-NEC)^d*step((x[i]-NEC)))-alpha # extra parameter alpha is offset to y
+      theta[i]<-bot + (top-bot)*exp(-beta*(x[i]-NEC)*step((x[i]-NEC)))
       # response is gaussian
       
       y[i]~dnorm(theta[i],tau)
@@ -475,11 +475,10 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
       # specify model priors
       top ~  dnorm(0,0.1) # dnorm(0,0.001) #T(0,) 
       beta ~ dgamma(0.0001,0.0001)
-      alpha ~ dnorm(0,0.1)
       NEC ~ dnorm(0, 0.0001) T(0,) #dgamma(0.0001,0.0001) Note we haven't used gamma here as the example didn't result in chain missing.
       sigma ~ dunif(0, 20)  #sigma is the SD
       tau  = 1 / (sigma * sigma)  #tau is the reciprical of the variance 
-      d~dnorm(1, 0.0001)  T(0,)
+      bot ~  dnorm(0,0.1) # dnorm(0,0.001) #T(0,) 
 
       # pearson residuals
       for (i in 1:N) {
@@ -504,10 +503,9 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
   init.fun <- function(mod.data=mod.data){list(
     top = rnorm(1,max(mod.dat$y),1), 
     beta = rgamma(1,0.2,0.001),
-    alpha = rnorm(1,min(mod.dat$y),1),
     NEC = rlnorm(1,log(mean(mod.dat$x)),1),#rgamma(1,0.2,0.001),
     sigma = runif(1, 0, 5),
-    d = 1)} #runif(1, 1, 1))}
+    bot =rnorm(1,min(mod.dat$y),1))}
 
  }
 
@@ -521,7 +519,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top*exp(-beta*(x[i]-NEC)^d*step((x[i]-NEC)))-alpha # extra parameter alpha is offset to y
+        theta[i]<-bot + (top-bot)*exp(-beta*(x[i]-NEC)*step((x[i]-NEC)))
         # response is gaussian
         
         y[i]~dnorm(theta[i],tau)
@@ -530,11 +528,10 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         # specify model priors
         top ~  dnorm(0,0.1) # dnorm(0,0.001) #T(0,) 
         beta ~ dgamma(0.0001,0.0001)
-        alpha ~ dnorm(0,0.1)
         NEC ~  dunif(0.001,0.999) #dbeta(1,1)
         sigma ~ dunif(0, 20)  #sigma is the SD
         tau  = 1 / (sigma * sigma)  #tau is the reciprical of the variance 
-        d~dnorm(1, 0.0001)  T(0,)
+        bot ~  dnorm(0,0.1) # dnorm(0,0.001) #T(0,) 
 
       # pearson residuals
         for (i in 1:N) {
@@ -559,10 +556,9 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
     init.fun <- function(mod.data=mod.data){list(
       top = rnorm(1,max(mod.dat$y),1), 
       beta = rgamma(1,0.2,0.001),
-      alpha = rnorm(1,min(mod.dat$y),1),
       NEC =  runif(1, 0.3, 0.6),#rgamma(1,0.2,0.001),
       sigma = runif(1, 0, 5),
-      d = 1)} #runif(1, 1, 1))}
+      bot =rnorm(1,min(mod.dat$y),1))}
     
   }
   
@@ -576,7 +572,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top*exp(-beta*(x[i]-NEC)^d*step((x[i]-NEC)))-alpha # extra parameter alpha is offset to y
+        theta[i]<-bot + (top-bot)*exp(-beta*(x[i]-NEC)*step((x[i]-NEC)))
         # response is gaussian
         
         y[i]~dnorm(theta[i],tau)
@@ -585,11 +581,10 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         # specify model priors
         top ~  dnorm(0,0.1) # dnorm(0,0.001) #T(0,) 
         beta ~ dgamma(0.0001,0.0001)
-        alpha ~ dnorm(0,0.1)
         NEC ~  dnorm(0,0.01)
         sigma ~ dunif(0, 20)  #sigma is the SD
         tau  = 1 / (sigma * sigma)  #tau is the reciprical of the variance 
-        d~dnorm(1, 0.0001)  T(0,)
+        bot ~  dnorm(0,0.1) # dnorm(0,0.001) #T(0,) 
 
       # pearson residuals
         for (i in 1:N) {
@@ -614,10 +609,9 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
     init.fun <- function(mod.data=mod.data){list(
       top = rnorm(1,max(mod.dat$y),1), 
       beta = rgamma(1,0.2,0.001),
-      alpha = rnorm(1,min(mod.dat$y),1),
       NEC =  rnorm(1,mean(mod.dat$x),1),
       sigma = runif(1, 0, 5),
-      d = 1)} #runif(1, 1, 1))}
+      bot =rnorm(1,min(mod.dat$y),1))}
     
   }
   
@@ -636,7 +630,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         y[i]~dbeta(shape1[i], shape2[i])
         shape1[i] <- theta[i] * phi
         shape2[i]  <- (1-theta[i]) * phi
-        theta[i]<-top*exp(-beta*((x[i])-NEC)^d*step(((x[i])-NEC)))
+        theta[i]<-bot + (top-bot)*exp(-beta*(x[i]-NEC)*step((x[i]-NEC)))
         }
         
         # specify model priors
@@ -645,7 +639,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         NEC ~  dunif(0.001,0.999) #dbeta(1,1)
         t0 ~ dnorm(0, 0.010)
         phi <- exp(t0)
-        d~dnorm(1, 0.0001)  T(0,)
+        bot ~  dunif(0.0001,0.99)
 
         # pearson residuals
         for (i in 1:N) {
@@ -668,11 +662,13 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      top = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.1),
+      top = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.75))/
+        round(mean(mod.dat$trials)),
       beta = rgamma(1,0.2,0.001),
       t0 = rnorm(0,100),
       NEC = runif(1, 0.3, 0.6),
-      d = 1)} #runif(1, 1, 1))}
+      bot =rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.25))/
+        round(mean(mod.dat$trials)))} 
   }
   
   # beta y; gamma x ----
@@ -690,7 +686,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         y[i] ~ dbeta(shape1[i], shape2[i])
         shape1[i] <- theta[i] * phi
         shape2[i]  <- (1-theta[i]) * phi
-        theta[i]<-top*exp(-beta*((x[i])-NEC)^d*step(((x[i])-NEC)))
+        theta[i]<-bot + (top-bot)*exp(-beta*(x[i]-NEC)*step((x[i]-NEC)))
         }
         
         # specify model priors
@@ -699,7 +695,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         NEC ~ dgamma(0.0001,0.0001) 
         t0 ~ dnorm(0, 0.010)
         phi <- exp(t0)
-        d~dnorm(1, 0.0001)  T(0,)
+        bot ~  dunif(0.0001,0.99)
 
         # pearson residuals
         for (i in 1:N) {
@@ -722,11 +718,13 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      top = dunif(0.001,0.999),
+      top = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.75))/
+        round(mean(mod.dat$trials)),
       beta = rgamma(1,0.2,0.001),
       t0 = rnorm(0,100),
       NEC = rlnorm(1,log(mean(mod.dat$x)),1),
-      d = 1)} #runif(1, 1, 1))}
+      bot = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.25))/
+        round(mean(mod.dat$trials)))}
   }
 
   # beta y; gaussian x ----
@@ -744,7 +742,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         y[i]~dbeta(shape1[i], shape2[i])
         shape1[i] <- theta[i] * phi
         shape2[i]  <- (1-theta[i]) * phi
-        theta[i]<-top*exp(-beta*((x[i])-NEC)^d*step(((x[i])-NEC)))
+        theta[i]<-bot + (top-bot)*exp(-beta*(x[i]-NEC)*step((x[i]-NEC)))
         }
         
         # specify model priors
@@ -753,7 +751,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         NEC ~ dnorm(0, 0.0001)
         t0 ~ dnorm(0, 0.010)
         phi <- exp(t0)
-        d~dnorm(1, 0.0001)  T(0,)
+        bot ~  dunif(0.0001,0.99)
 
         # pearson residuals
         for (i in 1:N) {
@@ -776,11 +774,13 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      top = dunif(0.001,0.999),
+      top = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.75))/
+        round(mean(mod.dat$trials)),
       beta = rgamma(1,0.2,0.001),
       t0 = rnorm(0,100),
       NEC = rnorm(1, 0, 2),
-      d = 1)} #runif(1, 1, 1))}
+      bot = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.25))/
+        round(mean(mod.dat$trials)))}
   }
   
   # negbin y; gaussian x ----
@@ -793,7 +793,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-size/(size+top*exp(-beta*(x[i]-NEC)^d*step((x[i]-NEC))))
+        theta[i]<-size/(size+ bot + (top-bot)*exp(-beta*(x[i]-NEC)*step((x[i]-NEC))))
         # response is begative binomial
         y[i]~dnegbin(theta[i], size)
         }
@@ -803,7 +803,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         beta ~ dgamma(0.0001,0.0001)
         NEC ~ dnorm(0.0001,0.0001) #dnorm(3, 0.0001) T(0,) dnorm(30, 0.0001) T(0,) #
         size ~ dunif(0,50)
-        d~dnorm(1, 0.0001)  T(0,)
+        bot ~ dgamma(1,0.001)
         
         # pearson residuals
         for (i in 1:N) {
@@ -831,7 +831,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
       beta = runif(1,0.0001,0.999), #rlnorm(1,0,1), #rgamma(1,0.2,0.001),
       NEC =  rnorm(1,mean(mod.dat$x),1),#rnorm(1,30,10))} #rgamma(1,0.2,0.001)),
       size=runif(1, 0.1, 40),
-      d = 1)} #runif(1, 1, 1))} #
+      bot =rpois(1,min(mod.dat$y)))} #
   } 
 
     # negbin y; gamma x ----
@@ -844,7 +844,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-size/(size+top*exp(-beta*(x[i]-NEC)^d*step((x[i]-NEC))))
+        theta[i]<-size/(size + bot + (top-bot)*exp(-beta*(x[i]-NEC)*step((x[i]-NEC))))
         # response is begative binomial
         y[i]~dnegbin(theta[i], size)
         }
@@ -854,7 +854,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         beta ~ dgamma(0.0001,0.0001)
         NEC~dgamma(0.0001,0.0001) #dnorm(3, 0.0001) T(0,) dnorm(30, 0.0001) T(0,) #
         size ~ dunif(0,50)
-        d~dnorm(1, 0.0001)  T(0,)
+        bot ~ dgamma(1,0.001)
         
         # pearson residuals
         for (i in 1:N) {
@@ -882,7 +882,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
       beta = runif(1,0.0001,0.999), #rlnorm(1,0,1), #rgamma(1,0.2,0.001),
       NEC = rlnorm(1,log(mean(mod.dat$x)),1),#rnorm(1,30,10))} #rgamma(1,0.2,0.001)),
       size=runif(1, 0.1, 40),
-      d = 1)} #runif(1, 1, 1))} #
+      bot =rpois(1,min(mod.dat$y)))} #
   }  
  
   # negbin y; beta x ----
@@ -895,7 +895,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-size/(size+top*exp(-beta*(x[i]-NEC)^d*step((x[i]-NEC))))
+        theta[i]<-size/(size + bot + (top-bot)*exp(-beta*(x[i]-NEC)*step((x[i]-NEC))))
         # response is begative binomial
         y[i]~dnegbin(theta[i], size)
         }
@@ -905,7 +905,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         beta ~ dgamma(0.0001,0.0001)
         NEC ~  dunif(0.001,0.999) #dbeta(1,1)
         size ~ dunif(0,50)
-        d~dnorm(1, 0.0001)  T(0,)
+        bot ~ dgamma(1,0.001)
         
         # pearson residuals
         for (i in 1:N) {
@@ -933,7 +933,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
       beta = runif(1,0.0001,0.999),
       NEC = runif(1, 0.3, 0.6),
       size=runif(1, 0.1, 40),
-      d = 1)} #runif(1, 1, 1))} 
+      bot =rpois(1,min(mod.dat$y)))} #
   }  
   
   # return the initial function
