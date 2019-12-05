@@ -26,6 +26,8 @@
 #'
 #' @param over.disp. If an overdispersed model should be used. Only changes the model fit for poisson and binomial y.type data. For poisson, a negative binomial model will be fit. For binomial a beta model will be fit.
 #'
+#' @param model The type of model to be fit. Currently takes values of "", Hockey" or "4param". This is in beta and does not work reliably for all test cases.
+#'
 #' @export
 #' @return The $BUGSoutput element of fitted jags model.
 
@@ -84,7 +86,12 @@ fit.jagsNEC <- function(data,
       
     if(class(y.dat)=="integer" & min(y.dat)>=0 & is.na(trials.var)!= TRUE){
       y.type="binomial"}   
-  }   
+  } 
+  
+  # check there is a valid model type
+  if(is.na(match(model, c("", "Hockey", "4param")))){
+    stop("The model type you have specified does not extist.")    
+  }
   
   if(y.type=="poisson" & over.disp==TRUE){
           y.type="negbin"}
@@ -146,17 +153,22 @@ fit.jagsNEC <- function(data,
   response = data[,y.var]
  
   if(y.type=="binomial"){
-   mod.dat$trials = data[,trials.var] # number of "trials"
-   response = data[,y.var]/data[,trials.var]
+   mod.dat$trials = data[, trials.var] # number of "trials"
+   response = data[, y.var]/data[,trials.var]
   }
-   
-  if(model=="Hockey"){
-    init.fun <- write.jags.Hockey.NECmod(x=x.type,y=y.type, mod.dat=mod.dat)
-    params <- c(params, "d")
-  }else{
+  
+  # set the type of model to fit
+  if(model==""){
      init.fun <- write.jags.NECmod(x=x.type,y=y.type, mod.dat=mod.dat) 
   }
-
+   if(model=="Hockey"){
+    init.fun <- write.jags.Hockey.NECmod(x=x.type,y=y.type, mod.dat=mod.dat)
+    params <- c(params, "d")
+  } 
+  if(model=="4param"){
+    init.fun <- write.jags.4param.NECmod(x=x.type,y=y.type, mod.dat=mod.dat)
+    params <- c(params, "bot")
+  }
   
   all.Js <- list()
   
@@ -235,16 +247,27 @@ fit.jagsNEC <- function(data,
     } 
   }
   J2  <- update(J1, n.iter = n.iter.update, n.thin = floor((n.iter.update*0.01)))  
-  out <- c(J2$BUGSoutput, list(mod.dat=mod.dat, y.type = y.type, x.type = x.type))
+  out <- c(J2$BUGSoutput, list(mod.dat=mod.dat, y.type = y.type, x.type = x.type, model = model))
     
   NEC <-  quantile(out$sims.list$NEC,c(0.025, 0.5, 0.975))
   top <-  quantile(out$sims.list$top,c(0.025, 0.5, 0.975))
   beta <-  quantile(out$sims.list$beta,c(0.025, 0.5, 0.975)) 
   alpha <- rep(0,3)#rep(0, length(NEC))
-  if(y.type=="gaussian"){
-         alpha <-  quantile(out$sims.list$lapha,c(0.025, 0.5, 0.975)) 
+  bot <- rep(0,3)#rep(0, length(NEC))
+  d <- rep(1,3)#rep(0, length(NEC))
+  
+  if(y.type=="gaussian" & model!="4param"){
+         alpha <-  quantile(out$sims.list$alpha,c(0.025, 0.5, 0.975)) 
   }
 
+  if(model=="4param"){
+    bot <-  quantile(out$sims.list$bot,c(0.025, 0.5, 0.975)) 
+  }
+  
+  if(model=="Hockey"){
+    d <-  quantile(out$sims.list$d,c(0.025, 0.5, 0.975)) 
+  }  
+  
   min.x <- min(mod.dat$x)
   max.x <- max(mod.dat$x)
   x.seq <- seq(min.x, max.x, length=100)
@@ -264,6 +287,8 @@ fit.jagsNEC <- function(data,
      top = top,
      beta = beta,
      alpha = alpha,
+     bot = bot,
+     d = d,
      params = params,
      over.disp = od,
      all.Js = all.Js,

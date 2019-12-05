@@ -5,7 +5,7 @@
 \title{extract_ECx}
 \usage{
 extract_ECx(X, ECx.val = 10, precision = 10000, posterior = FALSE,
-  type = "relative")
+  type = "absolute")
 }
 \arguments{
 \item{X}{a jag model fit as returned by a call to jags from fit.jagsNEC}
@@ -16,7 +16,7 @@ extract_ECx(X, ECx.val = 10, precision = 10000, posterior = FALSE,
 
 \item{posterior}{A logical value indicating if the full posterior sample of calculated ECx values should be returned instead of just the median and 95 credible intervals.}
 
-\item{type}{a character vector indicating if relative or absolute values for the ECx should be calculated. Takes either "relative" or "absolute"}
+\item{type}{a character vector indicating if relative or absolute values for the ECx should be calculated. Takes values of either "relative" or "absolute", with "absolute" being the default. For the default model type fit by jagsNEC, "relative" is calculated as the percentage decrease from the maximum value of the response *top* to the minimum predicted value of the response. For the default model fit, "absolute" is calculated as the the percentage decrease from the maximum value of the response *top* to *0*. If a 4 parameter model is fit, absolute will be calculated as the percent drecrease from *top* to *bot*, and should return the same results as type "relative"}
 }
 \value{
 A vector containing the estimated ECx value, including upper and lower 95 percent Credible Interval bounds

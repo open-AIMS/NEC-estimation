@@ -4,7 +4,7 @@
 \alias{predict_NECmod}
 \title{predict_NECmod}
 \usage{
-predict_NECmod(x.vec, NEC, top, beta, alpha = 0)
+predict_NECmod(x.vec, NEC, top, beta, alpha = 0, d = 1, bot = 0)
 }
 \arguments{
 \item{x.vec}{the x vector over which to calculate}

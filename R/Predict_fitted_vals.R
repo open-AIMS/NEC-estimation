@@ -15,13 +15,13 @@
 #' @export
 #' @return A list containing x and fitted y, with up and lw values
 
-predict_NECmod <- function(x.vec, NEC, top, beta, alpha=0){
+predict_NECmod <- function(x.vec, NEC, top, beta, alpha=0, d=1, bot=0){
   
   x.seq.pre <-  x.vec[which(x.vec<=NEC)] #seq(min.x, NEC.m, length=20)
   x.seq.post <- x.vec[which(x.vec>NEC)] # seq(NEC.m, max.x, length=20)
   
   y.pred.pre <- (rep(top, length(x.seq.pre)))-alpha
-  y.pred.post <- (top*exp(-beta*(x.seq.post-NEC)))-alpha  
+  y.pred.post <- bot + ((top-bot)*exp(-beta*(x.seq.post-NEC)^d))-alpha  
   
   y.pred <- c(y.pred.pre, y.pred.post)
 
@@ -46,7 +46,8 @@ predict_NECbugsmod <- function(X, precision=100){
   max.x <- max(mod.dat$x)
   x.seq <- seq(min.x, max.x, length=precision)
   
-  if(X$y.type != "gaussian"){
+  # for the original model
+  if(X$y.type != "gaussian" & X$model == ""){
     pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
       predict_NECmod(x.vec=x.seq,
                      NEC=X$sims.list$NEC[x],
@@ -54,13 +55,43 @@ predict_NECbugsmod <- function(X, precision=100){
                      beta=X$sims.list$beta[x])}))
   }
   
-  if(X$y.type == "gaussian"){
+  if(X$y.type == "gaussian" & X$model == "" ){
     pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
       predict_NECmod(x.vec=x.seq,
                      NEC=X$sims.list$NEC[x],
                      top=X$sims.list$top[x],
                      beta=X$sims.list$beta[x],
-                     alpha=X$sims.list$alpha[x]) }))
+                     alpha=X$sims.list$alpha[x])}))
+  }
+  
+  # for the Hockey model
+  if(X$y.type != "gaussian" & X$model == "Hockey"){
+    pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
+      predict_NECmod(x.vec=x.seq,
+                     NEC=X$sims.list$NEC[x],
+                     top=X$sims.list$top[x],
+                     beta=X$sims.list$beta[x],
+                     d=X$sims.list$d[x])}))
+  }
+  
+  if(X$y.type == "gaussian" & X$model == "" ){
+    pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
+      predict_NECmod(x.vec=x.seq,
+                     NEC=X$sims.list$NEC[x],
+                     top=X$sims.list$top[x],
+                     beta=X$sims.list$beta[x],
+                     alpha=X$sims.list$alpha[x],
+                     d=X$sims.list$d[x])}))
+  }
+  
+  # for the 4param model
+  if(X$y.type != "gaussian" & X$model == "4param"){
+    pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
+      predict_NECmod(x.vec=x.seq,
+                     NEC=X$sims.list$NEC[x],
+                     top=X$sims.list$top[x],
+                     beta=X$sims.list$beta[x],
+                     bot=X$sims.list$bot[x])}))
   }
 
   m.vals <- apply(pred.vals.out, MARGIN=1, FUN=quantile, probs=0.5)
