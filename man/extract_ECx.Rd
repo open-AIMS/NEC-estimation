@@ -5,7 +5,7 @@
 \title{extract_ECx}
 \usage{
 extract_ECx(X, ECx.val = 10, precision = 10000, posterior = FALSE,
-  type = "absolute")
+  type = "absolute", xform = NA)
 }
 \arguments{
 \item{X}{a jag model fit as returned by a call to jags from fit.jagsNEC}
@@ -21,6 +21,8 @@ of "relative",  "absolute" (the default) or "direct". For the default model type
 calculated as the percentage decrease from the maximum value of the response (top) to the minimum predicted value 
 of the response, "absolute" is calculated as the the percentage decrease from the maximum value of the response (top) 
 to 0 (or bot for a 4 parameter model fit),  and "direct" provides a direct estimate of the x value for a given y.}
+
+\item{xform}{A function to apply to the returned estimated concentration values}
 }
 \value{
 A vector containing the estimated ECx value, including upper and lower 95 percent Credible Interval bounds
