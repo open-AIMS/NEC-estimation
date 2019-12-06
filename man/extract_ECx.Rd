@@ -10,13 +10,17 @@ extract_ECx(X, ECx.val = 10, precision = 10000, posterior = FALSE,
 \arguments{
 \item{X}{a jag model fit as returned by a call to jags from fit.jagsNEC}
 
-\item{ECx.val}{the desired percentage effect value. This must be a value between 1 and 99, defaults to 10.}
+\item{ECx.val}{the desired percentage effect value. This must be a value between 1 and 99 (for type = "relative" and "absolute"), defaults to 10.}
 
 \item{precision}{The number of unique x values over which to find ECx - large values will make the ECx estimate more precise.}
 
 \item{posterior}{A logical value indicating if the full posterior sample of calculated ECx values should be returned instead of just the median and 95 credible intervals.}
 
-\item{type}{a character vector indicating if relative or absolute values for the ECx should be calculated. Takes values of either "relative" or "absolute", with "absolute" being the default. For the default model type fit by jagsNEC, "relative" is calculated as the percentage decrease from the maximum value of the response *top* to the minimum predicted value of the response. For the default model fit, "absolute" is calculated as the the percentage decrease from the maximum value of the response *top* to *0*. If a 4 parameter model is fit, absolute will be calculated as the percent drecrease from *top* to *bot*, and should return the same results as type "relative"}
+\item{type}{a character vector indicating if relative or absolute values for the ECx should be calculated. Takes values 
+of "relative",  "absolute" (the default) or "direct". For the default model type fit by jagsNEC, "relative" is 
+calculated as the percentage decrease from the maximum value of the response (top) to the minimum predicted value 
+of the response, "absolute" is calculated as the the percentage decrease from the maximum value of the response (top) 
+to 0 (or bot for a 4 parameter model fit),  and "direct" provides a direct estimate of the x value for a given y.}
 }
 \value{
 A vector containing the estimated ECx value, including upper and lower 95 percent Credible Interval bounds

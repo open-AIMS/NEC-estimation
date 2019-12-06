@@ -5,9 +5,13 @@
 #'
 #' @param  X a jag model fit as returned by a call to jags from fit.jagsNEC
 #' 
-#' @param ECx.val the desired percentage effect value. This must be a value between 1 and 99, defaults to 10.
+#' @param ECx.val the desired percentage effect value. This must be a value between 1 and 99 (for type = "relative" and "absolute"), defaults to 10.
 #' 
-#' @param type a character vector indicating if relative or absolute values for the ECx should be calculated. Takes values of either "relative" or "absolute", with "absolute" being the default. For the default model type fit by jagsNEC, "relative" is calculated as the percentage decrease from the maximum value of the response *top* to the minimum predicted value of the response. For the default model fit, "absolute" is calculated as the the percentage decrease from the maximum value of the response *top* to *0*. If a 4 parameter model is fit, absolute will be calculated as the percent drecrease from *top* to *bot*, and should return the same results as type "relative"
+#' @param type a character vector indicating if relative or absolute values for the ECx should be calculated. Takes values 
+#' of "relative",  "absolute" (the default) or "direct". For the default model type fit by jagsNEC, "relative" is 
+#' calculated as the percentage decrease from the maximum value of the response (top) to the minimum predicted value 
+#' of the response, "absolute" is calculated as the the percentage decrease from the maximum value of the response (top) 
+#' to 0 (or bot for a 4 parameter model fit),  and "direct" provides a direct estimate of the x value for a given y.
 #' 
 #' @param precision The number of unique x values over which to find ECx - large values will make the ECx estimate more precise.
 #' 
@@ -19,9 +23,12 @@
 #' @details Please note that the estimated ECx value is based on the equivalent percentage decrease from the range of the highest to the lowest estimate value across the range of the observed concentration (x) values. If the concentration response relationship is such that the full range of observed responses is not captured (ie a complete decline response at the highest level of exposure), the estimated ECx values may be lower than if the full concentration-response curve were available. Note this is therefore a conservative value.
 
 extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type="absolute"){
-  if(ECx.val<1 | ECx.val>99){
+  if(type!="direct"){
+   if(ECx.val<1 | ECx.val>99){
     stop("Supplied ECx.val is not in the required range. Please supply a percentage value between 1 and 99.")
-  } 
+   }   
+  }
+ 
   if(X$y.type=="gaussian" & X$model != "4param" & type=="absolute"){
     stop("Absolute ECx values are not valid for a gaussian response variable unless a 4 parameter model is fit") 
   }
@@ -57,7 +64,17 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
       ECx.x <- x.vec[which.min(abs(y-ECx.y))]
       return(ECx.x)  
     })     
-  }  
+  }
+  
+  if(type=="direct"){
+    ECx.out <- apply(pred.vals$posterior, MARGIN=2, FUN=function(y){
+      range.y <- range(y)
+      ECx.y <- ECx.val
+      ECx.x <- x.vec[which.min(abs(y-ECx.y))]
+      return(ECx.x)
+      
+    }) 
+  }
 
   
   ECx.estimate <- quantile(ECx.out, probs=c(0.5, 0.025, 0.975))
