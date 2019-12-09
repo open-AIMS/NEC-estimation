@@ -172,7 +172,7 @@ fit.jagsNEC <- function(data,
   
   all.Js <- list()
   
-  J1 <- try(jags(data       = mod.dat,
+  J1 <- try(jags(data   = mod.dat,
              inits      = init.fun,
              parameters = params,
              model      = "NECmod.txt",
@@ -253,8 +253,8 @@ fit.jagsNEC <- function(data,
   top <-  quantile(out$sims.list$top,c(0.025, 0.5, 0.975))
   beta <-  quantile(out$sims.list$beta,c(0.025, 0.5, 0.975)) 
   alpha <- rep(0,3)#rep(0, length(NEC))
-  bot <- rep(0,3)#rep(0, length(NEC))
-  d <- rep(1,3)#rep(0, length(NEC))
+  bot <- rep(0,3); names(bot) <- c("2.5%",  "50%", "97.5%") #rep(0, length(NEC))
+  d <- rep(1,3); names(d) <- c("2.5%",  "50%", "97.5%") #rep(0, length(NEC))
   
   if(y.type=="gaussian" & model!="4param"){
          alpha <-  quantile(out$sims.list$alpha,c(0.025, 0.5, 0.975)) 
@@ -272,10 +272,12 @@ fit.jagsNEC <- function(data,
   max.x <- max(mod.dat$x)
   x.seq <- seq(min.x, max.x, length=100)
   
-  y.pred.m <- predict_NECmod(x.vec=x.seq, NEC=NEC["50%"], top=top["50%"], beta=beta["50%"]) 
+  y.pred.m <- predict_NECmod(x.vec=x.seq, 
+                             NEC=NEC["50%"], top=top["50%"], beta=beta["50%"], d=d["50%"], bot=bot["50%"]) 
   pred.vals <- c(predict_NECbugsmod(X=out), list(y.m=y.pred.m))  
   
-  predicted.y <- predict_NECmod(x.vec=mod.dat$x, NEC=NEC["50%"], top=top["50%"], beta=beta["50%"]) 
+  predicted.y <- predict_NECmod(x.vec=mod.dat$x,
+                                NEC=NEC["50%"], top=top["50%"], beta=beta["50%"], d=d["50%"], bot=bot["50%"]) 
   residuals <-  response - predicted.y
   
   #overdispersion estimate
