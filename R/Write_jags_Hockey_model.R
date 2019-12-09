@@ -77,7 +77,7 @@ write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){
         }
         
         # specify model priors
-        top ~  dnorm(0.9,0.0001)T(0,1)#dunif(0.0001,0.999) 
+        top ~  dunif(0.1,0.999) #dnorm(0.9,0.0001)T(0,1)#
         beta ~ dgamma(0.0001,0.0001)
         NEC ~ dnorm(5,0.0001) T(0,)
         d ~ dnorm(1, 0.0001)  T(0,) #dunif(1, 7) #dnorm(1, 0.0001)  T(1,) #dunif(1, 3) #
