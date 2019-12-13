@@ -18,7 +18,7 @@
 #'
 #' @param xform a function to be applied as a transformation of the x data.
 #'
-#' @param lxform a function to be applied as a transformation only to axis labels and the annoted NEC value.
+#' @param lxform a function to be applied as a transformation only to axis labels and the annoted NEC/EC10 values.
 #'
 #' @param x.jitter a logical value indicating if the x data points on the plot should be jittered.
 #'
