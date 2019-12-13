@@ -8,7 +8,7 @@ source("R/check_mixing.R")
 source("R/Write_jags_model.R")
 source("R/Write_jags_Hockey_model.R")
 source("R/Write_jags_4param_model.R")
-source("R/Write_jags_basic4param_model_2.R")
+source("R/Write_jags_basic4param_model.R")
 source("R/Predict_fitted_vals.R")
 source("R/Fit_jagsNEC.R")
 source("R/plot_jagsNEC.R")
@@ -413,28 +413,60 @@ plot(binom.data$raw.x, out$residuals)
 ### Gerard - 28/10/2019 example list ----
 #hav4
 data1 = read.table("https://pastebin.com/raw/v7Uy4iXs", header= TRUE,dec=",") %>% 
-  mutate(raw.x=as.numeric(as.character(raw.x)))
+  mutate(raw.x=as.numeric(as.character(raw.x)),
+         log.x=log(raw.x))
 out <- fit.jagsNEC(data=data1,
                    x.var="raw.x",
                    y.var="suc",
                    trials.var="tot")
 check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
-plot_jagsNEC(out)
+plot(out)
 extract_ECx(out)
-mean(out$sims.list$SS > out$sims.list$SSsim)
+out$over.disp
+
+out <- fit.jagsNEC(data=data1,
+                   x.var="log.x",
+                   y.var="suc",
+                   trials.var="tot")
+out$over.disp
+plot(out)
+
+# try using beta
+out <- fit.jagsNEC(data=data1,
+                   x.var="log.x",
+                   y.var="suc",
+                   trials.var="tot",
+                   over.disp = TRUE,
+                   model="basic4param")
+out$over.disp
+plot(out)
+
+
 
 data1 = read.table("https://pastebin.com/raw/zfrUha88", header= TRUE,dec=",") %>%
-mutate(raw.x=as.numeric(as.character(raw.x)))
+mutate(raw.x=as.numeric(as.character(raw.x)),
+       log.x=log(raw.x))
 out <- fit.jagsNEC(data=data1,
                    x.var="raw.x",
                    y.var="suc",
                    trials.var="tot")
 check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
-plot_jagsNEC(out)
+plot(out)
+out$over.disp
+# overdispersed
+out <- fit.jagsNEC(data=data1,
+                   x.var="log.x",
+                   y.var="suc",
+                   trials.var="tot",
+                   over.disp=T,
+                   model="4param") 
+plot(out)
+out$over.disp
 extract_ECx(out)
-mean(out$sims.list$SS > out$sims.list$SSsim)
+
+
 
 #paul
 # note this example was a bit problematic (failed to have good chain mixing). Modelling as a % of WAF improved the outcome substantially.
@@ -443,10 +475,13 @@ mutate(raw.x=as.numeric(as.character(raw.x))/100)
 out <- fit.jagsNEC(data=data1,
                    x.var="raw.x",
                    y.var="suc",
-                   trials.var="tot", n.tries=1)
+                   trials.var="tot", 
+                   n.tries=1,
+                   model="4param")
 check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
-plot_jagsNEC(out, x.lab = "Proportion WAF")
+plot(out, x.lab = "Proportion WAF")
+out$over.disp
 extract_ECx(out)
 mean(out$sims.list$SS > out$sims.list$SSsim)
 
@@ -459,36 +494,39 @@ out <- fit.jagsNEC(data=data1,
                    trials.var="tot", n.tries=1)
 check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
-plot_jagsNEC(out)
+plot(out)
 extract_ECx(out)
 mean(out$sims.list$SS > out$sims.list$SSsim)
 
 #orp4 ## No NEC
 # note this example was a bit problematic (failed to have good chain mixing). Modelling as a % of WAF improved the outcome substantially.
 data1 = read.table("https://pastebin.com/raw/BaCAP3Sr", header= TRUE,dec=",") %>% 
-mutate(raw.x=as.numeric(as.character(raw.x))/100)
+mutate(raw.x=as.numeric(as.character(raw.x))/100,
+       log.x=log(raw.x*100+1))
 out.1 <- fit.jagsNEC(data=data1,
                    x.var="raw.x",
                    y.var="suc",
                    trials.var="tot", n.tries=1)
 check.chains(out.1)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
-plot_jagsNEC(out.1)
+plot(out.1)
 extract_ECx(out.1)
 # backtransform NEC
 (out.1$NEC)*100
 mean(out.1$sims.list$SS > out.1$sims.list$SSsim)
 
 # run the same example on a log scale - works a bit better.
-data1 = read.table("https://pastebin.com/raw/BaCAP3Sr", header= TRUE,dec=",") %>%
-  mutate(raw.x=log(as.numeric(as.character(raw.x))+1))
 out.2 <- fit.jagsNEC(data=data1,
                    x.var="raw.x",
                    y.var="suc",
-                   trials.var="tot", n.tries=1)
+                   trials.var="tot", 
+                   n.tries=1, 
+                   x.type="beta", 
+                   model="4param",
+                   over.disp=1)
 check.chains(out.2)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
-plot_jagsNEC(out.2)
+plot(out.2)
 extract_ECx(out.2)
 # backtransform NEC
 exp(out.2$NEC)-1
@@ -504,9 +542,9 @@ out <- fit.jagsNEC(data=data1,
                    trials.var="tot", n.tries=1)
 check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
-plot_jagsNEC(out)
+plot(out)
 extract_ECx(out)
-mean(out$sims.list$SS > out$sims.list$SSsim)
+out$over.disp
 
 #flo2 
 ## would not converge - try on log scale
@@ -515,12 +553,15 @@ mutate(raw.x=log(as.numeric(as.character(raw.x))))
 out <- fit.jagsNEC(data=data1,
                    x.var="raw.x",
                    y.var="suc",
-                   trials.var="tot", n.tries=1)
+                   trials.var="tot", 
+                   n.tries=1,
+                   over.disp=TRUE,
+                   model="4param")
 check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
-plot_jagsNEC(out)
+plot(out)
 extract_ECx(out)
-mean(out$sims.list$SS > out$sims.list$SSsim)
+out$over.disp
 
 #flo3
 ### would not converge - try on log scale
@@ -532,7 +573,7 @@ out <- fit.jagsNEC(data=data1,
                    trials.var="tot", n.tries=1)
 check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
-plot_jagsNEC(out)
+plot(out)
 extract_ECx(out)
 mean(out$sims.list$SS > out$sims.list$SSsim)
 
@@ -546,7 +587,7 @@ out <- fit.jagsNEC(data=data1,
                    trials.var="tot", n.tries=1)
 check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
-plot_jagsNEC(out)
+plot(out)
 extract_ECx(out)
 mean(out$sims.list$SS > out$sims.list$SSsim)
 
@@ -557,25 +598,29 @@ mutate(raw.x=log(as.numeric(as.character(raw.x))))
 out <- fit.jagsNEC(data=data1,
                    x.var="raw.x",
                    y.var="suc",
-                   trials.var="tot", n.tries=1)
+                   trials.var="tot", 
+                   n.tries=1)
 check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
-plot_jagsNEC(out)
+plot(out)
 extract_ECx(out)
-mean(out$sims.list$SS > out$sims.list$SSsim)
+out$over.disp
 
 #flo6
 data1 = read.table("https://pastebin.com/raw/Fp0uLBNX", header= TRUE,dec=",") %>% 
-mutate(raw.x=as.numeric(as.character(raw.x)))
+mutate(raw.x=as.numeric(as.character(raw.x)),
+       log.x=log(raw.x))
 out <- fit.jagsNEC(data=data1,
-                   x.var="raw.x",
+                   x.var="log.x",
                    y.var="suc",
-                   trials.var="tot", n.tries=1)
+                   trials.var="tot", 
+                   n.tries=1,
+                   over.disp = TRUE)
 check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
-plot_jagsNEC(out)
+plot(out)
 extract_ECx(out)
-mean(out$sims.list$SS > out$sims.list$SSsim)
+out$over.disp
 
 ### Marie pesticide MS ------
 t0.dat <- unlist(list(
@@ -626,27 +671,23 @@ dat <- read.table(paste(path,"NECEstimation_Diazinon.txt", sep="/"), header = T)
 out1 <- fit.jagsNEC(data=dat, 
                    x.var="raw.x", 
                    y.var="suc",
-                   trials.var="tot",
-                   burnin=100000,
-                   n.iter.update = 10000)
+                   trials.var="tot")
 
 
 check.chains(out1)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
-plot_jagsNEC(out1)
+plot(out1)
 extract_ECx(out1, precision = 10000)
-mean(out1$sims.list$SS > out1$sims.list$SSsim)
+out1$over.disp
 
 out2 <- fit.jagsNEC(data=dat, 
                     x.var="log.x", 
                     y.var="suc",
-                    trials.var="tot",
-                    burnin=10000,
-                    n.iter.update = 1000)
+                    trials.var="tot")
 
 
 check.chains(out2)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
-plot_jagsNEC(out2)
+plot(out2)
 extract_ECx(out2)
-mean(out2$sims.list$SS > out2$sims.list$SSsim)
+out2$over.disp
