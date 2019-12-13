@@ -26,7 +26,7 @@
 #'
 #' @param over.disp. If an overdispersed model should be used. Only changes the model fit for poisson and binomial y.type data. For poisson, a negative binomial model will be fit. For binomial a beta model will be fit.
 #'
-#' @param model The type of model to be fit. Currently takes values of "", Hockey" or "4param". This is in beta and does not work reliably for all test cases.
+#' @param model The type of model to be fit. Currently takes values of "", Hockey", "4param" or "basic4param". This is in beta and "Hockey" in particular does not work reliably for all test cases.
 #'
 #' @export
 #' @return The $BUGSoutput element of fitted jags model.
