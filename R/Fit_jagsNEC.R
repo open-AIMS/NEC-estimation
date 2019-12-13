@@ -22,7 +22,7 @@
 #'
 #' @param n.iter.burnin the number of interations to run overall. This should be large. Defaults to 10000.
 #'
-#' @param n.tries. If the initial model fit fails because it cannot be fit by jags (miss-specified priors, invalid initial values), or because there is poor chain mixing fit.jagsNEC will try n.tries many times using the init.fun defined by write.jags.NECmod. If all those attempts fail, fit.jagsNEC will then try using default values provided by jags. The function will only return an error if all n.tries fail.
+#' @param n.tries. If the initial model fit fails because it cannot be fit by jags (miss-specified priors, invalid initial values), or because there is poor chain mixing fit.jagsNEC will try n.tries many times using the init.fun defined by the write model function. If all those attempts fail, fit.jagsNEC will then try using default values provided by jags. The function will only return an error if all n.tries fail.
 #'
 #' @param over.disp. If an overdispersed model should be used. Only changes the model fit for poisson and binomial y.type data. For poisson, a negative binomial model will be fit. For binomial a beta model will be fit.
 #'
@@ -43,7 +43,7 @@ fit.jagsNEC <- function(data,
                         n.tries=10,
                         params=c("top", "beta", "NEC", "SS", "SSsim"),
                         over.disp=FALSE,
-                        model="",
+                        model="NEC3param",
                         ...){
   
   y.dat <- data[,y.var]
@@ -159,8 +159,8 @@ fit.jagsNEC <- function(data,
   }
   
   # set the type of model to fit
-  if(model==""){
-     init.fun <- write.jags.NECmod(x=x.type,y=y.type, mod.dat=mod.dat) 
+  if(model=="NEC3param"){
+     init.fun <- write.jags.NEC3param.mod(x=x.type,y=y.type, mod.dat=mod.dat) 
   }
    if(model=="Hockey"){
     init.fun <- write.jags.Hockey.NECmod(x=x.type,y=y.type, mod.dat=mod.dat)
@@ -270,7 +270,7 @@ fit.jagsNEC <- function(data,
   if(model!="basic4param"){  
     NEC <- quantile(out$sims.list$NEC,c(0.025, 0.5, 0.975))
   }
-  if(y.type=="gaussian" & model==""){
+  if(y.type=="gaussian" & model=="NEC3param"){
     alpha <-  quantile(out$sims.list$alpha,c(0.025, 0.5, 0.975)) 
   }
   if(y.type=="gaussian" & model=="Hockey"){

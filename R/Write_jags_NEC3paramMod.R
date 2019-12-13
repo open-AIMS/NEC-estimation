@@ -1,6 +1,6 @@
-#' write.jags.NECmod
+#' write.jags.NEC3param.mod
 #'
-#' Writes an NEC model file and generates a function for initial values to pass to jags
+#' Writes an NEC model file for a three parameter model (top, beta and NEC) and generates a function for initial values to pass to jags
 #' 
 #' @param x the statistical distribution to use for the x (concentration) data. This may currently be one of  'beta', 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer.
 #' 
@@ -9,7 +9,7 @@
 #' @export
 #' @return an init function to pass to jags
 
-write.jags.NECmod <- function(x="gamma", y, mod.dat){  
+write.jags.NEC3param.mod <- function(x="gamma", y, mod.dat){  
   
   # binomial y; gamma x ----
    if(x=="gamma" & y=="binomial"){
