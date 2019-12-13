@@ -64,7 +64,7 @@ fit.jagsNEC <- function(data,
   }
 
   # check variable type x.var
-  if(is.na(x.type)==T){ # if the x.var is not specified, then guess
+  if(is.na(x.type)==TRUE){ # if the x.var is not specified, then guess
      if(class(x.dat)=="integer"){
      stop("jagsNEC does not currently support integer concentration data. Please provide
          a numeric x.var")}    
@@ -89,7 +89,7 @@ fit.jagsNEC <- function(data,
   } 
   
   # check there is a valid model type
-  if(is.na(match(model, c("", "Hockey", "4param")))){
+  if(is.na(match(model, c("", "Hockey", "4param", "basic4param")))){
     stop("The model type you have specified does not extist.")    
   }
   
@@ -150,6 +150,7 @@ fit.jagsNEC <- function(data,
 
     N = nrow(data))  # Sample size
 
+  
   response = data[,y.var]
  
   if(y.type=="binomial"){
@@ -168,6 +169,11 @@ fit.jagsNEC <- function(data,
   if(model=="4param"){
     init.fun <- write.jags.4param.NECmod(x=x.type,y=y.type, mod.dat=mod.dat)
     params <- c(params, "bot")
+  }
+  
+  if(model=="basic4param"){
+    init.fun <- write.jags.basic4param.mod(x=x.type,y=y.type, mod.dat=mod.dat)
+    params <- setdiff(c(params, "bot", "EC50"), c("NEC", "alpha"))
   }
   
   all.Js <- list()
@@ -249,40 +255,58 @@ fit.jagsNEC <- function(data,
   J2  <- update(J1, n.iter = n.iter.update, n.thin = floor((n.iter.update*0.01)))  
   out <- c(J2$BUGSoutput, list(mod.dat=mod.dat, y.type = y.type, x.type = x.type, model = model))
     
-  NEC <-  quantile(out$sims.list$NEC,c(0.025, 0.5, 0.975))
+  min.x <- min(mod.dat$x)
+  max.x <- max(mod.dat$x)
+  x.seq <- seq(min.x, max.x, length=100)
+  
+  # extract the model paramters - depending on the model types
+  NEC <-   rep(min.x,3); names(NEC) <- c("2.5%",  "50%", "97.5%")
   top <-  quantile(out$sims.list$top,c(0.025, 0.5, 0.975))
   beta <-  quantile(out$sims.list$beta,c(0.025, 0.5, 0.975)) 
   alpha <- rep(0,3)#rep(0, length(NEC))
   bot <- rep(0,3); names(bot) <- c("2.5%",  "50%", "97.5%") #rep(0, length(NEC))
   d <- rep(1,3); names(d) <- c("2.5%",  "50%", "97.5%") #rep(0, length(NEC))
   
-  if(y.type=="gaussian" & model!="4param"){
-         alpha <-  quantile(out$sims.list$alpha,c(0.025, 0.5, 0.975)) 
+  if(model!="basic4param"){  
+    NEC <- quantile(out$sims.list$NEC,c(0.025, 0.5, 0.975))
   }
-
-  if(model=="4param"){
-    bot <-  quantile(out$sims.list$bot,c(0.025, 0.5, 0.975)) 
+  if(y.type=="gaussian" & model==""){
+    alpha <-  quantile(out$sims.list$alpha,c(0.025, 0.5, 0.975)) 
   }
-  
+  if(y.type=="gaussian" & model=="Hockey"){
+    alpha <-  quantile(out$sims.list$alpha,c(0.025, 0.5, 0.975)) 
+  }
+  if(model=="4param" | model=="basic4param"){
+    bot <-  quantile(out$sims.list$bot, c(0.025, 0.5, 0.975)) 
+  }
   if(model=="Hockey"){
-    d <-  quantile(out$sims.list$d,c(0.025, 0.5, 0.975)) 
-  }  
+    d <-  quantile(out$sims.list$d, c(0.025, 0.5, 0.975)) 
+  } 
+
+  # calculate the predicted values based on the median parameter estimates
+  if(model!="basic4param"){
+    y.pred.m <- predict_NECmod(x.vec=x.seq, 
+                             NEC=NEC["50%"], top=top["50%"], beta=beta["50%"], d=d["50%"], bot=bot["50%"])
+    predicted.y <- predict_NECmod(x.vec=mod.dat$x,
+                                  NEC=NEC["50%"], top=top["50%"], beta=beta["50%"], d=d["50%"], bot=bot["50%"])  
+  }else{
+    EC50 <-  quantile(out$sims.list$EC50, c(0.025, 0.5, 0.975)) 
+    y.pred.m <- predict_ECxmod(x.vec=x.seq, 
+                             EC50=EC50["50%"], top=top["50%"], beta=beta["50%"], bot=bot["50%"]) 
+    predicted.y <- predict_ECxmod(x.vec=mod.dat$x,
+                                  EC50=EC50["50%"], top=top["50%"], beta=beta["50%"], bot=bot["50%"])    
+  }
   
-  min.x <- min(mod.dat$x)
-  max.x <- max(mod.dat$x)
-  x.seq <- seq(min.x, max.x, length=100)
-  
-  y.pred.m <- predict_NECmod(x.vec=x.seq, 
-                             NEC=NEC["50%"], top=top["50%"], beta=beta["50%"], d=d["50%"], bot=bot["50%"]) 
+  # calculate the predicted values using the entire posterior
   pred.vals <- c(predict_NECbugsmod(X=out), list(y.m=y.pred.m))  
   
-  predicted.y <- predict_NECmod(x.vec=mod.dat$x,
-                                NEC=NEC["50%"], top=top["50%"], beta=beta["50%"], d=d["50%"], bot=bot["50%"]) 
+  # calculate the residuals
   residuals <-  response - predicted.y
   
-  #overdispersion estimate
+  # Extract the overdispersion estimate
   od <- mean(out$sims.list$SS > out$sims.list$SSsim)
   
+  # Put everyting in a list for output
   out <- c(out, list(
      pred.vals = pred.vals,
      NEC = NEC,
@@ -296,6 +320,8 @@ fit.jagsNEC <- function(data,
      all.Js = all.Js,
      predicted.y = predicted.y,
      residuals = residuals))
+  
+  # assign a class to the output
   class(out) <- "jagsNECfit"
   
   message(paste("Response variable ", y.var, " modelled using a ", y.type, " distribution.", sep=""))
