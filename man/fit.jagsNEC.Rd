@@ -7,7 +7,7 @@
 fit.jagsNEC(data, x.var, y.var, trials.var = NA, x.type = NA,
   y.type = NA, burnin = 5000, n.iter = burnin + 500,
   n.iter.update = 10000, n.tries = 10, params = c("top", "beta",
-  "NEC", "SS", "SSsim"), over.disp = FALSE, model = "", ...)
+  "NEC", "SS", "SSsim"), over.disp = FALSE, model = "NEC3param", ...)
 }
 \arguments{
 \item{data}{a data.frame containing the data to use for the model}
@@ -32,7 +32,7 @@ fit.jagsNEC(data, x.var, y.var, trials.var = NA, x.type = NA,
 
 \item{n.iter.burnin}{the number of interations to run overall. This should be large. Defaults to 10000.}
 
-\item{n.tries.}{If the initial model fit fails because it cannot be fit by jags (miss-specified priors, invalid initial values), or because there is poor chain mixing fit.jagsNEC will try n.tries many times using the init.fun defined by write.jags.NECmod. If all those attempts fail, fit.jagsNEC will then try using default values provided by jags. The function will only return an error if all n.tries fail.}
+\item{n.tries.}{If the initial model fit fails because it cannot be fit by jags (miss-specified priors, invalid initial values), or because there is poor chain mixing fit.jagsNEC will try n.tries many times using the init.fun defined by the write model function. If all those attempts fail, fit.jagsNEC will then try using default values provided by jags. The function will only return an error if all n.tries fail.}
 
 \item{over.disp.}{If an overdispersed model should be used. Only changes the model fit for poisson and binomial y.type data. For poisson, a negative binomial model will be fit. For binomial a beta model will be fit.}
 }
