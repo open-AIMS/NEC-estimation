@@ -35,7 +35,7 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
     stop("Absolute ECx values are not valid for a gaussian response variable unless a 4 parameter model is fit") 
   }
 
-  label <- paste("EC",ECx.val,sep="")
+  label <- paste("EC",ECx.val,sep="_")
   
   pred.vals <- predict_NECbugsmod(X, precision=precision)
   
