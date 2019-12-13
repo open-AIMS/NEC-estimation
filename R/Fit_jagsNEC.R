@@ -51,7 +51,7 @@ fit.jagsNEC <- function(data,
   
   # check the x data are numeric
   if(class(x.dat)!="numeric"){
-    stop(paste("Your indicated x.var column ",x.var," contains data that is class ",class(x.dat),". 
+    stop(paste("Your indicated x.var column ", x.var," contains data that is class ", class(x.dat),". 
                The function jagsNEC requires the concentration data (argument x.var) to be numeric.",sep=""))    
   } 
   

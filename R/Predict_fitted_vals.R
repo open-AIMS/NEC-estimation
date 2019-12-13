@@ -10,12 +10,14 @@
 #' 
 #' @param beta the exponential decay rate
 #' 
+#' @param bot the lower plateau
+#' 
 #' @alpha alpha the offset of a gaussian y response variable
 #'
 #' @export
 #' @return A list containing x and fitted y, with up and lw values
 
-predict_NECmod <- function(x.vec, NEC, top, beta, alpha=0, d=1, bot=0){
+predict_NECmod <- function(x.vec, NEC=min(x.vec), top, beta, alpha=0, d=1, bot=0){
   
   x.seq.pre <-  x.vec[which(x.vec<=NEC)] #seq(min.x, NEC.m, length=20)
   x.seq.post <- x.vec[which(x.vec>NEC)] # seq(NEC.m, max.x, length=20)
@@ -24,6 +26,32 @@ predict_NECmod <- function(x.vec, NEC, top, beta, alpha=0, d=1, bot=0){
   y.pred.post <- bot + ((top-bot)*exp(-beta*(x.seq.post-NEC)^d))-alpha  
   
   y.pred <- c(y.pred.pre, y.pred.post)
+
+  return(y.pred)
+  
+}
+
+#' predict_ECxmod
+#'
+#' Calculates predicted y (response) values for a supplied vector of x (concentration) values for a given set of EC50, top, bottom and beta values
+#'
+#' @param  x.vec the x vector over which to calculate
+#' 
+#' @param EC50 the 50 percent effect concentration
+#' 
+#' @param top the upper plateau
+#' 
+#' @param beta the exponential decay rate (hillslope)
+#' 
+#' @param bot the lower plateau
+#'
+#' @export
+#' @return A list containing x and fitted y, with up and lw values
+
+predict_ECxmod <- function(x.vec, EC50, top, beta, bot=0){
+  
+  x.seq <- x.vec 
+  y.pred <- bot + (top-bot)/(1+exp((EC50-x.seq)*beta))
 
   return(y.pred)
   
@@ -74,7 +102,7 @@ predict_NECbugsmod <- function(X, precision=100){
                      d=X$sims.list$d[x])}))
   }
   
-  if(X$y.type == "gaussian" & X$model == "" ){
+  if(X$y.type == "gaussian" & X$model == "Hockey" ){
     pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
       predict_NECmod(x.vec=x.seq,
                      NEC=X$sims.list$NEC[x],
@@ -85,7 +113,7 @@ predict_NECbugsmod <- function(X, precision=100){
   }
   
   # for the 4param model
-  if(X$y.type != "gaussian" & X$model == "4param"){
+  if(X$model == "4param"){
     pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
       predict_NECmod(x.vec=x.seq,
                      NEC=X$sims.list$NEC[x],
@@ -94,6 +122,15 @@ predict_NECbugsmod <- function(X, precision=100){
                      bot=X$sims.list$bot[x])}))
   }
 
+  if(X$model == "basic4param"){
+    pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
+      predict_ECxmod(x.vec=x.seq,
+                     top=X$sims.list$top[x],
+                     beta=X$sims.list$beta[x],
+                     EC50=X$sims.list$EC50[x],
+                     bot=X$sims.list$bot[x])}))
+  }
+  
   m.vals <- apply(pred.vals.out, MARGIN=1, FUN=quantile, probs=0.5)
   up.vals <- apply(pred.vals.out, MARGIN=1, FUN=quantile, probs=0.975)
   lw.vals <- apply(pred.vals.out, MARGIN=1, FUN=quantile, probs=0.025)
