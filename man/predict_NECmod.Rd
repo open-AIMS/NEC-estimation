@@ -4,7 +4,8 @@
 \alias{predict_NECmod}
 \title{predict_NECmod}
 \usage{
-predict_NECmod(x.vec, NEC, top, beta, alpha = 0, d = 1, bot = 0)
+predict_NECmod(x.vec, NEC = min(x.vec), top, beta, alpha = 0, d = 1,
+  bot = 0)
 }
 \arguments{
 \item{x.vec}{the x vector over which to calculate}
@@ -14,6 +15,8 @@ predict_NECmod(x.vec, NEC, top, beta, alpha = 0, d = 1, bot = 0)
 \item{top}{the estimated value of y (response) over the range of x for which no effect occurs}
 
 \item{beta}{the exponential decay rate}
+
+\item{bot}{the lower plateau}
 }
 \value{
 A list containing x and fitted y, with up and lw values
