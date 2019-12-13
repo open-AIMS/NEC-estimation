@@ -7,13 +7,16 @@ source("R/check_chains.R")
 source("R/check_mixing.R")
 source("R/Write_jags_model.R")
 source("R/Write_jags_Hockey_model.R")
+source("R/Write_jags_4param_model.R")
+source("R/Write_jags_basic4param_model_2.R")
 source("R/Predict_fitted_vals.R")
 source("R/Fit_jagsNEC.R")
 source("R/plot_jagsNEC.R")
+source("R/plot_jagsNECfit.R")
 source("R/extract_ECx.R")
 path <- "C:/Users/rfisher/OneDrive - Australian Institute of Marine Science/Documents/AIMS/EcologicalRiskModelling/Ecotoxicology/Ecotox_stats/CR-examples"
 
-### Testing/troubleshooting the Hockey Model v1
+### Testing/troubleshooting alternative models
 
 data1 <-  read.table("https://pastebin.com/raw/dUMSAvYi", header= TRUE,dec=",")  %>%
   mutate(raw.x=as.numeric(as.character(raw.x)),
@@ -23,30 +26,33 @@ out <- fit.jagsNEC(data=data1,
                    x.var="log.x",
                    y.var="suc",
                    trials.var = "tot",
-                   model="Hockey",                   
-                   n.tries=2)
+                   model="basic4param",                   
+                   n.tries=2,
+                   over.disp=T)
 check.chains(out)
 
 par(mfrow=c(1,1))
-plot_jagsNEC(out, axes=FALSE)
+plot(out)#, lxform = exp)
+extract_ECx(out, type="direct", ECx.val=0.8)#, xform = exp)
+extract_ECx(out, xform = exp, ECx.val=50)
 
-### Testing/troubleshooting the Hockey Model v1
+### Testing/troubleshooting the Hockey Model v2
 
 data1 <-  read.table("https://pastebin.com/raw/dKVi6L3t", header= TRUE,dec=",")  %>%
   mutate(raw.x=as.numeric(as.character(raw.x)),
          log.x=log(raw.x))
 
 out <- fit.jagsNEC(data=data1,
-                   x.var="log.x",
+                   x.var="log.x",#"raw.x", 
                    y.var="suc",
                    trials.var = "tot",
-                   model="Hockey",                   
-                   n.tries=2)
+                   model="basic4param",                   
+                   n.tries=5)
 check.chains(out)
 
 par(mfrow=c(1,1))
-plot_jagsNEC(out, axes=FALSE)
-
+plot(out)
+plot(data1$log.x,out$residuals)
 
 ### Testing/troubleshooting the Hockey Model v3
 dat <- read.table(paste(path,'marie_test_hockey.txt',sep="/"), sep="\t", header=T) %>% 
@@ -56,10 +62,17 @@ dat <- read.table(paste(path,'marie_test_hockey.txt',sep="/"), sep="\t", header=
   na.omit()
 
 out <- fit.jagsNEC(data=dat,
-                   x.var="raw.x",
-                   y.var="SGR",
-                   model="Hockey",                   
-                   n.tries=2)
+                   x.var="log.x",
+                   y.var="SGR", y.type="gaussian",
+                   model="basic4param",                   
+                   n.tries=20)
+
+check.chains(out)
+
+par(mfrow=c(1,1))
+plot(out, legend.loc = "bottomleft")
+
+
 
 
 ### Example from Gerards original NEC script ----
@@ -80,60 +93,64 @@ out <- fit.jagsNEC(data=binom.data,
 check.chains(out)
 
 par(mfrow=c(1,1))
-plot_jagsNEC(out, axes=FALSE)
+plot(out)
 
 out$over.disp
 mean(out$sims.list$SS > out$sims.list$SSsim)
+extract_ECx(out, type="relative")
 
 # try log x
 out <- fit.jagsNEC(data=binom.data, 
                    x.var="log.x", 
                    y.var="suc", 
-                   trials.var="tot")
+                   model="basic4param",
+                   trials.var="tot", over.disp=T)
 
 check.chains(out)
 
 par(mfrow=c(1,1))
-plot_jagsNEC(out, axes=FALSE, xform=exp)
+plot(out, lxform=exp)
 
 out$over.disp
 
+extract_ECx(out, type="absolute")
 
 ####################################################
 #2) NEC - count data  (think invidivuals, cells etc
-count.data = read.table("https://pastebin.com/raw/ENgNSgf7", header= TRUE,dec=",")
+count.data = read.table("https://pastebin.com/raw/ENgNSgf7", header= TRUE,dec=",") %>%
+  mutate(raw.x=as.numeric(as.character(raw.x)),
+         log.x=log(raw.x))
 str(count.data)
-
-count.data$raw.x <- as.numeric(as.character(count.data$raw.x))
 
 range(count.data$raw.x)
 par(mfrow=c(2,1))
 hist(count.data$raw.x)
 hist(count.data$count)
 out <- fit.jagsNEC(data=count.data, 
-                   x.var="raw.x", 
+                   x.var="log.x", 
                    y.var="count", 
-                   params=c("top", "beta", "NEC", "SS", "SSsim"))
+                   model="basic4param")
 check.chains(out)
 mean(out$sims.list$SS > out$sims.list$SSsim)
 
 par(mfrow=c(1,1))
-plot_jagsNEC(out)
-
+plot(out)
+extract_ECx(out, type="relative")
+extract_ECx(out)
+            
 ###################################################
 #3) NEC - measured/continuous data  (think anything on the metric scale)
-measure.data = read.table("https://pastebin.com/raw/pWeS6x0n", header= TRUE,dec=",")
-measure.data
-measure.data$raw.x <- as.numeric(as.character(measure.data$raw.x))
-measure.data$measure <- as.numeric(as.character(measure.data$measure))
+measure.data = read.table("https://pastebin.com/raw/pWeS6x0n", header= TRUE,dec=",") %>%
+ mutate(raw.x = as.numeric(as.character(raw.x)),
+        measure = as.numeric(as.character(measure)),
+        log.x=log(raw.x))
 
 out <- fit.jagsNEC(data=measure.data, 
-                   x.var="raw.x", 
-                   y.var="measure", n.tries=1, prob.val=0.05)
-out <- fit.jagsNEC(data=measure.data, 
-                   x.var="raw.x", 
-                   y.var="measure", n.tries=1, prob.val =0.05,
-                   params=c("top", "beta", "NEC", "SS", "SSsim"))
+                   x.var="log.x", 
+                   y.var="measure", 
+                   model="basic4param",
+                   n.tries=1, prob.val=0.05)
+
 check.chains(out)
 mean(out$sims.list$SS > out$sims.list$SSsim)
 
@@ -148,12 +165,13 @@ require(car)
 
 binom.data$logit.prop <- logit(binom.data$prop)
 out <- fit.jagsNEC(data=binom.data, 
-                   x.var="raw.x", 
-                   y.var="logit.prop", params=c("top", "beta", "NEC", "SS", "SSsim"))
+                   x.var="log.x", 
+                   y.var="logit.prop",
+                   model="basic4param")
 check.chains(out)
 
 par(mfrow=c(1,1))
-plot_jagsNEC(out)
+plot(out)
 
 ### now test all Heidi's examples
 all.files <- list.files(path)
@@ -232,18 +250,18 @@ mean(out1$sims.list$SS > out1$sims.list$SSsim)
 
 check.chains(out1) 
 par(mfrow=c(1,1))
-plot_jagsNEC(out1)
+plot(out1)
 
 # second for Recovery
 out2 <- fit.jagsNEC(data=dat, 
                     x.var="concentration", 
                     y.var="y.2",
                     n.tries=2,
-                    params=c("top", "beta", "NEC", "SS", "SSsim"))
+                    model="basic4param")
 
 check.chains(out2)
 par(mfrow=c(1,1))
-plot_jagsNEC(out2) 
+plot(out2) 
 mean(out2$sims.list$SS > out2$sims.list$SSsim)
 
 ### test Heidi's necrosis example as a binomial (trials as a function of area) ----
@@ -263,12 +281,13 @@ out1 <- fit.jagsNEC(data=dat,
                     x.var="concentration", 
                     y.var="y.1",
                     n.tries=2,
-                    trials.var="trials")
+                    trials.var="trials",
+                    model="basic4param")
 
 
 check.chains(out1) 
 par(mfrow=c(1,1))
-plot_jagsNEC(out1)
+plot(out1)
 
 # second for Recovery
 out2 <- fit.jagsNEC(data=dat, 
@@ -289,11 +308,12 @@ prop.data <- read.table("https://pastebin.com/raw/123jq46d", header= TRUE,dec=",
 out <- fit.jagsNEC(data=prop.data, 
                    x.var="raw.x", 
                    y.var="resp",
+                   model="basic4param",
                    n.tries=1)
 
 check.chains(out) 
 par(mfrow=c(1,1))
-plot_jagsNEC(out)
+plot(out)
 mean(out$sims.list$SS > out$sims.list$SSsim)
 
 ### test Heidi's necrosis example as a binomial for any necrosis at all (0,1) ----
@@ -322,64 +342,67 @@ mean(out1$sims.list$SS > out2$sims.list$SSsim)
 out2 <- fit.jagsNEC(data=dat, 
                     x.var="concentration", 
                     y.var="y.2",
-                    trials.var="trials")
+                    trials.var="trials", 
+                    over.disp=TRUE,
+                    model="Hockey",
+                    n.tries = 20)
 
 check.chains(out2)
 par(mfrow=c(1,1))
-plot_jagsNEC(out2, jitter.x=T) 
+plot(out2, jitter.x=T) 
 mean(out2$sims.list$SS > out2$sims.list$SSsim)
 
 ### Paul's sea urchins ----
-binom.data <-  read.table(paste(path,"Data source R NEC and ECs sea urchin fertilization (Fisher, Ricardo, Fox).txt", sep="/"), header= TRUE,dec=",")
+binom.data <-  read.table(paste(path,"Data source R NEC and ECs sea urchin fertilization (Fisher, Ricardo, Fox).txt", 
+                                sep="/"), header= TRUE,dec=",") %>%
+  mutate(raw.x= as.numeric(as.character(raw.x)),
+         log.x=log(raw.x),
+         prop = suc/tot)
+
 str(binom.data)
-binom.data$raw.x <- as.numeric(as.character(binom.data$raw.x))
+binom.data$
 range(binom.data$raw.x)
 par(mfrow=c(2,1))
 hist(binom.data$raw.x)
 hist(binom.data$suc/binom.data$tot)
 out <- fit.jagsNEC(data=binom.data,
-                   x.var="raw.x",
+                   x.var="log.x",
                    y.var="suc",
                    trials.var="tot")
 check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
-plot_jagsNEC(out, x.lab = "WAF (%)", y.lab = "Fertilization success (%)",log.x = "x")
+plot(out, x.lab = "WAF (%)", y.lab = "Fertilization success (%)", lxform=exp)
 extract_ECx(out)
 out$over.disp
 out$summary
 par(mfrow=c(1,1), mar=c(4,4,1,1))
-plot(binom.data$raw.x, out$predicted.y-(binom))
 
-### Paul's sea urchins as beta
-binom.data <-  read.table(paste(path,"Data source R NEC and ECs sea urchin fertilization (Fisher, Ricardo, Fox).txt", sep="/"), header= TRUE,dec=",")
-str(binom.data)
-binom.data$raw.x <- as.numeric(as.character(binom.data$raw.x))
-binom.data$prop <- binom.data$suc/binom.data$tot
+
+# Paul's sea urchins as beta
 out <- fit.jagsNEC(data=binom.data,
-                   x.var="raw.x",
-                   y.var="prop", n.tries=1)
+                   x.var="log.x",
+                   y.var="prop", 
+                   n.tries=2,
+                   model="basic4param")
 check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
-plot_jagsNEC(out, x.lab = "WAF (%)", y.lab = "Fertilization success (%)",log.x = "x")
+plot(out, x.lab = "WAF (%)", y.lab = "Fertilization success (%)")
 extract_ECx(out)
 out$over.disp
 out$summary
 par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot(binom.data$raw.x, out$residuals)
 
-### Paul's sea urchins as beta using over.disp=TRUE
-binom.data <-  read.table(paste(path,"Data source R NEC and ECs sea urchin fertilization (Fisher, Ricardo, Fox).txt", sep="/"), header= TRUE,dec=",")
-str(binom.data)
-binom.data$raw.x <- as.numeric(as.character(binom.data$raw.x))
-binom.data$prop <- binom.data$suc/binom.data$tot
+# Paul's sea urchins as beta using over.disp=TRUE
 out <- fit.jagsNEC(data=binom.data,
-                   x.var="raw.x",
+                   x.var="log.x",
                    y.var="suc",
                    trials.var="tot", 
-                   over.disp=T)
+                   over.disp=T,
+                   model="4param")
 check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
-plot_jagsNEC(out, x.lab = "WAF (%)", y.lab = "Fertilization success (%)",log.x = "x")
+plot(out, x.lab = "WAF (%)", y.lab = "Fertilization success (%)",log.x = "x")
 extract_ECx(out)
 out$over.disp
 out$summary
