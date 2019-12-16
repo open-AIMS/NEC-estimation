@@ -35,7 +35,7 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
     stop("Absolute ECx values are not valid for a gaussian response variable unless a 4 parameter model is fit") 
   }
 
-  label <- paste("EC",ECx.val,sep="_")
+  label <- paste("EC", ECx.val, sep="_")
   
   pred.vals <- predict_NECbugsmod(X, precision=precision)
   
@@ -50,7 +50,7 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
      })    
   }
 
-  if(type=="absolute" & X$model == "4param"){
+  if(type=="absolute" & max(grep("4param", X$model))== 1){
      ECx.out <- apply(pred.vals$posterior, MARGIN=2, FUN=function(y){
      range.y <- range(y)
      ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
@@ -59,7 +59,7 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
      })     
   }
   
-  if(type=="absolute" & X$model != "4param"){
+  if(type=="absolute" & max(grep("4param", X$model))!= 1){
     ECx.out <- apply(pred.vals$posterior, MARGIN=2, FUN=function(y){
       range.y <- c(0, max(y))
       ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
