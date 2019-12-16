@@ -167,7 +167,7 @@ fit.jagsNEC <- function(data,
     params <- c(params, "d")
   } 
   if(model=="4param"){
-    init.fun <- write.jags.4param.NECmod(x=x.type,y=y.type, mod.dat=mod.dat)
+    init.fun <- write.jags.NEC4param.mod(x=x.type,y=y.type, mod.dat=mod.dat)
     params <- c(params, "bot")
   }
   

@@ -1,4 +1,4 @@
-#' write.jags.4param.NECmod
+#' write.jags.NEC4param.mod
 #'
 #' Writes an NEC model file and generates a function for initial values to pass to jags
 #' 
@@ -9,7 +9,7 @@
 #' @export
 #' @return an init function to pass to jags
 
-write.jags.4param.NECmod <- function(x="gamma", y, mod.dat){  
+write.jags.NEC4param.mod <- function(x="gamma", y, mod.dat){  
   
   # binomial y; gamma x ----
    if(x=="gamma" & y=="binomial"){
