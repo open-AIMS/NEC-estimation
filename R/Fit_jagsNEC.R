@@ -307,7 +307,8 @@ fit.jagsNEC <- function(data,
   od <- mean(out$sims.list$SS > out$sims.list$SSsim)
   
   # Put everyting in a list for output
-  out <- c(out, list(
+  if(class(out)!="try-error"){
+      out <- c(out, list(
      pred.vals = pred.vals,
      NEC = NEC,
      top = top,
@@ -323,7 +324,8 @@ fit.jagsNEC <- function(data,
   
   # assign a class to the output
   class(out) <- "jagsNECfit"
-  
+  }
+
   message(paste("Response variable ", y.var, " modelled using a ", y.type, " distribution.", sep=""))
   return(out)    
 }
