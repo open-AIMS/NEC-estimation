@@ -166,13 +166,13 @@ fit.jagsNEC <- function(data,
     init.fun <- write.jags.Hockey.NECmod(x=x.type,y=y.type, mod.dat=mod.dat)
     params <- c(params, "d")
   } 
-  if(model=="4param"){
+  if(model=="NEC4param"){
     init.fun <- write.jags.NEC4param.mod(x=x.type,y=y.type, mod.dat=mod.dat)
     params <- c(params, "bot")
   }
   
   if(model=="basic4param"){
-    init.fun <- write.jags.basic4param.mod(x=x.type,y=y.type, mod.dat=mod.dat)
+    init.fun <- write.jags.ECx4param.mod(x=x.type,y=y.type, mod.dat=mod.dat)
     params <- setdiff(c(params, "bot", "EC50"), c("NEC", "alpha"))
   }
   
@@ -276,7 +276,7 @@ fit.jagsNEC <- function(data,
   if(y.type=="gaussian" & model=="Hockey"){
     alpha <-  quantile(out$sims.list$alpha,c(0.025, 0.5, 0.975)) 
   }
-  if(model=="4param" | model=="basic4param"){
+  if(model=="NEC4param" | model=="basic4param"){
     bot <-  quantile(out$sims.list$bot, c(0.025, 0.5, 0.975)) 
   }
   if(model=="Hockey"){

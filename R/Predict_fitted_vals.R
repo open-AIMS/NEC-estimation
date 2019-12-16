@@ -59,7 +59,6 @@ predict_ECxmod <- function(x.vec, EC50, top, beta, bot=0){
 
 #' predict_NECbugsmod
 #'
-#' Calculates predicted y (response) values for a supplied vector of x (concentration) values for a jags fitted NEC model fit (as returned by fit.jagsNEC)
 #' 
 #' @param X the jags NEC model fit (as returned by fit.jagsNEC)
 #' 
@@ -75,7 +74,7 @@ predict_NECbugsmod <- function(X, precision=100){
   x.seq <- seq(min.x, max.x, length=precision)
   
   # for the original model
-  if(X$y.type != "gaussian" & X$model == ""){
+  if(X$y.type != "gaussian" & X$model == "NEC3param"){
     pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
       predict_NECmod(x.vec=x.seq,
                      NEC=X$sims.list$NEC[x],
@@ -83,7 +82,7 @@ predict_NECbugsmod <- function(X, precision=100){
                      beta=X$sims.list$beta[x])}))
   }
   
-  if(X$y.type == "gaussian" & X$model == "" ){
+  if(X$y.type == "gaussian" & X$model == "NEC3param" ){
     pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
       predict_NECmod(x.vec=x.seq,
                      NEC=X$sims.list$NEC[x],
