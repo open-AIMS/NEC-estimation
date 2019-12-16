@@ -31,7 +31,7 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
    }   
   }
  
-  if(X$y.type=="gaussian" & X$model != "4param" & type=="absolute"){
+  if(X$y.type=="gaussian" & max(grep("4param", X$model))!= 1  & type=="absolute"){
     stop("Absolute ECx values are not valid for a gaussian response variable unless a 4 parameter model is fit") 
   }
 
