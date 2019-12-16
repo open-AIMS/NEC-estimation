@@ -15,5 +15,5 @@ predict_NECbugsmod(X, precision = 100)
 a list containing x (the x.seq), y (the median predicted y values at each value of x), up.vals (the upper 97.5% percentile of the predicted y values at each value of x), and lw (the lower 2.5% percentile of the predicted y values at each value of x)
 }
 \description{
-Calculates predicted y (response) values for a supplied vector of x (concentration) values for a jags fitted NEC model fit (as returned by fit.jagsNEC)
+predict_NECbugsmod
 }
