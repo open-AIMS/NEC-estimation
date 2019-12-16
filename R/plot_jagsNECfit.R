@@ -34,7 +34,7 @@ plot.jagsNECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=F
                          ylab="response", 
                          xlab="concentration",  ...){
 
-  if(X$model=="basic4param" & add.NEC==TRUE){
+  if(X$model=="ECx4param" & add.NEC==TRUE){
       add.NEC=FALSE; add.EC10=TRUE
   }
 

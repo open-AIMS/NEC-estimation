@@ -26,7 +26,7 @@
 #'
 #' @param over.disp. If an overdispersed model should be used. Only changes the model fit for poisson and binomial y.type data. For poisson, a negative binomial model will be fit. For binomial a beta model will be fit.
 #'
-#' @param model The type of model to be fit. Currently takes values of "", Hockey", "4param" or "basic4param". This is in beta and "Hockey" in particular does not work reliably for all test cases.
+#' @param model The type of model to be fit. Currently takes values of "", Hockey", "4param" or"ECx4param". This is in beta and "Hockey" in particular does not work reliably for all test cases.
 #'
 #' @export
 #' @return The $BUGSoutput element of fitted jags model.
@@ -89,7 +89,7 @@ fit.jagsNEC <- function(data,
   } 
   
   # check there is a valid model type
-  if(is.na(match(model, c("", "Hockey", "4param", "basic4param")))){
+  if(is.na(match(model, c("NEC3param", "Hockey", "NEC4param", "ECx4param")))){
     stop("The model type you have specified does not extist.")    
   }
   
@@ -168,10 +168,10 @@ fit.jagsNEC <- function(data,
   } 
   if(model=="NEC4param"){
     init.fun <- write.jags.NEC4param.mod(x=x.type,y=y.type, mod.dat=mod.dat)
-    params <- c(params, "bot")
+    params <- setdiff(c(params, "bot"), c("NEC", "alpha"))
   }
   
-  if(model=="basic4param"){
+  if(model=="ECx4param"){
     init.fun <- write.jags.ECx4param.mod(x=x.type,y=y.type, mod.dat=mod.dat)
     params <- setdiff(c(params, "bot", "EC50"), c("NEC", "alpha"))
   }
@@ -267,7 +267,7 @@ fit.jagsNEC <- function(data,
   bot <- rep(0,3); names(bot) <- c("2.5%",  "50%", "97.5%") #rep(0, length(NEC))
   d <- rep(1,3); names(d) <- c("2.5%",  "50%", "97.5%") #rep(0, length(NEC))
   
-  if(model!="basic4param"){  
+  if(model!="ECx4param"){  
     NEC <- quantile(out$sims.list$NEC,c(0.025, 0.5, 0.975))
   }
   if(y.type=="gaussian" & model=="NEC3param"){
@@ -276,7 +276,7 @@ fit.jagsNEC <- function(data,
   if(y.type=="gaussian" & model=="Hockey"){
     alpha <-  quantile(out$sims.list$alpha,c(0.025, 0.5, 0.975)) 
   }
-  if(model=="NEC4param" | model=="basic4param"){
+  if(model=="NEC4param" | model=="ECx4param"){
     bot <-  quantile(out$sims.list$bot, c(0.025, 0.5, 0.975)) 
   }
   if(model=="Hockey"){
@@ -284,7 +284,7 @@ fit.jagsNEC <- function(data,
   } 
 
   # calculate the predicted values based on the median parameter estimates
-  if(model!="basic4param"){
+  if(model!="ECx4param"){
     y.pred.m <- predict_NECmod(x.vec=x.seq, 
                              NEC=NEC["50%"], top=top["50%"], beta=beta["50%"], d=d["50%"], bot=bot["50%"])
     predicted.y <- predict_NECmod(x.vec=mod.dat$x,

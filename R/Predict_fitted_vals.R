@@ -112,7 +112,7 @@ predict_NECbugsmod <- function(X, precision=100){
   }
   
   # for the 4param model
-  if(X$model == "4param"){
+  if(X$model == "NEC4param"){
     pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
       predict_NECmod(x.vec=x.seq,
                      NEC=X$sims.list$NEC[x],
@@ -121,7 +121,7 @@ predict_NECbugsmod <- function(X, precision=100){
                      bot=X$sims.list$bot[x])}))
   }
 
-  if(X$model == "basic4param"){
+  if(X$model == "ECx4param"){
     pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
       predict_ECxmod(x.vec=x.seq,
                      top=X$sims.list$top[x],
