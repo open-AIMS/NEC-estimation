@@ -78,8 +78,8 @@ plot.jagsNECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=F
     axis(side=1)
     NEC.legend <- paste("NEC: ", signif(NEC[2],3), 
                         " (", signif(NEC[1],3),"-", signif(NEC[3],3),")",sep="")
-    EC10.legend <- paste("EC10: ", signif(EC10[2],3), 
-                         " (", signif(EC10[1],3),"-", signif(EC10[3],3),")",sep="")
+    EC10.legend <- paste("EC10: ", signif(EC10[1],3), 
+                         " (", signif(EC10[2],3),"-", signif(EC10[3],3),")",sep="")
     }else{
     x.ticks <- seq(min(x.dat), max(x.dat), length=7)
     x.labs <- signif(lxform(x.ticks),2)
@@ -87,8 +87,8 @@ plot.jagsNECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=F
     NEC.legend <- paste("NEC: ", signif(lxform(NEC[2]),3), 
                         " (",    signif(lxform(NEC[1]),3),"-", 
                                  signif(lxform(NEC[3]),3),")",sep="")    
-    EC10.legend <- paste("EC10: ", signif(lxform(EC10[2]),3), 
-                        " (",    signif(lxform(EC10[1]),3),"-", 
+    EC10.legend <- paste("EC10: ", signif(lxform(EC10[1]),3), 
+                        " (",    signif(lxform(EC10[2]),3),"-", 
                         signif(lxform(EC10[3]),3),")",sep="")  
   }
   
@@ -108,13 +108,13 @@ plot.jagsNECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=F
            legend=NEC.legend, lty=1, col="red")
   }
   if(add.EC10==TRUE & add.NEC==FALSE){
-    abline(v=EC10, col = "red", lty=c(3,1,3))  
+    abline(v=EC10, col = "red", lty=c(1,3,3))  
     legend(legend.loc, bty="n",
           legend=EC10.legend, lty=1, col="red")
   }
   if(add.EC10==TRUE & add.NEC==TRUE){
     abline(v=NEC, col = "red", lty=c(3,1,3))  
-    abline(v=EC10, col = "orange", lty=c(3,1,3)) 
+    abline(v=EC10, col = "orange", lty=c(1,3,3)) 
     
     legend(legend.loc, bty="n",
            legend=c(NEC.legend, EC10.legend), 
