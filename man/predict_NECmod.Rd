@@ -16,6 +16,8 @@ predict_NECmod(x.vec, NEC = min(x.vec), top, beta, alpha = 0, d = 1,
 
 \item{beta}{the exponential decay rate}
 
+\item{alpha}{the offset of a gaussian y response variable}
+
 \item{bot}{the lower plateau}
 }
 \value{

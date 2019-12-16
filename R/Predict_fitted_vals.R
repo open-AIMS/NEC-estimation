@@ -12,7 +12,7 @@
 #' 
 #' @param bot the lower plateau
 #' 
-#' @alpha alpha the offset of a gaussian y response variable
+#' @param alpha the offset of a gaussian y response variable
 #'
 #' @export
 #' @return A list containing x and fitted y, with up and lw values
