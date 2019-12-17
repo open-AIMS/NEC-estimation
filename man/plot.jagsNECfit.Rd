@@ -7,7 +7,8 @@
 \method{plot}{jagsNECfit}(X, CI = TRUE, posterior.median = TRUE,
   median.model = FALSE, add.NEC = TRUE, legend.loc = "topright",
   add.EC10 = FALSE, xform = NA, lxform = NA, jitter.x = FALSE,
-  jitter.y = FALSE, ylab = "response", xlab = "concentration", ...)
+  jitter.y = FALSE, ylab = "response", xlab = "concentration",
+  xlim = NA, xticks = NA, ...)
 }
 \arguments{
 \item{X}{the jags NEC model fit as returned by fit.jagsNEC.}
@@ -27,6 +28,14 @@
 \item{xform}{a function to be applied as a transformation of the x data.}
 
 \item{lxform}{a function to be applied as a transformation only to axis labels and the annoted NEC/EC10 values.}
+
+\item{ylab}{a character vector to use for the y-axis label}
+
+\item{xlab}{a character vector to use for the x-axis label}
+
+\item{xlim}{a numeric vector of length two to use for the lower and uper limits of the x-axis range}
+
+\item{xticks}{a numeric vector indicate where to place the tick marks of the x-axis}
 
 \item{x.jitter}{a logical value indicating if the x data points on the plot should be jittered.}
 

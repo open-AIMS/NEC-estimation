@@ -23,6 +23,14 @@
 #' @param x.jitter a logical value indicating if the x data points on the plot should be jittered.
 #'
 #' @param y.jitter a logical value indicating if the y data points on the plot should be jittered.
+#' 
+#' @param xlab a character vector to use for the x-axis label
+#' 
+#' @param ylab a character vector to use for the y-axis label
+#' 
+#' @param xlim a numeric vector of length two to use for the lower and uper limits of the x-axis range
+#' 
+#' @param xticks a numeric vector indicate where to place the tick marks of the x-axis
 #'
 #' @export
 #' @return a plot of the fitted model
@@ -32,7 +40,8 @@ plot.jagsNECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=F
                          xform=NA, lxform=NA,
                          jitter.x=FALSE, jitter.y=FALSE, 
                          ylab="response", 
-                         xlab="concentration",  ...){
+                         xlab="concentration", 
+                         xlim = NA, xticks = NA,  ...){
 
   if(X$model=="ECx4param" & add.NEC==TRUE){
       add.NEC=FALSE; add.EC10=TRUE
@@ -67,27 +76,38 @@ plot.jagsNECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=F
   if(jitter.x==TRUE){x.dat <- jitter(x.dat)}
   if(jitter.y==TRUE){y.dat <- jitter(y.dat)}  
   
+  # check if a range for the x axis has been specified
+  if(max(is.na(xlim))==1){
+    x.lim <- range(x.dat)}else{
+    x.lim <- xlim
+  }
+  # Check if x axis tick marks have been specified
+  if(max(is.na(xticks))==1){
+    x.ticks <- seq(min(x.dat), max(x.dat), length=7)
+  }else{
+    x.ticks <- xticks
+  }
+  
   plot(x.dat, y.dat, 
        ylab=ylab, 
        xlab=xlab,        
-       pch=16, xaxt="n",
+       pch=16, xaxt="n", xlim = x.lim,
        col=adjustcolor(1, alpha=0.25), 
        cex=1.5) 
   
   if(class(lxform)!="function"){
-    axis(side=1)
+   if(max(is.na(xticks))==1){axis(side=1)}else{axis(side=1, at=x.ticks)}  
     NEC.legend <- paste("NEC: ", signif(NEC[2],3), 
                         " (", signif(NEC[1],3),"-", signif(NEC[3],3),")",sep="")
     EC10.legend <- paste("EC10: ", signif(EC10[1],3), 
                          " (", signif(EC10[2],3),"-", signif(EC10[3],3),")",sep="")
     }else{
-    x.ticks <- seq(min(x.dat), max(x.dat), length=7)
-    x.labs <- signif(lxform(x.ticks),2)
-    axis(side=1, at=x.ticks, labels = x.labs)
-    NEC.legend <- paste("NEC: ", signif(lxform(NEC[2]),3), 
+     x.labs <- signif(lxform(x.ticks),2)
+     axis(side=1, at=x.ticks, labels = x.labs)
+     NEC.legend <- paste("NEC: ", signif(lxform(NEC[2]),3), 
                         " (",    signif(lxform(NEC[1]),3),"-", 
                                  signif(lxform(NEC[3]),3),")",sep="")    
-    EC10.legend <- paste("EC10: ", signif(lxform(EC10[1]),3), 
+     EC10.legend <- paste("EC10: ", signif(lxform(EC10[1]),3), 
                         " (",    signif(lxform(EC10[2]),3),"-", 
                         signif(lxform(EC10[3]),3),")",sep="")  
   }
