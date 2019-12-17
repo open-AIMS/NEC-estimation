@@ -34,7 +34,7 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
    }   
   }
  
-  if(X$y.type=="gaussian" & max(grep("4param", X$model))!= 1  & type=="absolute"){
+  if(X$y.type=="gaussian" & length(grep("4param", X$model))!= 1  & type=="absolute"){
     stop("Absolute ECx values are not valid for a gaussian response variable unless a 4 parameter model is fit") 
   }
 
@@ -53,7 +53,7 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
      })    
   }
 
-  if(type=="absolute" & max(grep("4param", X$model))== 1){
+  if(type=="absolute" & length(grep("4param", X$model))== 1){
      ECx.out <- apply(pred.vals$posterior, MARGIN=2, FUN=function(y){
      range.y <- range(y)
      ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
@@ -62,7 +62,7 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
      })     
   }
   
-  if(type=="absolute" & max(grep("4param", X$model))!= 1){
+  if(type=="absolute" & length(grep("4param", X$model))!= 1){
     ECx.out <- apply(pred.vals$posterior, MARGIN=2, FUN=function(y){
       range.y <- c(0, max(y))
       ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
