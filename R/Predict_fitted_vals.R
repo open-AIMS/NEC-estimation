@@ -51,7 +51,7 @@ predict_NECmod <- function(x.vec, NEC=min(x.vec), top, beta, alpha=0, d=1, bot=0
 predict_ECxmod <- function(x.vec, EC50, top, beta, bot=0){
   
   x.seq <- x.vec 
-  y.pred <- bot + (top-bot)/(1+exp((EC50-x.seq)*beta))
+  y.pred <- top + (bot-top)/(1+exp((EC50-x.seq)*beta))
 
   return(y.pred)
   
