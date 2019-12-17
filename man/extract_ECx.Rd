@@ -5,7 +5,7 @@
 \title{extract_ECx}
 \usage{
 extract_ECx(X, ECx.val = 10, precision = 10000, posterior = FALSE,
-  type = "absolute", xform = NA)
+  type = "absolute", xform = NA, prob.vals = c(0.5, 0.025, 0.975))
 }
 \arguments{
 \item{X}{a jag model fit as returned by a call to jags from fit.jagsNEC}
@@ -23,6 +23,8 @@ of the response, "absolute" is calculated as the the percentage decrease from th
 to 0 (or bot for a 4 parameter model fit),  and "direct" provides a direct estimate of the x value for a given y.}
 
 \item{xform}{A function to apply to the returned estimated concentration values}
+
+\item{prob.vals}{A vector indicating the probability values over which to return the estimated ECx value. Default to 0.5 (median) and 0.025 and 0.975 (95% credible intervals).}
 }
 \value{
 A vector containing the estimated ECx value, including upper and lower 95 percent Credible Interval bounds
