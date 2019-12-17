@@ -662,13 +662,11 @@ write.jags.ECx4param.mod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      top = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.75))/
-        round(mean(mod.dat$trials)),
+      top = quantile(mod.dat$y, probs=0.75),
       beta = rgamma(1,0.2,0.001),
       t0 = rnorm(0,100),
       EC50 = runif(1, 0.3, 0.6),
-      bot =rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.25))/
-        round(mean(mod.dat$trials)))} 
+      bot =quantile(mod.dat$y, probs=0.25))} 
   }
   
   # beta y; gamma x ----
@@ -718,13 +716,11 @@ write.jags.ECx4param.mod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      top = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.75))/
-        round(mean(mod.dat$trials)),
+      top = quantile(mod.dat$y, probs=0.75),
       beta = rgamma(1,0.2,0.001),
       t0 = rnorm(0,100),
       EC50 = rlnorm(1,log(mean(mod.dat$x)),1),
-      bot = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.25))/
-        round(mean(mod.dat$trials)))}
+      bot = quantile(mod.dat$y, probs=0.25))}
   }
 
   # beta y; gaussian x ----
@@ -774,13 +770,11 @@ write.jags.ECx4param.mod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      top = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.75))/
-        round(mean(mod.dat$trials)),
+      top = quantile(mod.dat$y, probs=0.75),
       beta = rgamma(1,0.2,0.001),
       t0 = rnorm(0,100),
       EC50 = rnorm(1, 0, 2),
-      bot = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.25))/
-        round(mean(mod.dat$trials)))}
+      bot = quantile(mod.dat$y, probs=0.25))}
   }
   
   # negbin y; gaussian x ----
