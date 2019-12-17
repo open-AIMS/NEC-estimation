@@ -46,9 +46,9 @@ fit.jagsNEC <- function(data,
                         model="NEC3param",
                         ...){
   
-  y.dat <- data[,y.var]
-  x.dat <- data[,x.var] 
-  
+  y.dat <- data[, y.var]
+  x.dat <- data[, x.var] 
+   
   # check the x data are numeric
   if(class(x.dat)!="numeric"){
     stop(paste("Your indicated x.var column ", x.var," contains data that is class ", class(x.dat),". 
