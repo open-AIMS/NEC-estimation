@@ -285,7 +285,7 @@ fit.jagsNEC <- function(data,
 
   # calculate the predicted values based on the median parameter estimates
   if(model!="ECx4param"){
-    EC50 <- extract_ECx(out, ECx.val = 50)
+    EC50 <- extract_ECx(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975))
     y.pred.m <- predict_NECmod(x.vec=x.seq, 
                              NEC=NEC["50%"], top=top["50%"], beta=beta["50%"], d=d["50%"], bot=bot["50%"])
     predicted.y <- predict_NECmod(x.vec=mod.dat$x,
