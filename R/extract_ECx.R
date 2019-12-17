@@ -19,7 +19,7 @@
 #' 
 #' @param xform A function to apply to the returned estimated concentration values
 #' 
-#' @param prob.vals A vector indicating the probability values over which to return the estimated ECx value. Default to 0.5 (median) and 0.025 and 0.975 (95% credible intervals). 
+#' @param prob.vals A vector indicating the probability values over which to return the estimated ECx value. Defaults to 0.5 (median) and 0.025 and 0.975 (95 percent credible intervals). 
 #' 
 #' @export
 #' @return A vector containing the estimated ECx value, including upper and lower 95 percent Credible Interval bounds
