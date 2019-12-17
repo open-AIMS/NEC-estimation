@@ -787,7 +787,7 @@ write.jags.ECx4param.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-size/(size+ bot + (top-bot)/(1+exp((EC50-x[i])*beta))
+        theta[i]<-size/(size+ bot + (top-bot)/(1+exp((EC50-x[i])*beta)))
         # response is begative binomial
         y[i]~dnegbin(theta[i], size)
         }
@@ -838,7 +838,7 @@ write.jags.ECx4param.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-size/(size + bot + (top-bot)/(1+exp((EC50-x[i])*beta))
+        theta[i]<-size/(size + bot + (top-bot)/(1+exp((EC50-x[i])*beta)))
         # response is begative binomial
         y[i]~dnegbin(theta[i], size)
         }
@@ -889,7 +889,7 @@ write.jags.ECx4param.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-size/(size + bot + (top-bot)/(1+exp((EC50-x[i])*beta))
+        theta[i]<-size/(size + bot + (top-bot)/(1+exp((EC50-x[i])*beta)))
         # response is begative binomial
         y[i]~dnegbin(theta[i], size)
         }
