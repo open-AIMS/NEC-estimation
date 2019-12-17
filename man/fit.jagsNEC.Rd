@@ -6,7 +6,7 @@
 \usage{
 fit.jagsNEC(data, x.var, y.var, trials.var = NA, x.type = NA,
   y.type = NA, burnin = 5000, n.iter = burnin + 500,
-  n.iter.update = 10000, n.tries = 10, params = c("top", "beta",
+  n.iter.update = 10000, n.tries = 3, params = c("top", "beta",
   "NEC", "SS", "SSsim"), over.disp = FALSE, model = "NEC3param", ...)
 }
 \arguments{
