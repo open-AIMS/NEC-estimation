@@ -178,6 +178,8 @@ fit.jagsNEC <- function(data,
   
   all.Js <- list()
   
+  warn = getOption("warn")
+  options(warn=-1)
   J1 <- try(jags(data   = mod.dat,
              inits      = init.fun,
              parameters = params,
@@ -186,6 +188,8 @@ fit.jagsNEC <- function(data,
              n.chains   = 5,
              n.burnin   = burnin,
              n.iter     = n.iter), silent = T)
+  options(warn=warn)
+  
   if(class(J1)!="try-error"){ # make sure the fitted model had good mixing
     all.Js <- c(all.Js, list(J1))   
     if(max(unlist(check.mixing(J1)$cv.test))==1){class(J1)="try-error"}
@@ -194,6 +198,8 @@ fit.jagsNEC <- function(data,
    warning("The generated init.fun failed to yield a valid model. Model based on default jags initial values")
   }
   # if the attempt fails try 10 more times
+  warn = getOption("warn")
+  options(warn=-1)
   w <- 1
     while(class(J1)=="try-error" & w <= n.tries){
     w <- w+1      
@@ -227,6 +233,7 @@ fit.jagsNEC <- function(data,
       if(max(unlist(check.mixing(J1)$cv.test))==1){class(J1)="try-error"}
     }    
   }
+  options(warn=warn)
   
   if(class(J1)=="try-error"){
     if(length(all.Js)>0){
