@@ -19,12 +19,15 @@
 #' 
 #' @param xform A function to apply to the returned estimated concentration values
 #' 
+#' @param prob.vals A vector indicating the probability values over which to return the estimated ECx value. Default to 0.5 (median) and 0.025 and 0.975 (95% credible intervals). 
+#' 
 #' @export
 #' @return A vector containing the estimated ECx value, including upper and lower 95 percent Credible Interval bounds
 #' 
 #' @details Please note that the estimated ECx value is based on the equivalent percentage decrease from the range of the highest to the lowest estimate value across the range of the observed concentration (x) values. If the concentration response relationship is such that the full range of observed responses is not captured (ie a complete decline response at the highest level of exposure), the estimated ECx values may be lower than if the full concentration-response curve were available. Note this is therefore a conservative value.
 
-extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type="absolute", xform=NA){
+extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type="absolute", xform=NA, 
+                        prob.vals=c(0.5, 0.025, 0.975)){
   if(type!="direct"){
    if(ECx.val<1 | ECx.val>99){
     stop("Supplied ECx.val is not in the required range. Please supply a percentage value between 1 and 99.")
@@ -78,7 +81,7 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
     }) 
   }
   
-  ECx.estimate <- quantile(ECx.out, probs=c(0.5, 0.025, 0.975))
+  ECx.estimate <- quantile(ECx.out, probs=prob.vals)
   names(ECx.estimate) <- c(label, paste(label, "lw", sep="_"), paste(label, "up", sep="_"))
 
   if(class(xform)=="function"){
