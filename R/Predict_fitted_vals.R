@@ -91,8 +91,8 @@ predict_NECbugsmod <- function(X, precision=100){
                      alpha=X$sims.list$alpha[x])}))
   }
   
-  # for the Hockey model
-  if(X$y.type != "gaussian" & X$model == "Hockey"){
+  # for the NECsigmoidal model
+  if(X$y.type != "gaussian" & X$model == "NECsigmoidal"){
     pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
       predict_NECmod(x.vec=x.seq,
                      NEC=X$sims.list$NEC[x],
@@ -101,7 +101,7 @@ predict_NECbugsmod <- function(X, precision=100){
                      d=X$sims.list$d[x])}))
   }
   
-  if(X$y.type == "gaussian" & X$model == "Hockey"){
+  if(X$y.type == "gaussian" & X$model == "NECsigmoidal"){
     pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
       predict_NECmod(x.vec=x.seq,
                      NEC=X$sims.list$NEC[x],

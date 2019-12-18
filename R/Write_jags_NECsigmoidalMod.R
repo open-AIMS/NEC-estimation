@@ -9,7 +9,7 @@
 #' @export
 #' @return an init function to pass to jags
 
-write.jags.NECsigmoidal <- function(x="gamma", y, mod.dat){  
+write.jags.NECsigmoidal.mod <- function(x="gamma", y, mod.dat){  
   
   # binomial y; gamma x ----
    if(x=="gamma" & y=="binomial"){
