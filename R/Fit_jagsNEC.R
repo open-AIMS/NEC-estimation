@@ -316,19 +316,18 @@ fit.jagsNEC <- function(data,
   od <- mean(out$sims.list$SS > out$sims.list$SSsim)
   
   # calculate the NEC from the predicted values for the ECx model
-  #if(model=="ECx4param"){
-    out$sims.list$NEC.p <- unlist(lapply(1:out$n.sims, FUN=function(x){
+  if(model=="ECx4param"){
+    out$sims.list$NEC <- unlist(lapply(1:out$n.sims, FUN=function(x){
       pred.vals$x[which.min(abs(pred.vals$posterior[, x]-quantile(out$sims.list$top, 0.01)))]
         }))
-    NEC.p <- quantile(out$sims.list$NEC.p, c(0.025, 0.5, 0.975))  
-  #}
+    NEC <- quantile(out$sims.list$NEC, c(0.025, 0.5, 0.975))  
+  }
   
   # Put everyting in a list for output
   if(class(out)!="try-error"){
       out <- c(out, list(
      pred.vals = pred.vals,
      NEC = NEC,
-     NEC.p = NEC.p,
      top = top,
      beta = beta,
      alpha = alpha,
