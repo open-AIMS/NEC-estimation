@@ -26,7 +26,7 @@
 #'
 #' @param over.disp. If an overdispersed model should be used. Only changes the model fit for poisson and binomial y.type data. For poisson, a negative binomial model will be fit. For binomial a beta model will be fit.
 #'
-#' @param model The type of model to be fit. Currently takes values of "NEC3param",  "NEC4param" or"ECx4param", or Hockey". This is in beta and "Hockey" in particular does not work reliably for all test cases.
+#' @param model The type of model to be fit. Currently takes values of "NEC3param",  "NEC4param" or"ECx4param", or NECsigmoidal". This is in beta and "NECsigmoidal" in particular does not work reliably for all test cases.
 #'
 #' @export
 #' @return The $BUGSoutput element of fitted jags model.
@@ -89,7 +89,7 @@ fit.jagsNEC <- function(data,
   } 
   
   # check there is a valid model type
-  if(is.na(match(model, c("NEC3param", "Hockey", "NEC4param", "ECx4param")))){
+  if(is.na(match(model, c("NEC3param", "NECsigmoidal", "NEC4param", "ECx4param")))){
     stop("The model type you have specified does not extist.")    
   }
   
@@ -162,8 +162,8 @@ fit.jagsNEC <- function(data,
   if(model=="NEC3param"){
      init.fun <- write.jags.NEC3param.mod(x=x.type,y=y.type, mod.dat=mod.dat) 
   }
-   if(model=="Hockey"){
-    init.fun <- write.jags.Hockey.NECmod(x=x.type,y=y.type, mod.dat=mod.dat)
+   if(model=="NECsigmoidal"){
+    init.fun <- write.jags.NECsigmoidal.mod(x=x.type,y=y.type, mod.dat=mod.dat)
     params <- c(params, "d")
   } 
   if(model=="NEC4param"){
@@ -264,29 +264,30 @@ fit.jagsNEC <- function(data,
     
   min.x <- min(mod.dat$x)
   max.x <- max(mod.dat$x)
-  x.seq <- seq(min.x, max.x, length=100)
+  x.seq <- seq(min.x, max.x, length=1000)
   
   # extract the model paramters - depending on the model types
-  NEC <-   rep(min.x,3); names(NEC) <- c("2.5%",  "50%", "97.5%")
+  # NEC <-   rep(min.x,3); names(NEC) <- c("2.5%",  "50%", "97.5%")
   top <-  quantile(out$sims.list$top,c(0.025, 0.5, 0.975))
   beta <-  quantile(out$sims.list$beta,c(0.025, 0.5, 0.975)) 
   alpha <- rep(0,3)#rep(0, length(NEC))
   bot <- rep(0,3); names(bot) <- c("2.5%",  "50%", "97.5%") #rep(0, length(NEC))
   d <- rep(1,3); names(d) <- c("2.5%",  "50%", "97.5%") #rep(0, length(NEC))
   
+  # extract the relevant model parameters
   if(model!="ECx4param"){  
     NEC <- quantile(out$sims.list$NEC,c(0.025, 0.5, 0.975))
   }
   if(y.type=="gaussian" & model=="NEC3param"){
     alpha <-  quantile(out$sims.list$alpha,c(0.025, 0.5, 0.975)) 
   }
-  if(y.type=="gaussian" & model=="Hockey"){
+  if(y.type=="gaussian" & model=="NECsigmoidal"){
     alpha <-  quantile(out$sims.list$alpha,c(0.025, 0.5, 0.975)) 
   }
   if(model=="NEC4param" | model=="ECx4param"){
     bot <-  quantile(out$sims.list$bot, c(0.025, 0.5, 0.975)) 
   }
-  if(model=="Hockey"){
+  if(model=="NECsigmoidal"){
     d <-  quantile(out$sims.list$d, c(0.025, 0.5, 0.975)) 
   } 
 
@@ -306,7 +307,7 @@ fit.jagsNEC <- function(data,
   }
   
   # calculate the predicted values using the entire posterior
-  pred.vals <- c(predict_NECbugsmod(X=out), list(y.m=y.pred.m))  
+  pred.vals <- c(predict_NECbugsmod(X=out, precision = 1000), list(y.m=y.pred.m))  
   
   # calculate the residuals
   residuals <-  response - predicted.y
@@ -314,11 +315,20 @@ fit.jagsNEC <- function(data,
   # Extract the overdispersion estimate
   od <- mean(out$sims.list$SS > out$sims.list$SSsim)
   
+  # calculate the NEC from the predicted values for the ECx model
+  #if(model=="ECx4param"){
+    out$sims.list$NEC.p <- unlist(lapply(1:out$n.sims, FUN=function(x){
+      pred.vals$x[which.min(abs(pred.vals$posterior[, x]-quantile(out$sims.list$top, 0.01)))]
+        }))
+    NEC.p <- quantile(out$sims.list$NEC.p, c(0.025, 0.5, 0.975))  
+  #}
+  
   # Put everyting in a list for output
   if(class(out)!="try-error"){
       out <- c(out, list(
      pred.vals = pred.vals,
      NEC = NEC,
+     NEC.p = NEC.p,
      top = top,
      beta = beta,
      alpha = alpha,
