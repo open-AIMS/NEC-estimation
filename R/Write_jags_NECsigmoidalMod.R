@@ -1,4 +1,4 @@
-#' write.jags.Hockey.NECmod
+#' write.jags.NECsigmoidal
 #'
 #' Writes an NEC model file and generates a function for initial values to pass to jags
 #' 
@@ -9,7 +9,7 @@
 #' @export
 #' @return an init function to pass to jags
 
-write.jags.Hockey.NECmod <- function(x="gamma", y, mod.dat){  
+write.jags.NECsigmoidal <- function(x="gamma", y, mod.dat){  
   
   # binomial y; gamma x ----
    if(x=="gamma" & y=="binomial"){
