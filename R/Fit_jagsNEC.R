@@ -26,7 +26,9 @@
 #'
 #' @param over.disp. If an overdispersed model should be used. Only changes the model fit for poisson and binomial y.type data. For poisson, a negative binomial model will be fit. For binomial a beta model will be fit.
 #'
-#' @param model The type of model to be fit. Currently takes values of "NEC3param",  "NEC4param" or"ECx4param", or NECsigmoidal". This is in beta and "NECsigmoidal" in particular does not work reliably for all test cases.
+#' @param model The type of model to be fit. Currently takes values of "NEC3param",  
+#' "NEC4param", "NECsigmoidal", "NECHormesis" or "ECx4param". All models other than 
+#' "NEC3param" (which is that defined by Fox 2010) are currently undergoing beta testing and are experimental. These should not yet be used for NEC reporting.
 #'
 #' @export
 #' @return The $BUGSoutput element of fitted jags model.
@@ -89,7 +91,8 @@ fit.jagsNEC <- function(data,
   } 
   
   # check there is a valid model type
-  if(is.na(match(model, c("NEC3param", "NECsigmoidal", "NEC4param", "ECx4param")))){
+  if(is.na(match(model, c("NEC3param", "NECsigmoidal", "NEC4param", 
+                          "ECx4param", "NECHormesis")))){
     stop("The model type you have specified does not extist.")    
   }
   
@@ -176,6 +179,11 @@ fit.jagsNEC <- function(data,
     params <- setdiff(c(params, "bot", "EC50"), c("NEC", "alpha"))
   }
   
+  if(model=="NECHormesis"){
+    init.fun <- write.jags.NECHormesis.mod(x=x.type,y=y.type, mod.dat=mod.dat)
+    params <- c(params, "slope")
+  }
+  
   all.Js <- list()
   
   warn = getOption("warn")
@@ -198,8 +206,8 @@ fit.jagsNEC <- function(data,
    warning("The generated init.fun failed to yield a valid model. Model based on default jags initial values")
   }
   # if the attempt fails try 10 more times
-  warn = getOption("warn")
-  options(warn=-1)
+  #warn = getOption("warn")
+  #options(warn=-1)
   w <- 1
     while(class(J1)=="try-error" & w <= n.tries){
     w <- w+1      
@@ -233,7 +241,7 @@ fit.jagsNEC <- function(data,
       if(max(unlist(check.mixing(J1)$cv.test))==1){class(J1)="try-error"}
     }    
   }
-  options(warn=warn)
+  #options(warn=warn)
   
   if(class(J1)=="try-error"){
     if(length(all.Js)>0){
@@ -273,6 +281,7 @@ fit.jagsNEC <- function(data,
   alpha <- rep(0,3)#rep(0, length(NEC))
   bot <- rep(0,3); names(bot) <- c("2.5%",  "50%", "97.5%") #rep(0, length(NEC))
   d <- rep(1,3); names(d) <- c("2.5%",  "50%", "97.5%") #rep(0, length(NEC))
+  slope <- rep(0,3); names(slope) <- c("2.5%",  "50%", "97.5%")
   
   # extract the relevant model parameters
   if(model!="ECx4param"){  
@@ -290,20 +299,40 @@ fit.jagsNEC <- function(data,
   if(model=="NECsigmoidal"){
     d <-  quantile(out$sims.list$d, c(0.025, 0.5, 0.975)) 
   } 
-
+  if(model=="NECHormesis"){
+    slope <-  quantile(out$sims.list$slope, c(0.025, 0.5, 0.975)) 
+     if(slope["50%"]<0){
+        warning("The estimated model has a negative slope parameter for characterising Hormesis, 
+                             which is invalid for an NEC model.
+            Please refit using one of the non-hormesis model types.")}
+  }
+  
   # calculate the predicted values based on the median parameter estimates
-  if(model!="ECx4param"){
+  if(model!="ECx4param" & y.type !="gaussian"){
     EC50 <- extract_ECx(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975))
     y.pred.m <- predict_NECmod(x.vec=x.seq, 
-                             NEC=NEC["50%"], top=top["50%"], beta=beta["50%"], d=d["50%"], bot=bot["50%"])
+                             NEC=NEC["50%"], top=top["50%"],  beta=beta["50%"], 
+                             d=d["50%"], bot=bot["50%"], slope=slope["50%"])
     predicted.y <- predict_NECmod(x.vec=mod.dat$x,
-                                  NEC=NEC["50%"], top=top["50%"], beta=beta["50%"], d=d["50%"], bot=bot["50%"])  
-  }else{
+                                  NEC=NEC["50%"], top=top["50%"], beta=beta["50%"], 
+                                  d=d["50%"], bot=bot["50%"], slope=slope["50%"])}
+  if(model!="ECx4param" & y.type =="gaussian"){
+    EC50 <- extract_ECx(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975), type="relative")
+    y.pred.m <- predict_NECmod(x.vec=x.seq, 
+                               NEC=NEC["50%"], top=top["50%"],  beta=beta["50%"], 
+                               d=d["50%"], bot=bot["50%"], slope=slope["50%"])
+    predicted.y <- predict_NECmod(x.vec=mod.dat$x,
+                                  NEC=NEC["50%"], top=top["50%"], beta=beta["50%"], 
+                                  d=d["50%"], bot=bot["50%"], slope=slope["50%"])}  
+  
+   if(model=="ECx4param"){
     EC50 <-  quantile(out$sims.list$EC50, c(0.025, 0.5, 0.975)) 
     y.pred.m <- predict_ECxmod(x.vec=x.seq, 
-                             EC50=EC50["50%"], top=top["50%"], beta=beta["50%"], bot=bot["50%"]) 
+                             EC50=EC50["50%"], top=top["50%"], beta=beta["50%"], 
+                             bot=bot["50%"]) 
     predicted.y <- predict_ECxmod(x.vec=mod.dat$x,
-                                  EC50=EC50["50%"], top=top["50%"], beta=beta["50%"], bot=bot["50%"])    
+                                  EC50=EC50["50%"], top=top["50%"], beta=beta["50%"], 
+                                  bot=bot["50%"])    
   }
   
   # calculate the predicted values using the entire posterior

@@ -17,12 +17,12 @@
 #' @export
 #' @return A list containing x and fitted y, with up and lw values
 
-predict_NECmod <- function(x.vec, NEC=min(x.vec), top, beta, alpha=0, d=1, bot=0){
+predict_NECmod <- function(x.vec, NEC=min(x.vec), top, beta, alpha=0, d=1, bot=0, slope=0){
   
   x.seq.pre <-  x.vec[which(x.vec<=NEC)] #seq(min.x, NEC.m, length=20)
   x.seq.post <- x.vec[which(x.vec>NEC)] # seq(NEC.m, max.x, length=20)
   
-  y.pred.pre <- (rep(top, length(x.seq.pre)))-alpha
+  y.pred.pre <- (top + slope*x.seq.pre)-alpha
   y.pred.post <- bot + ((top-bot)*exp(-beta*(x.seq.post-NEC)^d))-alpha  
   
   y.pred <- c(y.pred.pre, y.pred.post)
@@ -129,6 +129,26 @@ predict_NECbugsmod <- function(X, precision=100){
                      EC50=X$sims.list$EC50[x],
                      bot=X$sims.list$bot[x])}))
   }
+  
+  # for the NECHormesis model
+  if(X$y.type != "gaussian" & X$model == "NECHormesis"){
+    pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
+      predict_NECmod(x.vec=x.seq,
+                     NEC=X$sims.list$NEC[x],
+                     top=X$sims.list$top[x],
+                     beta=X$sims.list$beta[x],
+                     slope=X$sims.list$slope[x])}))
+  }
+  
+  if(X$y.type == "gaussian" & X$model == "NECHormesis"){
+    pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
+      predict_NECmod(x.vec=x.seq,
+                     NEC=X$sims.list$NEC[x],
+                     top=X$sims.list$top[x],
+                     beta=X$sims.list$beta[x],
+                     alpha=X$sims.list$alpha[x],
+                     slope=X$sims.list$slope[x])}))
+  } 
   
   m.vals <- apply(pred.vals.out, MARGIN=1, FUN=quantile, probs=0.5)
   up.vals <- apply(pred.vals.out, MARGIN=1, FUN=quantile, probs=0.975)

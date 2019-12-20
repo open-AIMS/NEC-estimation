@@ -5,7 +5,7 @@
 \title{predict_NECmod}
 \usage{
 predict_NECmod(x.vec, NEC = min(x.vec), top, beta, alpha = 0, d = 1,
-  bot = 0)
+  bot = 0, slope = 0)
 }
 \arguments{
 \item{x.vec}{the x vector over which to calculate}

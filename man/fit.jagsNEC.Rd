@@ -28,7 +28,9 @@ fit.jagsNEC(data, x.var, y.var, trials.var = NA, x.type = NA,
 
 \item{params}{A vector of names indicating the parameters that to trace during the jags fit. For the NEC jags model this is typically 'NEC','top' and 'beta'. If left out, fit.jagsNEC will supply this based on the selected y.type and x.type.}
 
-\item{model}{The type of model to be fit. Currently takes values of "NEC3param",  "NEC4param" or"ECx4param", or NECsigmoidal". This is in beta and "NECsigmoidal" in particular does not work reliably for all test cases.}
+\item{model}{The type of model to be fit. Currently takes values of "NEC3param",
+"NEC4param", "NECsigmoidal", "NECHormesis" or "ECx4param". All models other than 
+"NEC3param" (which is that defined by Fox 2010) are currently undergoing beta testing and are experimental. These should not yet be used for NEC reporting.}
 
 \item{n.iter.burnin}{the number of interations to run overall. This should be large. Defaults to 10000.}
 

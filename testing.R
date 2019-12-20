@@ -6,9 +6,10 @@ require(tidyverse)
 source("R/check_chains.R")
 source("R/check_mixing.R")
 source("R/Write_jags_NEC3paramMod.R")
-source("R/Write_jags_Hockey_model.R")
+source("R/Write_jags_NECsigmoidalMod.R")
 source("R/Write_jags_NEC4paramMod.R")
-source("R/	Write_jags_ECx4paramMod.R")
+source("R/Write_jags_ECx4paramMod.R")
+source("R/Write_jags_NECHormesisMod.R")
 source("R/Predict_fitted_vals.R")
 source("R/Fit_jagsNEC.R")
 source("R/plot_jagsNEC.R")
@@ -16,25 +17,113 @@ source("R/plot_jagsNECfit.R")
 source("R/extract_ECx.R")
 path <- "C:/Users/rfisher/OneDrive - Australian Institute of Marine Science/Documents/AIMS/EcologicalRiskModelling/Ecotoxicology/Ecotox_stats/CR-examples"
 
-### Testing/troubleshooting alternative models
+### testing what to do with hormesis ----
+data1 <- read.table("https://pastebin.com/raw/rF2biHYG", header= TRUE,dec=",") %>%
+  mutate(raw.x = as.numeric(as.character(raw.x)),
+         log.x = log(raw.x),
+         suc = as.integer(as.character(suc)),
+         tot = as.integer(as.character(tot)),
+         prop = suc/tot) %>%
+  drop_na() 
+
+data1$obs <- factor(formatC(1:nrow(data1), flag="0", width = 3))# first need to make an observation row to soon randomise
+plot(data1$raw.x, data1$suc/data1$tot, log = 'x')   #pooled by spp and specta (tenuis not updates
+sp.data1 = split(data1, data1$spp)
+data1.mil = sp.data1$mil
+levels(data1$spectra)
+sp.mil = split(data1.mil, data1.mil$spectra)
+data.m.w = sp.mil$whi
+data.m.w
+data.m.y = sp.mil$yel
+data.m.y
+# plot(data.m.w$raw.x, data.m.w$suc/data.m.w$tot, log = 'x')   #pooled by specta 
+# points(data.m.y$raw.x, data.m.y$suc/data.m.y$tot, col = 'orange')
+
+library(ggplot2)
+p0 = ggplot()+geom_point(data1.mil, mapping = aes(x = raw.x, y = prop), position = position_jitter(width = .02),color = 'grey60', alpha = 0.20,size = data1.mil$tot )+facet_wrap(~spectra)+scale_x_log10(name ="dep sed")
+p0
+
+out <- fit.jagsNEC(data=data1,
+                   x.var="log.x",  
+                   y.var="suc",
+                   model="NECHormesis",
+                   #over.disp = TRUE,
+                   trials.var = "tot")
+check.chains(out)
+
+par(mfrow=c(1,1))
+plot(out)
+
+
+
+### Testing/troubleshooting alternative models ----
+#source("R/Write_jags_NECHormesisMod.R")
 
 data1 <-  read.table("https://pastebin.com/raw/dUMSAvYi", header= TRUE,dec=",")  %>%
   mutate(raw.x=as.numeric(as.character(raw.x)),
          log.x=log(raw.x))
 
-out <- fit.jagsNEC(data=data1,
+out1 <- fit.jagsNEC(data=data1,
                    x.var="log.x",
                    y.var="suc",
-                   trials.var = "tot",
-                   model="basic4param",                   
-                   n.tries=2,
-                   over.disp=T)
-check.chains(out)
+                   model="ECx4param",
+                   over.disp = TRUE,
+                   trials.var = "tot")
 
+out2 <- fit.jagsNEC(data=data1,
+                   x.var="log.x",
+                   y.var="suc",
+                   model="NEC4param",
+                   over.disp = TRUE,
+                   trials.var = "tot")
+out3 <- fit.jagsNEC(data=data1,
+                         x.var="log.x",
+                         y.var="suc",
+                         model="NECsigmoidal",
+                         over.disp = TRUE,
+                         trials.var = "tot", 
+                         n.tries=20)
+out4 <- fit.jagsNEC(data=data1,
+                    x.var="log.x",
+                    y.var="suc",
+                    model="NECHormesis",
+                    over.disp = TRUE,
+                    trials.var = "tot")
+out5 <- fit.jagsNEC(data=data1,
+                    x.var="log.x",
+                    y.var="suc",
+                    model="NEC3param",
+                    over.disp = TRUE,
+                    trials.var = "tot")
+
+pdf("compare_NECvals.pdf", height=8)
+par(mfrow=c(3,2), mar=c(2,2,1,1), oma=c(2,2,0,0))
+plot(out1)
+abline(v=out1$NEC, lty=c(2,1,2), col="blue")
+legend("bottomleft", legend="ECx4param", bty="n")
+legend("right", legend="NEC (indirect)", col="blue", lty=1, bty="n")
+plot(out5)
+legend("bottomleft", legend="NEC3param", bty="n")
+plot(out2)
+legend("bottomleft", legend="NEC4param", bty="n")
+plot(out3)
+legend("bottomleft", legend="NECsigmoidal", bty="n")
+plot(out4)
+legend("bottomleft", legend="NECHormesis", bty="n")
+mtext(text="Log (Concentration)", side=1, outer=TRUE)
+mtext(text="Response", side=2, outer=TRUE)
+
+dev.off()
+
+
+out1$NEC
+out2$NEC
+
+check.chains(out)
 par(mfrow=c(1,1))
-plot(out)#, lxform = exp)
+plot(out)#, lxform = exp, xlim=c(-1,3), xticks = c(-1,0,1,2,3))
 extract_ECx(out, type="direct", ECx.val=0.8)#, xform = exp)
-extract_ECx(out, xform = exp, ECx.val=50)
+extract_ECx(out, ECx.val=50)
 
 ### Testing/troubleshooting the Hockey Model v2
 
@@ -43,18 +132,39 @@ data1 <-  read.table("https://pastebin.com/raw/dKVi6L3t", header= TRUE,dec=",") 
          log.x=log(raw.x))
 
 out <- fit.jagsNEC(data=data1,
-                   x.var="log.x",#"raw.x", 
+                   x.var="log.x",#"raw.x", # 
                    y.var="suc",
-                   trials.var = "tot",
-                   model="basic4param",                   
-                   n.tries=5)
+                   model="NECHormesis",
+                   trials.var = "tot")
 check.chains(out)
 
 par(mfrow=c(1,1))
 plot(out)
 plot(data1$log.x,out$residuals)
 
-### Testing/troubleshooting the Hockey Model v3
+
+out1 <- fit.jagsNEC(data=data1,
+                    x.var="log.x",
+                    y.var="suc",
+                    model="ECx4param",
+                    over.disp = TRUE,
+                    trials.var = "tot")
+
+out2 <- fit.jagsNEC(data=data1,
+                    x.var="log.x",
+                    y.var="suc",
+                    model="NEC4param",
+                    over.disp = TRUE,
+                    trials.var = "tot")
+par(mfrow=c(1,2))
+plot(out1)
+plot(out2)
+out1$NEC.p 
+out2$NEC.p
+out2$NEC
+
+
+### Testing/troubleshooting alternative models
 dat <- read.table(paste(path,'marie_test_hockey.txt',sep="/"), sep="\t", header=T) %>% 
   dplyr::select(raw.x, count) %>%
   mutate(SGR=(log(count)-log10(3353))/3,
@@ -63,16 +173,18 @@ dat <- read.table(paste(path,'marie_test_hockey.txt',sep="/"), sep="\t", header=
 
 out <- fit.jagsNEC(data=dat,
                    x.var="log.x",
-                   y.var="SGR", y.type="gaussian",
-                   model="basic4param",                   
+                   y.var="SGR", 
+                   y.type="gaussian",
+                   model="NECHormesis",                   
                    n.tries=20)
 
 check.chains(out)
 
 par(mfrow=c(1,1))
 plot(out, legend.loc = "bottomleft")
+abline(v=out$NEC, col="orange", lty=c(2,1,2))
 
-
+hist(out$sims.list$NEC)
 
 
 ### Example from Gerards original NEC script ----
@@ -88,7 +200,8 @@ hist(binom.data$raw.x)
 out <- fit.jagsNEC(data=binom.data, 
                         x.var="raw.x", 
                         y.var="suc", 
-                        trials.var="tot")
+                        trials.var="tot",
+                        model="ECx4param" )
 
 check.chains(out)
 
@@ -103,7 +216,7 @@ extract_ECx(out, type="relative")
 out <- fit.jagsNEC(data=binom.data, 
                    x.var="log.x", 
                    y.var="suc", 
-                   model="basic4param",
+                   model="ECx4param",
                    trials.var="tot", over.disp=T)
 
 check.chains(out)
@@ -129,7 +242,7 @@ hist(count.data$count)
 out <- fit.jagsNEC(data=count.data, 
                    x.var="log.x", 
                    y.var="count", 
-                   model="basic4param")
+                   model="ECx4param")
 check.chains(out)
 mean(out$sims.list$SS > out$sims.list$SSsim)
 
@@ -148,14 +261,14 @@ measure.data = read.table("https://pastebin.com/raw/pWeS6x0n", header= TRUE,dec=
 out <- fit.jagsNEC(data=measure.data, 
                    x.var="log.x", 
                    y.var="measure", 
-                   model="basic4param",
-                   n.tries=1, prob.val=0.05)
+                   model="NECHormesis",
+                   n.tries=20)
 
 check.chains(out)
 mean(out$sims.list$SS > out$sims.list$SSsim)
 
 par(mfrow=c(1,1))
-plot_jagsNEC(out)
+plot(out)
 
 
 #### other testing ####################################
@@ -167,30 +280,35 @@ binom.data$logit.prop <- logit(binom.data$prop)
 out <- fit.jagsNEC(data=binom.data, 
                    x.var="log.x", 
                    y.var="logit.prop",
-                   model="basic4param")
+                   model="NECHormesis")
 check.chains(out)
 
 par(mfrow=c(1,1))
 plot(out)
 
+extract_ECx(out, ECx.val = 50)
+
 ### now test all Heidi's examples
 all.files <- list.files(path)
 files <- all.files[grep(".csv",all.files)]
 
-pdf("testing.pdf",onefile = T)
+pdf("testingECx4param.pdf",onefile = T)
 
 for(f in 1:length(files)){
   dat <- read.csv(paste(path,files[f], sep="/"))
-  out <- fit.jagsNEC(data=dat, 
+  out <- try(fit.jagsNEC(data=dat, 
                      x.var="concentration", 
                      y.var="response", 
+                     model="ECx4param",
                      burnin=1000,
-                     n.iter.update = 10000)
-  check.chains(out)
-  
-  par(mfrow=c(1,1))
-  plot_jagsNEC(out)
-  mtext(side=3,text=f,outer=T)
+                     n.iter.update = 10000))
+  #check.chains(out)
+  if(class(out)!="try-error"){
+      par(mfrow=c(1,1))
+      plot(out)
+      mtext(side=3,text=f,outer=T)
+  }
+
   
 }
 dev.off()
@@ -257,7 +375,7 @@ out2 <- fit.jagsNEC(data=dat,
                     x.var="concentration", 
                     y.var="y.2",
                     n.tries=2,
-                    model="basic4param")
+                    model="ECx4param")
 
 check.chains(out2)
 par(mfrow=c(1,1))
@@ -282,7 +400,7 @@ out1 <- fit.jagsNEC(data=dat,
                     y.var="y.1",
                     n.tries=2,
                     trials.var="trials",
-                    model="basic4param")
+                    model="ECx4param")
 
 
 check.chains(out1) 
@@ -308,7 +426,7 @@ prop.data <- read.table("https://pastebin.com/raw/123jq46d", header= TRUE,dec=",
 out <- fit.jagsNEC(data=prop.data, 
                    x.var="raw.x", 
                    y.var="resp",
-                   model="basic4param",
+                   model="ECx4param",
                    n.tries=1)
 
 check.chains(out) 
@@ -383,7 +501,7 @@ out <- fit.jagsNEC(data=binom.data,
                    x.var="log.x",
                    y.var="prop", 
                    n.tries=2,
-                   model="basic4param")
+                   model="ECx4param")
 check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot(out, x.lab = "WAF (%)", y.lab = "Fertilization success (%)")
@@ -399,7 +517,7 @@ out <- fit.jagsNEC(data=binom.data,
                    y.var="suc",
                    trials.var="tot", 
                    over.disp=T,
-                   model="4param")
+                   model="NEC4param")
 check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot(out, x.lab = "WAF (%)", y.lab = "Fertilization success (%)",log.x = "x")
@@ -438,7 +556,7 @@ out <- fit.jagsNEC(data=data1,
                    y.var="suc",
                    trials.var="tot",
                    over.disp = TRUE,
-                   model="basic4param")
+                   model="ECx4param")
 out$over.disp
 plot(out)
 
@@ -461,7 +579,7 @@ out <- fit.jagsNEC(data=data1,
                    y.var="suc",
                    trials.var="tot",
                    over.disp=T,
-                   model="4param") 
+                   model="NEC4param") 
 plot(out)
 out$over.disp
 extract_ECx(out)
@@ -477,7 +595,7 @@ out <- fit.jagsNEC(data=data1,
                    y.var="suc",
                    trials.var="tot", 
                    n.tries=1,
-                   model="4param")
+                   model="NEC4param")
 check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot(out, x.lab = "Proportion WAF")
@@ -522,7 +640,7 @@ out.2 <- fit.jagsNEC(data=data1,
                    trials.var="tot", 
                    n.tries=1, 
                    x.type="beta", 
-                   model="4param",
+                   model="NEC4param",
                    over.disp=1)
 check.chains(out.2)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
@@ -556,7 +674,7 @@ out <- fit.jagsNEC(data=data1,
                    trials.var="tot", 
                    n.tries=1,
                    over.disp=TRUE,
-                   model="4param")
+                   model="NEC4param")
 check.chains(out)
 par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot(out)

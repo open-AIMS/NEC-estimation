@@ -15,5 +15,5 @@ write.jags.ECx4param.mod(x = "gamma", y, mod.dat)
 an init function to pass to jags
 }
 \description{
-Writes an EC50 model file and generates a function for initial values to pass to jags
+Writes an EC50 model (log logistic) file and generates a function for initial values to pass to jags
 }
