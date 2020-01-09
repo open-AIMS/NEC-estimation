@@ -12,7 +12,7 @@ Version: \tab 1.0\cr
 Date: \tab 2019-09-06\cr
 Author: \tab Rebecca Fisher\cr
 Maintainer: \tab Rebecca Fisher\cr
-License: \tab GPL (>= 3)\cr
+License: \tab Apache 2\cr
 LazyLoad: \tab yes\cr
 Depends: \tab R2jags\cr
 }}
