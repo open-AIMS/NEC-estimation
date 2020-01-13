@@ -71,6 +71,16 @@ fit.jagsNEC <- function(data,
                The function jagsNEC requires the concentration data (argument x.var) to be numeric.",sep=""))    
   } 
   
+  # check data contains only finite values
+  test.x <- mean(x.dat)
+  test.y <- mean(y.dat)
+  if(is.finite(test.x)!=TRUE){
+    stop("Your x.var column contains values that are not finite.")    
+  } 
+  if(is.finite(test.y)!=TRUE){
+    stop("Your y.var column contains values that are not finite.")    
+  } 
+  
   # check the data are lower at high x compared to low x (ie the response variable declines within increase in the x)
   if(mean(y.dat[which(x.dat<mean(x.dat))])< mean(y.dat[which(x.dat>mean(x.dat))])){
     stop("The mean value of the response for the lower half of the 
