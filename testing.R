@@ -3,6 +3,7 @@
 #require(jagsNEC)
 library(R2jags)
 require(tidyverse)
+require(readxl)
 source("R/check_chains.R")
 source("R/check_mixing.R")
 source("R/Write_jags_NEC3paramMod.R")
@@ -546,7 +547,8 @@ out$over.disp
 out <- fit.jagsNEC(data=data1,
                    x.var="log.x",
                    y.var="suc",
-                   trials.var="tot")
+                   trials.var="tot",
+                   model="NECHormesis")
 out$over.disp
 plot(out)
 
@@ -809,3 +811,40 @@ par(mfrow=c(1,1), mar=c(4,4,1,1))
 plot(out2)
 extract_ECx(out2)
 out2$over.disp
+
+
+### Flo take 2 ----
+
+dat.diuron <- read_excel(paste(path,"/zoox data_use for R.xlsx", sep=""), sheet="diuron") %>%
+  data.frame() %>%
+  na.omit %>%
+  mutate(sqrt.x=sqrt(raw.x),
+         log.x=log(raw.x))
+  
+
+dat.metribuzin <- read_excel(paste(path,"/zoox data_use for R.xlsx", sep=""), sheet="metribuzin") %>%
+  data.frame() %>%
+  na.omit() %>%
+  mutate(sqrt.x=sqrt(raw.x),
+         log.x=log(raw.x))
+
+head(dat.diuron)
+head(dat.metribuzin)
+
+par(mfrow=c(3,2), mar=c(3,2,0,0), oma=c(2,2,1,1))
+plot(dat.diuron$raw.x, dat.diuron$resp)
+plot(dat.metribuzin$raw.x, dat.metribuzin$resp,  yaxt="n")
+
+plot(dat.diuron$sqrt.x, dat.diuron$resp)
+plot(dat.metribuzin$sqrt.x, dat.metribuzin$resp,  yaxt="n")
+
+plot(dat.diuron$log.x, dat.diuron$resp)
+plot(dat.metribuzin$log.x, dat.metribuzin$resp, yaxt="n")
+
+out.diuron <- fit.jagsNEC(data=dat.diuron, 
+                          x.var="log.x", 
+                          y.var="resp")
+
+out.metribuzin <- fit.jagsNEC(data=dat.metribuzin, 
+                          x.var="log.x", 
+                          y.var="resp")
