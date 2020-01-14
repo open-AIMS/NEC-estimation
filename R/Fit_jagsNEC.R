@@ -291,7 +291,7 @@ fit.jagsNEC <- function(data,
            developers")
     } 
   }
-  J2  <- R2jags::update(J1, n.iter = n.iter.update, n.thin = floor((n.iter.update*0.01)))  
+  J2  <- update(J1, n.iter = n.iter.update, n.thin = floor((n.iter.update*0.01)))  
   out <- c(J2$BUGSoutput, list(mod.dat=mod.dat, y.type = y.type, x.type = x.type, model = model))
     
   min.x <- min(mod.dat$x)
