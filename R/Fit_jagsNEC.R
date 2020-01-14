@@ -82,7 +82,7 @@ fit.jagsNEC <- function(data,
   } 
   
   # check the data are lower at high x compared to low x (ie the response variable declines within increase in the x)
-  if(mean(y.dat[which(x.dat<mean(x.dat))])< mean(y.dat[which(x.dat>mean(x.dat))])){
+  if(mean(y.dat[which(x.dat<mean(x.dat))])< mean(y.dat[which(x.dat>mean(x.dat))]) & model != "NECHormesis"){
     stop("The mean value of the response for the lower half of the 
          concentration data are lower than that of the upper half of the concentration data. 
          jagsNEC only fits concentration response data where the 
