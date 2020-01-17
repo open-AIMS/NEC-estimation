@@ -44,7 +44,7 @@ write.jags.NECHormesis.mod <- function(x="gamma", y, mod.dat){
         top ~  dunif(0.0001,0.999) 
         beta ~ dgamma(0.0001,0.0001)
         NEC ~ dgamma(0.0001,0.0001) #d norm(3, 0.0001) T(0,)
-        slope ~ dunif(0,0.1)  
+        slope ~ dunif(0,0.2)  
          
         # pearson residuals
         for (i in 1:N) {
@@ -94,7 +94,7 @@ write.jags.NECHormesis.mod <- function(x="gamma", y, mod.dat){
         top ~  dunif(0.0001,0.999) 
         beta ~ dgamma(0.0001,0.0001)
         NEC ~ dnorm(0,0.0001) 
-        slope ~ dunif(0, 0.1)
+        slope ~ dunif(0,0.2)
          
         # pearson residuals
         for (i in 1:N) {
@@ -144,7 +144,7 @@ write.jags.NECHormesis.mod <- function(x="gamma", y, mod.dat){
         top ~  dunif(0.0001,0.999) 
         beta ~ dgamma(0.0001,0.0001)
         NEC ~ dunif(0.0001,0.9999)
-        slope ~ dunif(0,0.1)
+        slope ~ dunif(0,0.2)
          
         # pearson residuals
         for (i in 1:N) {
@@ -659,7 +659,7 @@ write.jags.NECHormesis.mod <- function(x="gamma", y, mod.dat){
         NEC ~  dunif(0.001,0.999) #dbeta(1,1)
         t0 ~ dnorm(0, 0.010)
         phi <- exp(t0)
-        slope ~ dunif(0,0.1)
+        slope ~ dunif(0,0.2)
 
         # pearson residuals
         for (i in 1:N) {
@@ -713,7 +713,7 @@ write.jags.NECHormesis.mod <- function(x="gamma", y, mod.dat){
         NEC ~ dgamma(0.0001,0.0001) 
         t0 ~ dnorm(0, 0.010)
         phi <- exp(t0)
-        slope ~ dunif(0,0.1)
+        slope ~ dunif(0,0.2)
 
         # pearson residuals
         for (i in 1:N) {
@@ -767,7 +767,7 @@ write.jags.NECHormesis.mod <- function(x="gamma", y, mod.dat){
         NEC ~ dnorm(0, 0.0001)
         t0 ~ dnorm(0, 0.010)
         phi <- exp(t0)
-        slope ~ dunif(0,0.1)
+        slope ~ dunif(0,0.2)
 
         # pearson residuals
         for (i in 1:N) {
