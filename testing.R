@@ -48,7 +48,7 @@ out <- fit.jagsNEC(data=data1,
                    x.var="log.x",  
                    y.var="suc",
                    model="NECHormesis",
-                   #over.disp = TRUE,
+                   over.disp = TRUE,
                    trials.var = "tot")
 check.chains(out)
 
