@@ -29,26 +29,12 @@ data1 <- read.table("https://pastebin.com/raw/rF2biHYG", header= TRUE,dec=",") %
 
 data1$obs <- factor(formatC(1:nrow(data1), flag="0", width = 3))# first need to make an observation row to soon randomise
 plot(data1$raw.x, data1$suc/data1$tot, log = 'x')   #pooled by spp and specta (tenuis not updates
-sp.data1 = split(data1, data1$spp)
-data1.mil = sp.data1$mil
-levels(data1$spectra)
-sp.mil = split(data1.mil, data1.mil$spectra)
-data.m.w = sp.mil$whi
-data.m.w
-data.m.y = sp.mil$yel
-data.m.y
-# plot(data.m.w$raw.x, data.m.w$suc/data.m.w$tot, log = 'x')   #pooled by specta 
-# points(data.m.y$raw.x, data.m.y$suc/data.m.y$tot, col = 'orange')
-
-library(ggplot2)
-p0 = ggplot()+geom_point(data1.mil, mapping = aes(x = raw.x, y = prop), position = position_jitter(width = .02),color = 'grey60', alpha = 0.20,size = data1.mil$tot )+facet_wrap(~spectra)+scale_x_log10(name ="dep sed")
-p0
 
 out <- fit.jagsNEC(data=data1,
                    x.var="log.x",  
                    y.var="suc",
                    model="NECHormesis",
-                   #over.disp = TRUE,
+                   over.disp = TRUE,
                    trials.var = "tot")
 check.chains(out)
 

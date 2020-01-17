@@ -32,14 +32,18 @@
 #' @return A list containing x and fitted y, with up and lw values
 
 predict_NECmod <- function(x.vec, NEC=min(x.vec), top, beta, alpha=0, d=1, bot=0, slope=0){
+  pre.index <- which(x.vec<=NEC)
+  post.index <- which(x.vec>NEC)
+  x.seq.pre <-  x.vec[pre.index] 
+  x.seq.post <- x.vec[post.index]
   
-  x.seq.pre <-  x.vec[which(x.vec<=NEC)] #seq(min.x, NEC.m, length=20)
-  x.seq.post <- x.vec[which(x.vec>NEC)] # seq(NEC.m, max.x, length=20)
+  y.pred <- rep(NA, length(x.vec))
   
   y.pred.pre <- (top + slope*x.seq.pre)-alpha
   y.pred.post <- bot + ((top-bot)*exp(-beta*(x.seq.post-NEC)^d))-alpha  
   
-  y.pred <- c(y.pred.pre, y.pred.post)
+  y.pred[pre.index] <- y.pred.pre
+  y.pred[post.index] <- y.pred.post
 
   return(y.pred)
   
