@@ -41,73 +41,79 @@
 
 extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type="absolute", xform=NA, 
                         prob.vals=c(0.5, 0.025, 0.975)){
-  if(type!="direct"){
-   if(ECx.val<1 | ECx.val>99){
-    stop("Supplied ECx.val is not in the required range. Please supply a percentage value between 1 and 99.")
-   }   
+  if(X$model=="NECHormesis"){
+    warning("ECx values will not be estimated from an NEC Hormesis model")
+    ECx.estimate <- rep(NA, length(prob.vals))
+    ECx.out <- rep(NA, X$n.sims)  
+  }else{
+    if(type!="direct"){
+      if(ECx.val<1 | ECx.val>99){
+        stop("Supplied ECx.val is not in the required range. Please supply a percentage value between 1 and 99.")
+      }   
+    }
+    
+    if(X$y.type=="gaussian" & length(grep("4param", X$model))!= 1  & type=="absolute"){
+      stop("Absolute ECx values are not valid for a gaussian response variable unless a 4 parameter model is fit") 
+    }
+    
+    label <- paste("EC", ECx.val, sep="_")
+    
+    pred.vals <- predict_NECbugsmod(X, precision=precision)
+    
+    x.vec <- pred.vals$'x' 
+    
+    if(type=="relative"){
+      ECx.out <- apply(pred.vals$posterior, MARGIN=2, FUN=function(y){
+        range.y <- range(y)
+        ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
+        ECx.x <- x.vec[which.min(abs(y-ECx.y))]
+        return(ECx.x)
+      })    
+    }
+    
+    if(type=="absolute" & length(grep("4param", X$model))== 1){
+      ECx.out <- apply(pred.vals$posterior, MARGIN=2, FUN=function(y){
+        range.y <- range(y)
+        ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
+        ECx.x <- x.vec[which.min(abs(y-ECx.y))]
+        return(ECx.x)  
+      })     
+    }
+    
+    if(type=="absolute" & length(grep("4param", X$model))!= 1){
+      ECx.out <- apply(pred.vals$posterior, MARGIN=2, FUN=function(y){
+        range.y <- c(0, max(y))
+        ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
+        ECx.x <- x.vec[which.min(abs(y-ECx.y))]
+        return(ECx.x)  
+      })     
+    }
+    
+    if(type=="direct"){
+      ECx.out <- apply(pred.vals$posterior, MARGIN=2, FUN=function(y){
+        range.y <- range(y)
+        ECx.y <- ECx.val
+        ECx.x <- x.vec[which.min(abs(y-ECx.y))]
+        return(ECx.x)
+        
+      }) 
+    }
+    
+    ECx.estimate <- quantile(ECx.out, probs=prob.vals)
+    names(ECx.estimate) <- c(label, paste(label, "lw", sep="_"), paste(label, "up", sep="_"))
+    
+    if(class(xform)=="function"){
+      ECx.estimate <- xform(ECx.estimate)
+      ECx.out <- xform(ECx.out)
+    }   
   }
- 
-  if(X$y.type=="gaussian" & length(grep("4param", X$model))!= 1  & type=="absolute"){
-    stop("Absolute ECx values are not valid for a gaussian response variable unless a 4 parameter model is fit") 
-  }
-
-  label <- paste("EC", ECx.val, sep="_")
   
-  pred.vals <- predict_NECbugsmod(X, precision=precision)
-  
-  x.vec <- pred.vals$'x' 
-  
-  if(type=="relative"){
-   ECx.out <- apply(pred.vals$posterior, MARGIN=2, FUN=function(y){
-     range.y <- range(y)
-     ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
-     ECx.x <- x.vec[which.min(abs(y-ECx.y))]
-     return(ECx.x)
-     })    
-  }
-
-  if(type=="absolute" & length(grep("4param", X$model))== 1){
-     ECx.out <- apply(pred.vals$posterior, MARGIN=2, FUN=function(y){
-     range.y <- range(y)
-     ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
-     ECx.x <- x.vec[which.min(abs(y-ECx.y))]
-     return(ECx.x)  
-     })     
-  }
-  
-  if(type=="absolute" & length(grep("4param", X$model))!= 1){
-    ECx.out <- apply(pred.vals$posterior, MARGIN=2, FUN=function(y){
-      range.y <- c(0, max(y))
-      ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
-      ECx.x <- x.vec[which.min(abs(y-ECx.y))]
-      return(ECx.x)  
-    })     
-  }
-  
-  if(type=="direct"){
-    ECx.out <- apply(pred.vals$posterior, MARGIN=2, FUN=function(y){
-      range.y <- range(y)
-      ECx.y <- ECx.val
-      ECx.x <- x.vec[which.min(abs(y-ECx.y))]
-      return(ECx.x)
-      
-    }) 
-  }
-  
-  ECx.estimate <- quantile(ECx.out, probs=prob.vals)
-  names(ECx.estimate) <- c(label, paste(label, "lw", sep="_"), paste(label, "up", sep="_"))
-
-  if(class(xform)=="function"){
-    ECx.estimate <- xform(ECx.estimate)
-    ECx.out <- xform(ECx.out)
-  }
-
   
   if(posterior==FALSE){
     return(ECx.estimate)
   }else{
     return(ECx.out)}
-
+  
   
 }
 
