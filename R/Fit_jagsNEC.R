@@ -219,7 +219,8 @@ fit.jagsNEC <- function(data,
              n.thin     = 10,
              n.chains   = 5,
              n.burnin   = burnin,
-             n.iter     = n.iter), silent = T)
+             n.iter     = n.iter,
+             progress.bar = "none"), silent = T)
   options(warn=warn)
   
   if(class(J1)!="try-error"){ # make sure the fitted model had good mixing
@@ -242,7 +243,8 @@ fit.jagsNEC <- function(data,
                    n.thin     = 10,
                    n.chains   = 5,
                    n.burnin   = burnin,
-                   n.iter     = n.iter), silent = T)  
+                   n.iter     = n.iter,
+                   progress.bar = "none"), silent = T)  
     if(class(J1)!="try-error"){ # make sure the fitted model had good mixing
       all.Js <- c(all.Js, list(J1))   
       if(max(unlist(check.mixing(J1)$cv.test))==1){class(J1)="try-error"}
@@ -259,7 +261,8 @@ fit.jagsNEC <- function(data,
                    n.thin     = 10,
                    n.chains   = 5,
                    n.burnin   = burnin,
-                   n.iter     = n.iter), silent = T) 
+                   n.iter     = n.iter,
+                   progress.bar = "none"), silent = T) 
     if(class(J1)!="try-error"){ # make sure the fitted model had good mixing
       all.Js <- c(all.Js, list(J1))   
       if(max(unlist(check.mixing(J1)$cv.test))==1){class(J1)="try-error"}

@@ -1,9 +1,9 @@
 
 
-data=data1 #count.data#binom.data##
-x.var="log.x" #log.x" # "concentration" #
+data=dat #count.data#binom.data##
+x.var="light.stress" #log.x" # "concentration" #
 y.var="resp" # "suc" #"count" #"response" #"suc" # 
-model="NEC3param"#"NECHormesis"#"NECsigmoidal"#"ECx4param"  #
+model="NECHormesis"#"NEC3param"#"NECsigmoidal"#"ECx4param"  #
 trials.var=NA#"tot"
 x.type = NA #"gamma"
 y.type = NA #"gaussian"#"poisson" # #binomial"#"gaussian" #
