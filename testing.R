@@ -18,6 +18,75 @@ source("R/plot_jagsNECfit.R")
 source("R/extract_ECx.R")
 path <- "C:/Users/rfisher/OneDrive - Australian Institute of Marine Science/Documents/AIMS/EcologicalRiskModelling/Ecotoxicology/Ecotox_stats/CR-examples"
 
+
+### testing with Heidi's DLI dat ----
+
+dat<-read.csv(paste(path,'test_dat1.csv',sep="/"))
+out <- fit.jagsNEC(data=dat,
+                   x.var="light.stress", 
+                   y.var="scaled.col",
+                  model="NEC3param")
+                   #model="NECHormesis")
+check.chains(out)
+
+par(mfrow=c(1,1))
+plot(out)
+
+dat<-read.csv(paste(path,'test_dat2.csv',sep="/"))
+out <- fit.jagsNEC(data=dat,
+                   x.var="light.stress", 
+                   y.var="scaled.col",
+                   #model="NEC3param")
+                   model="NECHormesis")
+check.chains(out)
+
+par(mfrow=c(1,1))
+plot(out)
+
+dat<-read.csv(paste(path,'test_dat3.csv',sep="/"))
+out <- fit.jagsNEC(data=dat,
+                   x.var="light.stress", 
+                   y.var="scaled.col",
+                   #model="NEC3param")
+                   model="NECHormesis")
+check.chains(out)
+
+par(mfrow=c(1,1))
+plot(out)
+
+dat<-read.csv(paste(path,'test_dat4.csv',sep="/"))
+out <- fit.jagsNEC(data=dat,
+                   x.var="light.stress", 
+                   y.var="scaled.col",
+                   #model="NEC3param")
+                   model="NECHormesis")
+check.chains(out)
+
+par(mfrow=c(1,1))
+plot(out)
+
+dat<-read.csv(paste(path,'test_dat5.csv',sep="/"))
+out <- fit.jagsNEC(data=dat,
+                   x.var="light.stress", 
+                   y.var="scaled.col",
+                   #model="NEC3param")
+                   model="NECHormesis")
+check.chains(out)
+
+par(mfrow=c(1,1))
+plot(out)
+
+dat<-read.csv(paste(path,'test_dat6.csv',sep="/"))
+out <- fit.jagsNEC(data=dat,
+                   x.var="light.stress", 
+                   y.var="scaled.col",
+                   #model="NEC3param")
+                   model="NECHormesis")
+check.chains(out)
+
+par(mfrow=c(1,1))
+plot(out)
+
 ### testing what to do with hormesis ----
 data1 <- read.table("https://pastebin.com/raw/rF2biHYG", header= TRUE,dec=",") %>%
   mutate(raw.x = as.numeric(as.character(raw.x)),
@@ -34,7 +103,7 @@ out <- fit.jagsNEC(data=data1,
                    x.var="log.x",  
                    y.var="suc",
                    model="NECHormesis",
-                   over.disp = TRUE,
+                  # over.disp = TRUE,
                    trials.var = "tot")
 check.chains(out)
 
