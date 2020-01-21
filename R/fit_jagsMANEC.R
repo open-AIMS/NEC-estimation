@@ -154,7 +154,7 @@ fit.jagsMANEC <- function(data,
               predicted.y=predicted.y,
               residuals=mod.dat$y-predicted.y,
               pred.vals=list(x=x, y=y, up=up, lw=lw, posterior=posterior, y.m=y.m),
-              NEC=NEC)
+              NEC=quantile(NEC.posterior, probs=c(0.025, 0.5, 0.975)))
       )
   # assign a class to the output
   class(out) <- "jagsMANECfit"
