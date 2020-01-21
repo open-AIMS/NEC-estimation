@@ -154,7 +154,7 @@ fit.jagsMANEC <- function(data,
               predicted.y=predicted.y,
               residuals=mod.dat$y-predicted.y,
               pred.vals=list(x=x, y=y, up=up, lw=lw, posterior=posterior, y.m=y.m),
-              NEC=NEC
+              NEC=NEC)
       )
   # assign a class to the output
   class(out) <- "jagsMANECfit"
