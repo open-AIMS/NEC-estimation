@@ -1,6 +1,7 @@
 
 #devtools::install_github("AIMS/NEC-estimation")
 #require(jagsNEC)
+
 library(R2jags)
 require(tidyverse)
 require(readxl)
@@ -13,10 +14,33 @@ source("R/Write_jags_ECx4paramMod.R")
 source("R/Write_jags_NECHormesisMod.R")
 source("R/Predict_fitted_vals.R")
 source("R/Fit_jagsNEC.R")
+source("R/Fit_jagsMANEC.R")
 source("R/plot_jagsNEC.R")
 source("R/plot_jagsNECfit.R")
 source("R/extract_ECx.R")
+source("R/wi.R")
 path <- "C:/Users/rfisher/OneDrive - Australian Institute of Marine Science/Documents/AIMS/EcologicalRiskModelling/Ecotoxicology/Ecotox_stats/CR-examples"
+
+### testing model averaging function -----
+
+dat<-read.csv(paste(path,'test_dat1.csv',sep="/"))
+out <- fit.jagsNEC(data=dat,
+                   x.var="light.stress", 
+                   y.var="col.intensity",
+                   model="NEC3param")
+#model="NECHormesis")
+check.chains(out)
+
+par(mfrow=c(1,1))
+plot(out)
+
+out.ma <- fit.jagsMANEC(data=dat, 
+                          x.var="light.stress", 
+                          y.var="col.intensity")
+
+
+
+
 
 
 ### testing with Heidi's DLI dat ----
@@ -46,7 +70,7 @@ plot(out)
 dat<-read.csv(paste(path,'test_dat3.csv',sep="/"))
 out <- fit.jagsNEC(data=dat,
                    x.var="light.stress", 
-                   y.var="scaled.col",
+                   y.var="range01.col",
                    #model="NEC3param")
                    model="NECHormesis")
 check.chains(out)
@@ -103,7 +127,7 @@ out <- fit.jagsNEC(data=data1,
                    x.var="log.x",  
                    y.var="suc",
                    model="NECHormesis",
-                  # over.disp = TRUE,
+                   over.disp = TRUE,
                    trials.var = "tot")
 check.chains(out)
 
@@ -170,6 +194,13 @@ mtext(text="Log (Concentration)", side=1, outer=TRUE)
 mtext(text="Response", side=2, outer=TRUE)
 
 dev.off()
+
+out.list <- list(out1=out1, out2=out2, out3=out3,out4=out4,out5=out5)
+
+require(custom.functions.pkg)
+
+data.frame(DICw=unlist(round(wi(unlist(lapply(out.list, FUN=function(x){x$DIC}))),3)),
+           pD=unlist(lapply(out.list, FUN=function(x){x$pD})))
 
 
 out1$NEC
