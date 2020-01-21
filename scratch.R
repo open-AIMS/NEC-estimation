@@ -25,7 +25,6 @@ precision=10000
 
 type="absolute"
 prob.vals=c(0.5, 0.025, 0.975)
-xform=NA
 
 posterior = FALSE
 
@@ -41,3 +40,5 @@ jitter.x=FALSE
 jitter.y=FALSE
 ylab="response"
 xlab="concentration"
+xlim=NA
+xticks=NA

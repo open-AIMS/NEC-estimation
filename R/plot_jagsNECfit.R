@@ -208,14 +208,14 @@ plot.jagsMANECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model
     y.dat <- X$mod.dat$y/X$mod.dat$trials}else{
       y.dat <- X$mod.dat$y}
   
-  # extract EC10
+  ## extract EC10
   EC10 <- c(NA, NA, NA)
-  if(add.EC10==TRUE & X$y.type!="gaussian"){
-    EC10 <- extract_ma_ECx(X)
-  }
-  if(add.EC10==TRUE & X$y.type=="gaussian"){
-    EC10 <- extract_ma_ECx(X, type="relative")
-  }  
+  #if(add.EC10==TRUE & X$y.type!="gaussian"){
+  #  EC10 <- extract_ECx(X)
+  #}
+  #if(add.EC10==TRUE & X$y.type=="gaussian"){
+  #  EC10 <- extract_ECx(X, type="relative")
+  #}  
   
   # check if a transformation is required for x
   if(class(xform)=="function"){

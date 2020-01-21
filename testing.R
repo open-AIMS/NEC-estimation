@@ -127,7 +127,7 @@ out <- fit.jagsNEC(data=data1,
                    x.var="log.x",  
                    y.var="suc",
                    model="NECHormesis",
-                   over.disp = TRUE,
+                   #over.disp = TRUE,
                    trials.var = "tot")
 check.chains(out)
 
@@ -934,3 +934,33 @@ out.diuron <- fit.jagsNEC(data=dat.diuron,
 out.metribuzin <- fit.jagsNEC(data=dat.metribuzin, 
                           x.var="log.x", 
                           y.var="resp")
+
+
+
+dat.propazine <- read_excel(paste(path,"/zoox data_use for R.xlsx", sep=""), sheet = "propazine") %>%
+  data.frame() %>%
+  na.omit %>%
+  mutate(sqrt.x=sqrt(raw.x),
+         log.x=log(raw.x),
+         scaled.x=as.vector(scale(raw.x)))
+
+out <- fit.jagsMANEC(data=dat.propazine, 
+                             x.var="sqrt.x", 
+                             y.var="resp", 
+                             y.type="gaussian")
+
+
+par(mfrow=c(1,1))
+plot(out)
+out$mod.stats
+
+
+out <- fit.jagsNEC(data=dat.propazine, 
+                   x.var="sqrt.x", 
+                   y.var="resp", 
+                   y.type="gaussian",
+                   model="NECHormesis")
+
+
+
+

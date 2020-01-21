@@ -59,7 +59,7 @@ fit.jagsMANEC <- function(data,
                         n.tries=3,
                         params=c("top", "beta", "NEC", "SS", "SSsim"),
                         over.disp=FALSE,
-                        model.set=c("NEC3param", "NEC4param", "NECsigmoidal", "NECHormesis", "ECx4param"),
+                        model.set=c("NEC3param", "NEC4param", "NECHormesis"),#, "NECsigmoidal", "ECx4param"),
                         ...){
   
  # Fit each of the models
@@ -157,7 +157,7 @@ fit.jagsMANEC <- function(data,
               NEC=quantile(NEC.posterior, probs=c(0.025, 0.5, 0.975)))
       )
   # assign a class to the output
-  class(out) <- "jagsMANECfit"
+  class(export.list) <- "jagsMANECfit"
   
   # return the collated output
   return(export.list)
