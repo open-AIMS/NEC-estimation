@@ -18,14 +18,16 @@
 #'
 #' @param  J a jag model fit as returned by a call to jags
 #'
-#' @param  prob.val the probability value to pass to quantile to assess the between chain coefficient of variation against the within chain coefficient of variation. Please inspect the model code for more details.
+#' @param  prob.val the probability value to pass to quantile to assess the between 
+#' chain coefficient of variation against the within chain coefficient of variation. 
+#' Please inspect the model code for more details.
 #'
 #' @export
 #' @return A list of within and between coefficient of variations for parameter, 
 #' the outcome of the test if between is greater than within, and the ratio.
 
 
-check.mixing <- function(J, prob.val=0.75){
+check.mixing <- function(J, prob.val=0.8){
   x <- J$BUGSoutput$sims.array
   params <- J$parameters.to.save
   num.chains <- ncol(x[,,params[1]])
