@@ -44,7 +44,8 @@
 #' "NEC4param", "NECsigmoidal", "NECHormesis" or "ECx4param". This method is under development and desting and should not yet be used for NEC reporting.
 #'
 #' @export
-#' @return Model averaged predictions and a list of the The $BUGSoutput element of the fitted jags models.
+#' @return All successully fitted jags model fits, mod.stats a data.frame of model fit statistics, NEC a model
+#' averaged posterior of the estimated NEC, and pred.vals a list of model averaged predictions.
 
 fit.jagsMANEC <- function(data,
                         x.var,
@@ -153,7 +154,7 @@ fit.jagsMANEC <- function(data,
               predicted.y=predicted.y,
               residuals=mod.dat$y-predicted.y,
               pred.vals=list(x=x, y=y, up=up, lw=lw, posterior=posterior, y.m=y.m)
-                )
+              NEC=NEC)
       )
   # assign a class to the output
   class(out) <- "jagsMANECfit"
