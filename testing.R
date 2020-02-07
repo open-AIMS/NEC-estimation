@@ -1,5 +1,5 @@
 
-#devtools::install_github("AIMS/NEC-estimation")
+#devtools::install_github("AIMS/NEC-estimation/Model_averaged")
 #require(jagsNEC)
 
 library(R2jags)
