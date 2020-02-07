@@ -111,19 +111,19 @@ plot.jagsNECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=F
   
   if(class(lxform)!="function"){
    if(max(is.na(xticks))==1){axis(side=1)}else{axis(side=1, at=x.ticks)}  
-    NEC.legend <- paste("NEC: ", signif(NEC[2],3), 
-                        " (", signif(NEC[1],3),"-", signif(NEC[3],3),")",sep="")
-    EC10.legend <- paste("EC10: ", signif(EC10[1],3), 
-                         " (", signif(EC10[2],3),"-", signif(EC10[3],3),")",sep="")
+    NEC.legend <- paste("NEC: ", signif(NEC[2],2), 
+                        " (", signif(NEC[1],2),"-", signif(NEC[3],2),")",sep="")
+    EC10.legend <- paste("EC10: ", signif(EC10[1],2), 
+                         " (", signif(EC10[2],2),"-", signif(EC10[3],2),")",sep="")
     }else{
      x.labs <- signif(lxform(x.ticks),2)
      axis(side=1, at=x.ticks, labels = x.labs)
-     NEC.legend <- paste("NEC: ", signif(lxform(NEC[2]),3), 
-                        " (",    signif(lxform(NEC[1]),3),"-", 
-                                 signif(lxform(NEC[3]),3),")",sep="")    
-     EC10.legend <- paste("EC10: ", signif(lxform(EC10[1]),3), 
-                        " (",    signif(lxform(EC10[2]),3),"-", 
-                        signif(lxform(EC10[3]),3),")",sep="")  
+     NEC.legend <- paste("NEC: ", signif(lxform(NEC[2]),2), 
+                        " (",    signif(lxform(NEC[1]),2),"-", 
+                                 signif(lxform(NEC[3]),2),")",sep="")    
+     EC10.legend <- paste("EC10: ", signif(lxform(EC10[1]),2), 
+                        " (",    signif(lxform(EC10[2]),2),"-", 
+                        signif(lxform(EC10[3]),2),")",sep="")  
   }
   
   if(CI==TRUE){
