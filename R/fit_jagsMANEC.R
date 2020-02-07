@@ -40,8 +40,9 @@
 #'
 #' @param over.disp. If an overdispersed model should be used. Only changes the model fit for poisson and binomial y.type data. For poisson, a negative binomial model will be fit. For binomial a beta model will be fit.
 #'
-#' @param model A vector of the names of model types to be fit. Currently defaults to all availables, including "NEC3param",  
-#' "NEC4param", "NECsigmoidal", "NECHormesis" or "ECx4param". This method is under development and desting and should not yet be used for NEC reporting.
+#' @param model A vector of the names of model types to be fit. Currently defaults to 
+#' c("NEC3param", "NEC4param", "NECHormesis"). This method is under development 
+#' and desting and should not yet be used for NEC reporting.
 #'
 #' @export
 #' @return All successully fitted jags model fits, mod.stats a data.frame of model fit statistics, NEC a model
