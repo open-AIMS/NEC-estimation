@@ -69,10 +69,10 @@ plot.jagsNECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=F
   
   EC10 <- c(NA, NA, NA)
   if(add.EC10==TRUE & X$y.type!="gaussian"){
-   EC10 <- extract_ECx(X)
+   EC10 <- extract_ECx.jagsNECfit(X)
   }
   if(add.EC10==TRUE & X$y.type=="gaussian"){
-    EC10 <- extract_ECx(X, type="relative")
+    EC10 <- extract_ECx.jagsNECfit(X, type="relative")
   }  
   
   # check if a transformation is required for x
