@@ -84,8 +84,8 @@ plot_jagsNEC <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model=FALS
   }
   if(add.NEC==TRUE){
         legend("topright", bty="n",
-           legend=paste("NEC: ", signif(NEC[2],3), 
-                        " (", signif(NEC[1],3),"-", signif(NEC[3],3),")",sep=""))
+           legend=paste("NEC: ", signif(NEC[2],2), 
+                        " (", signif(NEC[1],2),"-", signif(NEC[3],2),")",sep=""))
   }
   
   
