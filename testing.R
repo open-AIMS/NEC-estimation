@@ -1,10 +1,13 @@
 
-#devtools::install_github("AIMS/NEC-estimation", ref="Model_averaged")
-#require(jagsNEC)
+devtools::install_github("AIMS/NEC-estimation", ref="Model_averaged")
+require(jagsNEC)
 
 library(R2jags)
 require(tidyverse)
 require(readxl)
+path <- "C:/Users/rfisher/OneDrive - Australian Institute of Marine Science/Documents/AIMS/EcologicalRiskModelling/Ecotoxicology/Ecotox_stats/CR-examples"
+
+
 source("R/check_chains.R")
 source("R/check_mixing.R")
 source("R/Write_jags_NEC3paramMod.R")
@@ -19,7 +22,6 @@ source("R/plot_jagsNEC.R")
 source("R/plot_jagsNECfit.R")
 source("R/extract_ECx.R")
 source("R/wi.R")
-path <- "C:/Users/rfisher/OneDrive - Australian Institute of Marine Science/Documents/AIMS/EcologicalRiskModelling/Ecotoxicology/Ecotox_stats/CR-examples"
 
 ### testing model averaging function -----
 
@@ -38,21 +40,7 @@ out.ma <- fit.jagsMANEC(data=dat,
                           x.var="light.stress", 
                           y.var="col.intensity")
 
-
-
-
-### testing with Heidi's DLI dat ----
-
-dat<-read.csv(paste(path,'test_dat1.csv',sep="/"))
-out <- fit.jagsNEC(data=dat,
-                   x.var="light.stress", 
-                   y.var="scaled.col",
-                  model="NEC3param")
-                   #model="NECHormesis")
-check.chains(out)
-
-par(mfrow=c(1,1))
-plot(out)
+#---
 
 dat<-read.csv(paste(path,'test_dat2.csv',sep="/"))
 out <- fit.jagsNEC(data=dat,
@@ -64,6 +52,13 @@ check.chains(out)
 
 par(mfrow=c(1,1))
 plot(out)
+
+
+out.ma <- fit.jagsMANEC(data=dat, 
+                        x.var="light.stress", 
+                        y.var="col.intensity")
+
+#----
 
 dat<-read.csv(paste(path,'test_dat3.csv',sep="/"))
 out <- fit.jagsNEC(data=dat,
