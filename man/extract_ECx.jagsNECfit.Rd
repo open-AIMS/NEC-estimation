@@ -2,7 +2,7 @@
 % Please edit documentation in R/extract_ECx.R
 \name{extract_ECx.jagsNECfit}
 \alias{extract_ECx.jagsNECfit}
-\title{extract_ECx.jagsNECfit}
+\title{extract_ECx.jagsNEC}
 \usage{
 extract_ECx.jagsNECfit(X, ECx.val = 10, precision = 10000,
   posterior = FALSE, type = "absolute", xform = NA,

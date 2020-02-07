@@ -12,7 +12,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-#' extract_ECx.jagsNECfit
+#' extract_ECx.jagsNEC
 #'
 #' Extracts the predicted ECx value as desired from a jagsNEC model fit obeject
 #'
@@ -117,7 +117,7 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
   
 }
 
-#' extract_ECx.jagsMANECfit
+#' extract_ECx.jagsMANEC
 #'
 #' Extracts the predicted ECx value as desired from a jagsNEC model fit obeject
 #'
