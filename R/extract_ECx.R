@@ -113,8 +113,7 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
     return(ECx.estimate)
   }else{
     return(ECx.out)}
-  
-  
+
 }
 
 #' extract_ECx.jagsNECfit
@@ -160,7 +159,7 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
     label <- paste("EC", ECx.val, sep="_")
     
     pred.vals <- predict_NECbugsmod(X, precision=precision)
-    posterior <- pred.vals$posterior
+    posterior.sample <- pred.vals$posterior
     x.vec <- pred.vals$'x' 
     
     if(X$model=="NECHormesis"){ # remove values prior to the NEC for the hormesis model
@@ -168,7 +167,7 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
     }
     
     if(type=="relative"){
-      ECx.out <- apply(posterior, MARGIN=2, FUN=function(y){
+      ECx.out <- apply(posterior.sample, MARGIN=2, FUN=function(y){
         range.y <- range(y)
         ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
         ECx.x <- x.vec[which.min(abs(y-ECx.y))]
@@ -177,7 +176,7 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
     }
     
     if(type=="absolute" & length(grep("4param", X$model))== 1){
-      ECx.out <- apply(posterior, MARGIN=2, FUN=function(y){
+      ECx.out <- apply(posterior.sample, MARGIN=2, FUN=function(y){
         range.y <- range(y)
         ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
         ECx.x <- x.vec[which.min(abs(y-ECx.y))]
@@ -186,7 +185,7 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
     }
     
     if(type=="absolute" & length(grep("4param", X$model))!= 1){
-      ECx.out <- apply(posterior, MARGIN=2, FUN=function(y){
+      ECx.out <- apply(posterior.sample, MARGIN=2, FUN=function(y){
         range.y <- c(0, max(y))
         ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
         ECx.x <- x.vec[which.min(abs(y-ECx.y))]
@@ -195,7 +194,7 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
     }
     
     if(type=="direct"){
-      ECx.out <- apply(posterior, MARGIN=2, FUN=function(y){
+      ECx.out <- apply(posterior.sample, MARGIN=2, FUN=function(y){
         range.y <- range(y)
         ECx.y <- ECx.val
         ECx.x <- x.vec[which.min(abs(y-ECx.y))]
@@ -214,9 +213,7 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
       ECx.out <- xform(ECx.out)
     }   
   
-  
-  
-  if(posterior==FALSE){
+   if(posterior==FALSE){
     return(ECx.estimate)
   }else{
     return(ECx.out)}
@@ -253,6 +250,27 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
 
 extract_ECx.jagsMANECfit <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type="absolute", xform=NA, 
                                    prob.vals=c(0.5, 0.025, 0.975)){
+  
+  ECx.out <- rowSums(t(X$mod.stats$wi*t(do.call("cbind", lapply(X$mod.fits, FUN=extract_ECx.jagsNECfit, 
+                                     ECx.val=ECx.val, precision=precision, posterior = TRUE, type=type, 
+                                     prob.vals=prob.vals)))))
 
+  label <- paste("EC", ECx.val, sep="_")
+  # calculate the quantile values from the posterior
+  ECx.estimate <- quantile(ECx.out, probs=prob.vals)
+  names(ECx.estimate) <- c(label, paste(label, "lw", sep="_"), paste(label, "up", sep="_"))
+  
+  # if a transformation is required
+  if(class(xform)=="function"){
+    ECx.estimate <- xform(ECx.estimate)
+    ECx.out <- xform(ECx.out)
+  }   
+  
+ 
+  if(posterior==FALSE){
+    return(ECx.estimate)
+  }else{
+    return(ECx.out)}
+  
   
   }
