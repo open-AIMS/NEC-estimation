@@ -41,8 +41,6 @@ out.ma <- fit.jagsMANEC(data=dat,
 
 
 
-
-
 ### testing with Heidi's DLI dat ----
 
 dat<-read.csv(paste(path,'test_dat1.csv',sep="/"))
