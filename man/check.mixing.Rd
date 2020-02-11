@@ -4,12 +4,14 @@
 \alias{check.mixing}
 \title{check.mixing}
 \usage{
-check.mixing(J, prob.val = 0.75)
+check.mixing(J, prob.val = 0.8)
 }
 \arguments{
 \item{J}{a jag model fit as returned by a call to jags}
 
-\item{prob.val}{the probability value to pass to quantile to assess the between chain coefficient of variation against the within chain coefficient of variation. Please inspect the model code for more details.}
+\item{prob.val}{the probability value to pass to quantile to assess the between 
+chain coefficient of variation against the within chain coefficient of variation. 
+Please inspect the model code for more details.}
 }
 \value{
 A list of within and between coefficient of variations for parameter, 
