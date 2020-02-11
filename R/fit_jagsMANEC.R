@@ -167,7 +167,7 @@ fit.jagsMANEC <- function(data,
               sims.list=list(NEC=NEC.posterior),
               predicted.y=predicted.y,
               residuals=mod.dat$y-predicted.y,
-              pred.vals=list(x=x, y=y, up=up, lw=lw, posterior=posterior, y.m=y.m),
+              pred.vals=list(x=x, y=y, up=up, lw=lw, posterior=posterior.predicted, y.m=y.m),
               NEC=quantile(NEC.posterior, probs=c(0.025, 0.5, 0.975)))
       )
   # assign a class to the output
