@@ -12,7 +12,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-#' extract_ECx
+#' extract_ECx.jagsNEC
 #'
 #' Extracts the predicted ECx value as desired from a jagsNEC model fit obeject
 #'
@@ -39,13 +39,9 @@
 #' 
 #' @details Please note that the estimated ECx value is based on the equivalent percentage decrease from the range of the highest to the lowest estimate value across the range of the observed concentration (x) values. If the concentration response relationship is such that the full range of observed responses is not captured (ie a complete decline response at the highest level of exposure), the estimated ECx values may be lower than if the full concentration-response curve were available. Note this is therefore a conservative value.
 
-extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type="absolute", xform=NA, 
+extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type="absolute", xform=NA, 
                         prob.vals=c(0.5, 0.025, 0.975)){
-  if(X$model=="NECHormesis"){
-    warning("ECx values will not be estimated from an NEC Hormesis model")
-    ECx.estimate <- rep(NA, length(prob.vals))
-    ECx.out <- rep(NA, X$n.sims)  
-  }else{
+
     if(type!="direct"){
       if(ECx.val<1 | ECx.val>99){
         stop("Supplied ECx.val is not in the required range. Please supply a percentage value between 1 and 99.")
@@ -59,11 +55,15 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
     label <- paste("EC", ECx.val, sep="_")
     
     pred.vals <- predict_NECbugsmod(X, precision=precision)
-    
+    posterior.sample <- pred.vals$posterior
     x.vec <- pred.vals$'x' 
     
+    if(X$model=="NECHormesis"){ # remove values prior to the NEC for the hormesis model
+      test=do.call("cbind", lapply(X$sims.list$NEC, FUN=function(x){x<x.vec}))
+    }
+    
     if(type=="relative"){
-      ECx.out <- apply(pred.vals$posterior, MARGIN=2, FUN=function(y){
+      ECx.out <- apply(posterior.sample, MARGIN=2, FUN=function(y){
         range.y <- range(y)
         ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
         ECx.x <- x.vec[which.min(abs(y-ECx.y))]
@@ -72,7 +72,7 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
     }
     
     if(type=="absolute" & length(grep("4param", X$model))== 1){
-      ECx.out <- apply(pred.vals$posterior, MARGIN=2, FUN=function(y){
+      ECx.out <- apply(posterior.sample, MARGIN=2, FUN=function(y){
         range.y <- range(y)
         ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
         ECx.x <- x.vec[which.min(abs(y-ECx.y))]
@@ -81,7 +81,7 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
     }
     
     if(type=="absolute" & length(grep("4param", X$model))!= 1){
-      ECx.out <- apply(pred.vals$posterior, MARGIN=2, FUN=function(y){
+      ECx.out <- apply(posterior.sample, MARGIN=2, FUN=function(y){
         range.y <- c(0, max(y))
         ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
         ECx.x <- x.vec[which.min(abs(y-ECx.y))]
@@ -90,7 +90,7 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
     }
     
     if(type=="direct"){
-      ECx.out <- apply(pred.vals$posterior, MARGIN=2, FUN=function(y){
+      ECx.out <- apply(posterior.sample, MARGIN=2, FUN=function(y){
         range.y <- range(y)
         ECx.y <- ECx.val
         ECx.x <- x.vec[which.min(abs(y-ECx.y))]
@@ -99,17 +99,17 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
       }) 
     }
     
+    # calculate the quantile values from the posterior?
     ECx.estimate <- quantile(ECx.out, probs=prob.vals)
     names(ECx.estimate) <- c(label, paste(label, "lw", sep="_"), paste(label, "up", sep="_"))
     
+    # if a transformation is required
     if(class(xform)=="function"){
       ECx.estimate <- xform(ECx.estimate)
       ECx.out <- xform(ECx.out)
     }   
-  }
   
-  
-  if(posterior==FALSE){
+   if(posterior==FALSE){
     return(ECx.estimate)
   }else{
     return(ECx.out)}
@@ -117,3 +117,56 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
   
 }
 
+#' extract_ECx.jagsMANEC
+#'
+#' Extracts the predicted ECx value as desired from a jagsNEC model fit obeject
+#'
+#' @param  X a jag model fit as returned by a call to jags from fit.jagsNEC
+#' 
+#' @param ECx.val the desired percentage effect value. This must be a value between 1 and 99 (for type = "relative" and "absolute"), defaults to 10.
+#' 
+#' @param type a character vector indicating if relative or absolute values for the ECx should be calculated. Takes values 
+#' of "relative",  "absolute" (the default) or "direct". For the default model type fit by jagsNEC, "relative" is 
+#' calculated as the percentage decrease from the maximum value of the response (top) to the minimum predicted value 
+#' of the response, "absolute" is calculated as the the percentage decrease from the maximum value of the response (top) 
+#' to 0 (or bot for a 4 parameter model fit),  and "direct" provides a direct estimate of the x value for a given y.
+#' 
+#' @param precision The number of unique x values over which to find ECx - large values will make the ECx estimate more precise.
+#' 
+#' @param posterior A logical value indicating if the full posterior sample of calculated ECx values should be returned instead of just the median and 95 credible intervals.
+#' 
+#' @param xform A function to apply to the returned estimated concentration values
+#' 
+#' @param prob.vals A vector indicating the probability values over which to return the estimated ECx value. Defaults to 0.5 (median) and 0.025 and 0.975 (95 percent credible intervals). 
+#' 
+#' @export
+#' @return A vector containing the estimated ECx value, including upper and lower 95 percent Credible Interval bounds
+#' 
+#' @details Please note that the estimated ECx value is based on the equivalent percentage decrease from the range of the highest to the lowest estimate value across the range of the observed concentration (x) values. If the concentration response relationship is such that the full range of observed responses is not captured (ie a complete decline response at the highest level of exposure), the estimated ECx values may be lower than if the full concentration-response curve were available. Note this is therefore a conservative value.
+
+extract_ECx.jagsMANECfit <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type="absolute", xform=NA, 
+                                   prob.vals=c(0.5, 0.025, 0.975)){
+  
+  ECx.out <- rowSums(t(X$mod.stats$wi*t(do.call("cbind", lapply(X$mod.fits, FUN=extract_ECx.jagsNECfit, 
+                                     ECx.val=ECx.val, precision=precision, posterior = TRUE, type=type, 
+                                     prob.vals=prob.vals)))))
+
+  label <- paste("EC", ECx.val, sep="_")
+  # calculate the quantile values from the posterior
+  ECx.estimate <- quantile(ECx.out, probs=prob.vals)
+  names(ECx.estimate) <- c(label, paste(label, "lw", sep="_"), paste(label, "up", sep="_"))
+  
+  # if a transformation is required
+  if(class(xform)=="function"){
+    ECx.estimate <- xform(ECx.estimate)
+    ECx.out <- xform(ECx.out)
+  }   
+  
+ 
+  if(posterior==FALSE){
+    return(ECx.estimate)
+  }else{
+    return(ECx.out)}
+  
+  
+  }

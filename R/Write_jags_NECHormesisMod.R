@@ -437,7 +437,7 @@ write.jags.NECHormesis.mod <- function(x="gamma", y, mod.dat){
         # specify model priors
         top ~  dlnorm(0,0.001) #dgamma(1,0.001) # dnorm(0,0.001) #T(0,) #
         beta ~ dgamma(0.0001,0.0001)
-        NEC~dgamma(0.0001,0.0001) #dnorm(3, 0.0001) T(0,) dnorm(30, 0.0001) T(0,) #
+        NEC ~ dlnorm(0,0.001)#dgamma(0.0001,0.0001) #dnorm(3, 0.0001) T(0,) dnorm(30, 0.0001) T(0,) #
         shape ~ dlnorm(0,0.001) #dunif(0,1000)
         slope ~ dlnorm(0,0.01)
 
@@ -493,7 +493,7 @@ write.jags.NECHormesis.mod <- function(x="gamma", y, mod.dat){
       NEC ~ dnorm(0, 0.0001) T(0,) #dgamma(0.0001,0.0001) Note we haven't used gamma here as the example didn't result in chain missing.
       sigma ~ dunif(0, 20)  #sigma is the SD
       tau  = 1 / (sigma * sigma)  #tau is the reciprical of the variance 
-      slope ~ dlnorm(0,0.01)
+      slope ~ dnorm(0,0.001) T(0,)
 
       # pearson residuals
       for (i in 1:N) {
@@ -521,7 +521,7 @@ write.jags.NECHormesis.mod <- function(x="gamma", y, mod.dat){
     alpha = rnorm(1,min(mod.dat$y),1),
     NEC = rlnorm(1,log(mean(mod.dat$x)),1),#rgamma(1,0.2,0.001),
     sigma = runif(1, 0, 5),
-    slope = 0.0001)}
+    slope = rlnorm(1, 0, 1))}
 
  }
 

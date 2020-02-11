@@ -53,7 +53,7 @@ fit.jagsNEC <- function(data,
                         trials.var = NA,
                         x.type = NA, 
                         y.type = NA,
-                        burnin = 5000,
+                        burnin = 10000,
                         n.iter = burnin+500,
                         n.iter.update = 10000,
                         n.tries=3,
@@ -336,7 +336,7 @@ fit.jagsNEC <- function(data,
   
   # calculate the predicted values based on the median parameter estimates
   if(model!="ECx4param" & y.type !="gaussian"){
-    EC50 <- extract_ECx(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975))
+    EC50 <- extract_ECx.jagsNECfit(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975))
     y.pred.m <- predict_NECmod(x.vec=x.seq, 
                              NEC=NEC["50%"], top=top["50%"],  beta=beta["50%"], 
                              d=d["50%"], bot=bot["50%"], slope=slope["50%"])
@@ -344,7 +344,7 @@ fit.jagsNEC <- function(data,
                                   NEC=NEC["50%"], top=top["50%"], beta=beta["50%"], 
                                   d=d["50%"], bot=bot["50%"], slope=slope["50%"])}
   if(model!="ECx4param" & y.type =="gaussian"){
-    EC50 <- extract_ECx(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975), type="relative")
+    EC50 <- extract_ECx.jagsNECfit(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975), type="relative")
     y.pred.m <- predict_NECmod(x.vec=x.seq, 
                                NEC=NEC["50%"], top=top["50%"],  beta=beta["50%"], 
                                d=d["50%"], bot=bot["50%"], slope=slope["50%"])
@@ -373,9 +373,15 @@ fit.jagsNEC <- function(data,
   
   # calculate the NEC from the predicted values for the ECx model
   if(model=="ECx4param"){
-    out$sims.list$NEC <- unlist(lapply(1:out$n.sims, FUN=function(x){
-      pred.vals$x[which.min(abs(pred.vals$posterior[, x]-quantile(out$sims.list$top, 0.01)))]
-        }))
+    reference <-  quantile(out$sims.list$top, 0.05)
+    out$sims.list$NEC  <-  sapply(1:out$n.sims, function (x, pred.vals, reference) {
+      pred.vals$x[which.min(abs(pred.vals$posterior[, x] - reference))]
+    }, pred.vals = pred.vals, reference = reference)
+    
+    #out$sims.list$NEC <- unlist(lapply(1:out$n.sims, FUN=function(x){
+    #  pred.vals$x[which.min(abs(pred.vals$posterior[, x]-quantile(out$sims.list$top, 0.01)))]
+    #    }))
+    
     NEC <- quantile(out$sims.list$NEC, c(0.025, 0.5, 0.975))  
   }
   

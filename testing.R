@@ -1,9 +1,13 @@
 
-#devtools::install_github("AIMS/NEC-estimation")
-#require(jagsNEC)
+devtools::install_github("AIMS/NEC-estimation", ref="Model_averaged")
+require(jagsNEC)
+
 library(R2jags)
 require(tidyverse)
 require(readxl)
+path <- "C:/Users/rfisher/OneDrive - Australian Institute of Marine Science/Documents/AIMS/EcologicalRiskModelling/Ecotoxicology/Ecotox_stats/CR-examples"
+
+
 source("R/check_chains.R")
 source("R/check_mixing.R")
 source("R/Write_jags_NEC3paramMod.R")
@@ -13,24 +17,30 @@ source("R/Write_jags_ECx4paramMod.R")
 source("R/Write_jags_NECHormesisMod.R")
 source("R/Predict_fitted_vals.R")
 source("R/Fit_jagsNEC.R")
+source("R/Fit_jagsMANEC.R")
 source("R/plot_jagsNEC.R")
 source("R/plot_jagsNECfit.R")
 source("R/extract_ECx.R")
-path <- "C:/Users/rfisher/OneDrive - Australian Institute of Marine Science/Documents/AIMS/EcologicalRiskModelling/Ecotoxicology/Ecotox_stats/CR-examples"
+source("R/wi.R")
 
-
-### testing with Heidi's DLI dat ----
+### testing model averaging function -----
 
 dat<-read.csv(paste(path,'test_dat1.csv',sep="/"))
 out <- fit.jagsNEC(data=dat,
                    x.var="light.stress", 
-                   y.var="scaled.col",
-                  model="NEC3param")
-                   #model="NECHormesis")
+                   y.var="col.intensity",
+                   model="NEC3param")
+#model="NECHormesis")
 check.chains(out)
 
 par(mfrow=c(1,1))
 plot(out)
+
+out.ma <- fit.jagsMANEC(data=dat, 
+                          x.var="light.stress", 
+                          y.var="col.intensity")
+
+#---
 
 dat<-read.csv(paste(path,'test_dat2.csv',sep="/"))
 out <- fit.jagsNEC(data=dat,
@@ -43,10 +53,17 @@ check.chains(out)
 par(mfrow=c(1,1))
 plot(out)
 
+
+out.ma <- fit.jagsMANEC(data=dat, 
+                        x.var="light.stress", 
+                        y.var="col.intensity")
+
+#----
+
 dat<-read.csv(paste(path,'test_dat3.csv',sep="/"))
 out <- fit.jagsNEC(data=dat,
                    x.var="light.stress", 
-                   y.var="scaled.col",
+                   y.var="range01.col",
                    #model="NEC3param")
                    model="NECHormesis")
 check.chains(out)
@@ -103,7 +120,7 @@ out <- fit.jagsNEC(data=data1,
                    x.var="log.x",  
                    y.var="suc",
                    model="NECHormesis",
-                  # over.disp = TRUE,
+                   #over.disp = TRUE,
                    trials.var = "tot")
 check.chains(out)
 
@@ -170,6 +187,13 @@ mtext(text="Log (Concentration)", side=1, outer=TRUE)
 mtext(text="Response", side=2, outer=TRUE)
 
 dev.off()
+
+out.list <- list(out1=out1, out2=out2, out3=out3,out4=out4,out5=out5)
+
+require(custom.functions.pkg)
+
+data.frame(DICw=unlist(round(wi(unlist(lapply(out.list, FUN=function(x){x$DIC}))),3)),
+           pD=unlist(lapply(out.list, FUN=function(x){x$pD})))
 
 
 out1$NEC
@@ -903,3 +927,33 @@ out.diuron <- fit.jagsNEC(data=dat.diuron,
 out.metribuzin <- fit.jagsNEC(data=dat.metribuzin, 
                           x.var="log.x", 
                           y.var="resp")
+
+
+
+dat.propazine <- read_excel(paste(path,"/zoox data_use for R.xlsx", sep=""), sheet = "propazine") %>%
+  data.frame() %>%
+  na.omit %>%
+  mutate(sqrt.x=sqrt(raw.x),
+         log.x=log(raw.x),
+         scaled.x=as.vector(scale(raw.x)))
+
+out <- fit.jagsMANEC(data=dat.propazine, 
+                             x.var="sqrt.x", 
+                             y.var="resp", 
+                             y.type="gaussian")
+
+
+par(mfrow=c(1,1))
+plot(out)
+out$mod.stats
+
+
+out <- fit.jagsNEC(data=dat.propazine, 
+                   x.var="sqrt.x", 
+                   y.var="resp", 
+                   y.type="gaussian",
+                   model="NECHormesis")
+
+
+
+
