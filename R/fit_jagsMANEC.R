@@ -124,26 +124,39 @@ fit.jagsMANEC <- function(data,
   
   # model averaged pred.vals
   x <- mod.fits[[success.models[1]]]$pred.vals$x
+  sample.size <- length(NEC.posterior) 
+  # for model averaged predictions - no used
   
-  y <- rowSums(do.call("cbind", lapply(success.models, FUN=function(x){
-                      mod.fits[[x]]$pred.vals$y*mod.stats[x, "wi"]
-                    })))
-  
-  up <- rowSums(do.call("cbind", lapply(success.models, FUN=function(x){
-                      mod.fits[[x]]$pred.vals$up*mod.stats[x, "wi"]
-                    })))
-  
-  lw <- rowSums(do.call("cbind", lapply(success.models, FUN=function(x){
-                      mod.fits[[x]]$pred.vals$lw*mod.stats[x, "wi"]
-                    })))
-  
-  posterior <- Reduce("+", lapply(success.models, FUN=function(x){
-                  mod.fits[[x]]$pred.vals$posterior*mod.stats[x, "wi"]    
-                     }))
-    
+  # y <- rowSums(do.call("cbind", lapply(success.models, FUN=function(x){
+  #                     mod.fits[[x]]$pred.vals$y*mod.stats[x, "wi"]
+  #                   })))
+  # 
+  # up <- rowSums(do.call("cbind", lapply(success.models, FUN=function(x){
+  #                     mod.fits[[x]]$pred.vals$up*mod.stats[x, "wi"]
+  #                   })))
+  # 
+  # lw <- rowSums(do.call("cbind", lapply(success.models, FUN=function(x){
+  #                     mod.fits[[x]]$pred.vals$lw*mod.stats[x, "wi"]
+  #                   })))
+  # 
+  # posterior <- Reduce("+", lapply(success.models, FUN=function(x){
+  #                 mod.fits[[x]]$pred.vals$posterior*mod.stats[x, "wi"]    
+  #                    }))
+  #   
   y.m <- rowSums(do.call("cbind", lapply(success.models, FUN=function(x){
                       mod.fits[[x]]$pred.vals$y.m*mod.stats[x, "wi"]
                     })))
+  
+  # for model weighted posterior - used
+  posterior.predicted <- do.call("cbind", lapply(success.models, FUN=function(x){
+                 mod.fits[[x]]$pred.vals$posterior[,
+                 base::sample(1:sample.size, round(sample.size*mod.stats[x, "wi"]))] 
+                     }))
+  
+  y <- apply(posterior.predicted, MARGIN=1, FUN=median)
+  up <- apply(posterior.predicted, MARGIN=1, FUN=quantile, probs=0.975)
+  lw <- apply(posterior.predicted, MARGIN=1, FUN=quantile, probs=0.025)
+
 
   # collate all the elements
   export.list <- 
