@@ -1,5 +1,5 @@
 
-devtools::install_github("AIMS/NEC-estimation", ref="Model_averaged")
+devtools::install_github("AIMS/NEC-estimation", ref="Weibull")
 require(jagsNEC)
 
 library(R2jags)
@@ -15,6 +15,8 @@ source("R/Write_jags_NECsigmoidalMod.R")
 source("R/Write_jags_NEC4paramMod.R")
 source("R/Write_jags_ECx4paramMod.R")
 source("R/Write_jags_NECHormesisMod.R")
+source("R/Write_jags_ECxWeibull1Mod.R")
+source("R/Write_jags_ECxWeibull2Mod.R")
 source("R/Predict_fitted_vals.R")
 source("R/Fit_jagsNEC.R")
 source("R/Fit_jagsMANEC.R")
@@ -29,8 +31,8 @@ dat<-read.csv(paste(path,'test_dat1.csv',sep="/"))
 out <- fit.jagsNEC(data=dat,
                    x.var="light.stress", 
                    y.var="col.intensity",
-                   model="NEC3param")
-#model="NECHormesis")
+                   model="NECHormesis")#"ECxWeibull1") #
+
 check.chains(out)
 
 par(mfrow=c(1,1))
@@ -38,7 +40,11 @@ plot(out)
 
 out.ma <- fit.jagsMANEC(data=dat, 
                           x.var="light.stress", 
-                          y.var="col.intensity")
+                          y.var="col.intensity", 
+                          model.set=c("NEC3param", "NECsigmoidal", "NEC4param", 
+                                                             "NECHormesis",
+                                                             "ECx4param", "ECxWeibull1", "ECxWeibull2")
+                          )
 
 #---
 
@@ -119,7 +125,7 @@ plot(data1$raw.x, data1$suc/data1$tot, log = 'x')   #pooled by spp and specta (t
 out <- fit.jagsNEC(data=data1,
                    x.var="log.x",  
                    y.var="suc",
-                   model="NECHormesis",
+                   model="ECxWeibull1",
                    #over.disp = TRUE,
                    trials.var = "tot")
 check.chains(out)
@@ -127,7 +133,10 @@ check.chains(out)
 par(mfrow=c(1,1))
 plot(out)
 
-
+out.ma <- fit.jagsMANEC(data=data1, 
+                        x.var="log.x", 
+                        y.var="suc",
+                        trials.var = "tot")
 
 ### Testing/troubleshooting alternative models ----
 #source("R/Write_jags_NECHormesisMod.R")

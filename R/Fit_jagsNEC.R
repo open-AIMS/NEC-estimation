@@ -22,30 +22,59 @@
 #' 
 #' @param y.var the column heading indicating the response (y) variable
 #' 
-#' @param trials.var the column heading indicating the column for the number of "trials" for binomial response data. If not supplied, the model may run but will not be the model you intended!
+#' @param trials.var the column heading indicating the column for the number of "trials" for binomial response data. 
+#' If not supplied, the model may run but will not be the model you intended!
 #' 
-#' @param x.type the statistical distribution to use for the x (concentration) data. This will be guess based on the characteristic of the input data if not supplied. As some concentration-response data will use zero concentration, and there is no distribution on the continuous scale from 0 to in (ie tweedie) available in jags, a small offset is added (1/10^3 of the next lowest value) to zero values of concentration where these are gamma distributed.
+#' @param x.type the statistical distribution to use for the x (concentration) data. This will be guess based on the 
+#' characteristic of the input data if not supplied.
 #'
-#' @param y.type the statistical distribution to use for the y (response) data. This may currently be one of  'binomial', 'poisson',' 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer. If not supplied, the appropriate distribution will be guessed based on the distribution of the input data.
+#' @param y.type the statistical distribution to use for the y (response) data. This may currently be one of  'binomial', 
+#' 'poisson',' 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer. 
+#' If not supplied, the appropriate distribution will be guessed based on the distribution of the input data.
 #'
-#' @param  params A vector of names indicating the parameters that to trace during the jags fit. For the NEC jags model this is typically 'NEC','top' and 'beta'. If left out, fit.jagsNEC will supply this based on the selected y.type and x.type.
+#' @param  params A vector of names indicating the parameters that to trace during the jags fit. For the NEC jags model 
+#' this is typically 'NEC','top' and 'beta'. If left out, fit.jagsNEC will supply this based on the selected y.type and 
+#' x.type.
 #'
 #' @param burnin the number of iterations to use as burnin. 
 #' 
-#' @param n.iter the number of interations to run following burnin for the initial jags fit. Defaults to 500 + burnin, but small values are good when the model may have trouble fitting and is updated by n.iter.update iterations anyway.
+#' @param n.iter the number of interations to run following burnin for the initial jags fit. Defaults to 500 + burnin, 
 #'
 #' @param n.iter.burnin the number of interations to run overall. This should be large. Defaults to 10000.
 #'
-#' @param n.tries. If the initial model fit fails because it cannot be fit by jags (miss-specified priors, invalid initial values), or because there is poor chain mixing fit.jagsNEC will try n.tries many times using the init.fun defined by the write model function. If all those attempts fail, fit.jagsNEC will then try using default values provided by jags. The function will only return an error if all n.tries fail.
+#' @param n.tries. The number of tries to attempt to fit the model and attain good chain mixing. See details below.
 #'
-#' @param over.disp. If an overdispersed model should be used. Only changes the model fit for poisson and binomial y.type data. For poisson, a negative binomial model will be fit. For binomial a beta model will be fit.
+#' @param over.disp. If an overdispersed model should be used. Only changes the model fit for poisson and binomial y.type 
+#' data. For poisson, a negative binomial model will be fit. For binomial a beta model will be fit.
 #'
 #' @param model The type of model to be fit. Currently takes values of "NEC3param",  
-#' "NEC4param", "NECsigmoidal", "NECHormesis" or "ECx4param". All models other than 
-#' "NEC3param" (which is that defined by Fox 2010) are currently undergoing beta testing and are experimental. These should not yet be used for NEC reporting.
+#' "NEC4param", "NECsigmoidal", "NECHormesis", "ECx4param", "ECxWeibull1", or "ECxWeibull2".
+#'
+#' @details   
+#' 
+#' As some concentration-response data will use zero concentration, 
+#' and there is no distribution on the continuous scale from 0 to in (ie tweedie) available in jags, a small offset 
+#' is added (1/10^3 of the next lowest value) to zero values of concentration where x.var are gamma distributed.
+#' 
+#' If the initial model fit fails because it cannot be fit by jags (miss-specified priors, invalid 
+#' initial values), or because there is poor chain mixing fit.jagsNEC will try n.tries many times using the init.fun 
+#' defined by the write model function. If all those attempts fail, fit.jagsNEC will then try using default values 
+#' provided by jags. The function will only return an error if all n.tries fail.
+#' 
+#' All models other than "NEC3param" (which is that defined by Fox 2010) are currently undergoing beta testing and are 
+#' experimental. These should not yet be used for NEC reporting for official purposes. Comments and feedback are welcome, 
+#' especially reproducible examples of issues, as well as example test cases.
+#' 
+#' All models provide an estimate for NEC. For model types with "NEC" as a prefix, NEC is directly estimated as a paremeter 
+#' in the model. Models with "ECx" as a prefix are continuos curve models, tyipically used for extracting ECx values 
+#' from concentration response data. In this instance the NEC value is defined as the concentration at which there is 
+#' 90 percent certainty (based on the Bayesian posterior estimate) that the response falls below the estimated value of
+#' the upper assymptote (top) of the response (i.e the response value is significantly lower than that expected in the case of
+#' no exposure).
 #'
 #' @export
-#' @return The $BUGSoutput element of fitted jags model.
+#' @return The $BUGSoutput element of fitted jags model, including an estimate of the NEC value. 
+#' A posterior sample of the NEC is also available under $sims.list.
 
 fit.jagsNEC <- function(data,
                         x.var,
@@ -115,8 +144,9 @@ fit.jagsNEC <- function(data,
   } 
   
   # check there is a valid model type
-  if(is.na(match(model, c("NEC3param", "NECsigmoidal", "NEC4param", 
-                          "ECx4param", "NECHormesis")))){
+  if(is.na(match(model, c("NEC3param", "NECsigmoidal", "NEC4param", "NECHormesis",
+                          "ECx4param", "ECxWeibull1", "ECxWeibull1"
+                          )))){
     stop("The model type you have specified does not extist.")    
   }
   
@@ -198,14 +228,24 @@ fit.jagsNEC <- function(data,
     params <- setdiff(c(params, "bot"), c("alpha"))
   }
   
+  if(model=="NECHormesis"){
+    init.fun <- write.jags.NECHormesis.mod(x=x.type,y=y.type, mod.dat=mod.dat)
+    params <- c(params, "slope")
+  }
+  
   if(model=="ECx4param"){
     init.fun <- write.jags.ECx4param.mod(x=x.type,y=y.type, mod.dat=mod.dat)
     params <- setdiff(c(params, "bot", "EC50"), c("NEC", "alpha"))
   }
   
-  if(model=="NECHormesis"){
-    init.fun <- write.jags.NECHormesis.mod(x=x.type,y=y.type, mod.dat=mod.dat)
-    params <- c(params, "slope")
+  if(model=="ECxWeibull1"){
+    init.fun <- write.jags.ECxWeibull1.mod(x=x.type,y=y.type, mod.dat=mod.dat)
+    params <- setdiff(c(params, "bot", "EC50"), c("NEC", "alpha"))
+  }
+  
+  if(model=="ECxWeibull2"){
+    init.fun <- write.jags.ECxECxWeibull2.mod(x=x.type,y=y.type, mod.dat=mod.dat)
+    params <- setdiff(c(params, "bot", "EC50"), c("NEC", "alpha"))
   }
   
   all.Js <- list()
@@ -273,15 +313,9 @@ fit.jagsNEC <- function(data,
   if(class(J1)=="try-error"){
     if(length(all.Js)>0){
       J1 <- all.Js[[ which.min(unlist(lapply(all.Js, FUN=function(x){check.mixing(x)$cv.ratio})))]]
-      warning("The function fit.jagsNEC was unable to find a set of starting parameters 
-              resulting in good chain mixing. This may be a result of a weakly defined 
-              threshold, in which case try calculating an ECx value instead. If the data 
-              show a clear NEC pattern that would normally be easy to fit, please send a 
-              reproducible example so we can try and improve our function. 
-              While a model has been returned, please evaluate the model using check.chains 
-              to assess the validity of the fit, as well as criticially evaluate the outcome 
-              of the estimated values. Extreme caution should be used in interpreting the 
-              model results.")
+      warning(paste("The function fit.jagsNEC was unable to find a set of starting parameters for the ", model,  
+              " model resulting in good chain mixing. Exmine the model using check.chains and criticially evaluate the outcome 
+              of the estimated values. Caution should be used in interpreting the model results."), sep="")
          } 
     if(length(all.Js)==0 & nchar(round(diff(range(x.dat))))>=3){
       stop(paste("The function fit.jagsNEC was unable to fit this model. Your x.var variable ", 
@@ -303,57 +337,61 @@ fit.jagsNEC <- function(data,
   
   # extract the model paramters - depending on the model types
   # NEC <-   rep(min.x,3); names(NEC) <- c("2.5%",  "50%", "97.5%")
-  top <-  quantile(out$sims.list$top,c(0.025, 0.5, 0.975))
-  beta <-  quantile(out$sims.list$beta,c(0.025, 0.5, 0.975)) 
-  alpha <- rep(0,3)#rep(0, length(NEC))
-  bot <- rep(0,3); names(bot) <- c("2.5%",  "50%", "97.5%") #rep(0, length(NEC))
-  d <- rep(1,3); names(d) <- c("2.5%",  "50%", "97.5%") #rep(0, length(NEC))
-  slope <- rep(0,3); names(slope) <- c("2.5%",  "50%", "97.5%")
-  
+  #top <-  quantile(out$sims.list$top,c(0.025, 0.5, 0.975))
+  #beta <-  quantile(out$sims.list$beta,c(0.025, 0.5, 0.975)) 
+ 
   # extract the relevant model parameters
-  if(model!="ECx4param"){  
-    NEC <- quantile(out$sims.list$NEC,c(0.025, 0.5, 0.975))
-  }
-  if(y.type=="gaussian" & model=="NEC3param"){
-    alpha <-  quantile(out$sims.list$alpha,c(0.025, 0.5, 0.975)) 
-  }
-  if(y.type=="gaussian" & model=="NECsigmoidal"){
-    alpha <-  quantile(out$sims.list$alpha,c(0.025, 0.5, 0.975)) 
-  }
-  if(model=="NEC4param" | model=="ECx4param"){
-    bot <-  quantile(out$sims.list$bot, c(0.025, 0.5, 0.975)) 
-  }
-  if(model=="NECsigmoidal"){
-    d <-  quantile(out$sims.list$d, c(0.025, 0.5, 0.975)) 
-  } 
-  if(model=="NECHormesis"){
-    slope <-  quantile(out$sims.list$slope, c(0.025, 0.5, 0.975)) 
-     if(slope["50%"]<0){
-        warning("The estimated model has a negative slope parameter for characterising Hormesis, 
-                             which is invalid for an NEC model.
-            Please refit using one of the non-hormesis model types.")}
+  extract.params <- c("top", "beta", "NEC", "alpha", "bot", "d", "slope", "EC50")
+  extracted.params <- lapply(extract.params, FUN=function(x){
+    quantile(out$sims.list[[x]],c(0.025, 0.5, 0.975))
+  })
+  names(extracted.params) <- extract.params
+
+  top <- extracted.params$top
+  beta <- extracted.params$beta
+  NEC <- extracted.params$NEC
+  alpha <- extracted.params$alpha
+  bot <- extracted.params$bot
+  d <- extracted.params$d
+  slope <- extracted.params$slope
+  EC50 <- extracted.params$EC50 
+  
+   # set values for unused parameters
+  if(is.na(alpha[1])){
+    alpha <- rep(0,3)}
+  
+  if(is.na(bot[1])){ 
+    bot <- rep(0,3); names(bot) <- c("2.5%",  "50%", "97.5%")}
+  
+  if(is.na(d[1])){  
+    d <- rep(1,3); names(d) <- c("2.5%",  "50%", "97.5%")}
+  
+  if(is.na(slope[1])){ 
+    slope <- rep(0,3); names(slope) <- c("2.5%",  "50%", "97.5%")}
+  
+  if(is.na(EC50[1])){
+    if(y.type !="gaussian"){
+      EC50 <- extract_ECx.jagsNECfit(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975))
+      }
+    if(y.type =="gaussian"){
+      EC50 <- extract_ECx.jagsNECfit(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975), type="relative")
+      }  
   }
   
   # calculate the predicted values based on the median parameter estimates
-  if(model!="ECx4param" & y.type !="gaussian"){
-    EC50 <- extract_ECx.jagsNECfit(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975))
+  mod.class <- "NEC"
+  if(length(grep("ECx", model))>0){mod.class <- "ECx"}
+    
+  if(mod.class!="ECx"){
     y.pred.m <- predict_NECmod(x.vec=x.seq, 
-                             NEC=NEC["50%"], top=top["50%"],  beta=beta["50%"], 
-                             d=d["50%"], bot=bot["50%"], slope=slope["50%"])
+                             NEC=NEC["50%"], top=top["50%"],  
+                             beta=beta["50%"], d=d["50%"],
+                             bot=bot["50%"], slope=slope["50%"])
     predicted.y <- predict_NECmod(x.vec=mod.dat$x,
-                                  NEC=NEC["50%"], top=top["50%"], beta=beta["50%"], 
-                                  d=d["50%"], bot=bot["50%"], slope=slope["50%"])}
-  if(model!="ECx4param" & y.type =="gaussian"){
-    EC50 <- extract_ECx.jagsNECfit(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975), type="relative")
-    y.pred.m <- predict_NECmod(x.vec=x.seq, 
-                               NEC=NEC["50%"], top=top["50%"],  beta=beta["50%"], 
-                               d=d["50%"], bot=bot["50%"], slope=slope["50%"])
-    predicted.y <- predict_NECmod(x.vec=mod.dat$x,
-                                  NEC=NEC["50%"], top=top["50%"], beta=beta["50%"], 
-                                  d=d["50%"], bot=bot["50%"], slope=slope["50%"])}  
-  
-   if(model=="ECx4param"){
-    EC50 <-  quantile(out$sims.list$EC50, c(0.025, 0.5, 0.975)) 
+                                  NEC=NEC["50%"], top=top["50%"], 
+                                  beta=beta["50%"], d=d["50%"], 
+                                  bot=bot["50%"], slope=slope["50%"])}
+  if(model=="ECx4param"){
     y.pred.m <- predict_ECxmod(x.vec=x.seq, 
                              EC50=EC50["50%"], top=top["50%"], beta=beta["50%"], 
                              bot=bot["50%"]) 
@@ -362,6 +400,23 @@ fit.jagsNEC <- function(data,
                                   bot=bot["50%"])    
   }
   
+  if(model=="ECxWeibull1"){
+    y.pred.m <- predict_WB1mod(x.vec=x.seq, 
+                               EC50=EC50["50%"], top=top["50%"], beta=beta["50%"], 
+                               bot=bot["50%"]) 
+    predicted.y <- predict_WB1mod(x.vec=mod.dat$x,
+                                  EC50=EC50["50%"], top=top["50%"], beta=beta["50%"], 
+                                  bot=bot["50%"])    
+  }
+  
+  if(model=="ECxWeibull2"){
+    y.pred.m <- predict_WB1mod(x.vec=x.seq, 
+                               EC50=EC50["50%"], top=top["50%"], beta=beta["50%"], 
+                               bot=bot["50%"]) 
+    predicted.y <- predict_WB1mod(x.vec=mod.dat$x,
+                                  EC50=EC50["50%"], top=top["50%"], beta=beta["50%"], 
+                                  bot=bot["50%"])    
+  }
   # calculate the predicted values using the entire posterior
   pred.vals <- c(predict_NECbugsmod(X=out, precision = 1000), list(y.m=y.pred.m))  
   
@@ -372,22 +427,18 @@ fit.jagsNEC <- function(data,
   od <- mean(out$sims.list$SS > out$sims.list$SSsim)
   
   # calculate the NEC from the predicted values for the ECx model
-  if(model=="ECx4param"){
-    reference <-  quantile(out$sims.list$top, 0.05)
+  if(mod.class=="ECx"){
+    reference <-  quantile(out$sims.list$top, 0.5)
     out$sims.list$NEC  <-  sapply(1:out$n.sims, function (x, pred.vals, reference) {
-      pred.vals$x[which.min(abs(pred.vals$posterior[, x] - reference))]
-    }, pred.vals = pred.vals, reference = reference)
-    
-    #out$sims.list$NEC <- unlist(lapply(1:out$n.sims, FUN=function(x){
-    #  pred.vals$x[which.min(abs(pred.vals$posterior[, x]-quantile(out$sims.list$top, 0.01)))]
-    #    }))
-    
+      pred.vals$x[which.min(abs(pred.vals$posterior[, x] - reference))]}, 
+      pred.vals = pred.vals, reference = reference)
+
     NEC <- quantile(out$sims.list$NEC, c(0.025, 0.5, 0.975))  
   }
   
   # Put everyting in a list for output
   if(class(out)!="try-error"){
-      out <- c(out, list(
+     out <- c(out, list(
      pred.vals = pred.vals,
      NEC = NEC,
      top = top,

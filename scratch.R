@@ -1,10 +1,10 @@
 
 
-data=dat #count.data#binom.data##
-x.var="light.stress" #log.x" # "concentration" #
-y.var="col.intensity" # "suc" #"count" #"response" #"suc" # 
-#model="NECHormesis"#"NEC3param"#"NECsigmoidal"#"ECx4param"  #
-trials.var=NA#"tot"
+data=data1#dat #count.data#binom.data##
+x.var="log.x" #"light.stress" # "concentration" #
+y.var="suc" #"col.intensity" # "count" #"response" #"suc" #
+model="ECxWeibull1"#"NECHormesis"#"ECxWeibull1"#"NEC3param"#"NECsigmoidal"#"ECx4param"  #
+trials.var="tot"#NA#
 x.type = NA #"gamma"
 y.type = NA #"gaussian"#"poisson" # #binomial"#"gaussian" #
 params=c("top", "beta", "NEC", "SS", "SSsim")#, "slope")

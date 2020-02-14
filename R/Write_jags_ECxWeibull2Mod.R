@@ -35,17 +35,17 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top + (bot−top) * (1−exp(−exp(beta*(log(x[i]) − log(EC50))))) 
+        theta[i]<-bot + (top-bot) * (1-exp(-exp(beta*(log(x[i]) - log(EC50))))) 
         
         # response is binomial
         y[i]~dbin(theta[i],trials[i])
         }
         
         # specify model priors
-        bot ~  dunif(0.0001,0.999) 
+        top ~  dunif(0.0001,0.999) 
         beta ~ dgamma(0.0001,0.0001)
         EC50 ~ dgamma(0.0001,0.0001) #d norm(3, 0.0001) T(0,)
-        top ~  dunif(0.0001,0.99)
+        bot ~  dunif(0.0001,0.99)
          
         # pearson residuals
         for (i in 1:N) {
@@ -69,11 +69,11 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      bot = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.75))/
+      top = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.75))/
       round(mean(mod.dat$trials)), 
       beta = runif(1,0.0001,0.999),#rlnorm(1,0,1), #
       EC50 = rlnorm(1,log(mean(mod.dat$x)),1),
-      top =runif(1, 0.01, 0.09))}#rgamma(1,0.2,0.001))}  
+      bot =runif(1, 0.01, 0.09))}#rgamma(1,0.2,0.001))}  
    }
 
   # binomial y; gaussian x ----
@@ -86,16 +86,16 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top + (bot−top) * (1−exp(−exp(beta*(log(x[i]) − log(EC50))))) 
+        theta[i]<-bot + (top-bot) * (1-exp(-exp(beta*(log(x[i]) - log(EC50))))) 
         # response is binomial
         y[i]~dbin(theta[i],trials[i])
         }
         
         # specify model priors
-        bot ~  dunif(0.0001,0.999) 
+        top ~  dunif(0.0001,0.999) 
         beta ~ dgamma(0.0001,0.0001)
         EC50 ~ dnorm(0,0.0001) 
-        top ~  dunif(0.0001,0.99)
+        bot ~  dunif(0.0001,0.99)
          
         # pearson residuals
         for (i in 1:N) {
@@ -119,11 +119,11 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      bot = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.75))/
+      top = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.75))/
         round(mean(mod.dat$trials)), 
       beta = runif(1,0.0001,0.999),
       EC50 = rnorm(1,mean(mod.dat$x),2),
-      top =runif(1, 0.01, 0.09))} 
+      bot =runif(1, 0.01, 0.09))} 
   }
   
   # binomial y; beta x ----
@@ -136,16 +136,16 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top + (bot−top) * (1−exp(−exp(beta*(log(x[i]) − log(EC50))))) 
+        theta[i]<-bot + (top-bot) * (1-exp(-exp(beta*(log(x[i]) - log(EC50))))) 
         # response is binomial
         y[i]~dbin(theta[i],trials[i])
         }
         
         # specify model priors
-        bot ~  dunif(0.0001,0.999) 
+        top ~  dunif(0.0001,0.999) 
         beta ~ dgamma(0.0001,0.0001)
         EC50 ~ dunif(0.0001,0.9999) 
-        top ~  dunif(0.0001,0.99)
+        bot ~  dunif(0.0001,0.99)
          
         # pearson residuals
         for (i in 1:N) {
@@ -168,11 +168,11 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      bot = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.75))/
+      top = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.75))/
         round(mean(mod.dat$trials)), 
       beta = runif(1,0.0001,0.999),
       EC50 = runif(1, 0.01, 0.9),
-      top =runif(1, 0.01, 0.09))} 
+      bot =runif(1, 0.01, 0.09))} 
   }
   
   # poisson y; gamma x ----
@@ -185,16 +185,16 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top + (bot−top) * (1−exp(−exp(beta*(log(x[i]) − log(EC50))))) 
+        theta[i]<-bot + (top-bot) * (1-exp(-exp(beta*(log(x[i]) - log(EC50))))) 
         # response is poisson
         y[i]~dpois(theta[i])
         }
         
         # specify model priors
-        bot ~ dgamma(1,0.001) # dnorm(0,0.001) T(0,) dnorm(100,0.0001)T(0,) #
+        top ~ dgamma(1,0.001) # dnorm(0,0.001) T(0,) dnorm(100,0.0001)T(0,) #
         beta~dgamma(0.0001,0.0001)
         EC50~dgamma(0.0001,0.0001) #dnorm(3, 0.0001) T(0,) dnorm(30, 0.0001) T(0,) #
-        top ~  dgamma(1,0.001)
+        bot ~  dgamma(1,0.001)
         
         # pearson residuals
         for (i in 1:N) {
@@ -218,10 +218,10 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      bot = rpois(1,max(mod.dat$y)), 
+      top = rpois(1,max(mod.dat$y)), 
       beta = runif(1,0.0001,0.999), #rlnorm(1,0,1), #rgamma(1,0.2,0.001),
       EC50 =  rlnorm(1,log(mean(mod.dat$x)),1),
-      top =rpois(1,round(mean(mod.dat$y))))} 
+      bot =rpois(1,round(mean(mod.dat$y))))} 
   }
   
   # poisson y; gaussian x----
@@ -234,16 +234,16 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top + (bot−top) * (1−exp(−exp(beta*(log(x[i]) − log(EC50))))) 
+        theta[i]<-bot + (top-bot) * (1-exp(-exp(beta*(log(x[i]) - log(EC50))))) 
         # response is poisson
         y[i]~dpois(theta[i])
         }
 
         # specify model priors
-        bot ~  dgamma(1,0.001)
+        top ~  dgamma(1,0.001)
         beta~dgamma(0.0001,0.0001)
         EC50~dnorm(0, 0.0001)
-        top ~  dgamma(1,0.001)
+        bot ~  dgamma(1,0.001)
 
         # pearson residuals
         for (i in 1:N) {
@@ -266,10 +266,10 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      bot = rpois(1,max(mod.dat$y)), 
+      top = rpois(1,max(mod.dat$y)), 
       beta = rgamma(1,0.2,0.001),
       EC50 = rnorm(1, mean(mod.dat$x), 2),
-      top =rpois(1,round(mean(mod.dat$y))))} 
+      bot =rpois(1,round(mean(mod.dat$y))))} 
   }
     
   # poisson y; beta x----
@@ -282,16 +282,16 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top + (bot−top) * (1−exp(−exp(beta*(log(x[i]) − log(EC50))))) 
+        theta[i]<-bot + (top-bot) * (1-exp(-exp(beta*(log(x[i]) - log(EC50))))) 
         # response is poisson
         y[i]~dpois(theta[i])
         }
         
         # specify model priors
-        bot ~  dgamma(1,0.001) # dnorm(0,0.001) #T(0,) #
+        top ~  dgamma(1,0.001) # dnorm(0,0.001) #T(0,) #
         beta ~ dgamma(0.0001,0.0001)
         EC50 ~  dunif(0.0001,0.9999) 
-        top ~  dgamma(1,0.001)
+        bot ~  dgamma(1,0.001)
 
         # pearson residuals
         for (i in 1:N) {
@@ -314,10 +314,10 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      bot = rpois(1,max(mod.dat$y)), #rnorm(1,0,1),#
+      top = rpois(1,max(mod.dat$y)), #rnorm(1,0,1),#
       beta = rgamma(1,0.2,0.001),
       EC50 = runif(1, 0.01, 0.9),
-      top =rpois(1,round(mean(mod.dat$y))))} 
+      bot =rpois(1,round(mean(mod.dat$y))))} 
   }
     
   # gamma y; beta x -----
@@ -330,17 +330,17 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top + (bot−top) * (1−exp(−exp(beta*(log(x[i]) − log(EC50))))) 
+        theta[i]<-bot + (top-bot) * (1-exp(-exp(beta*(log(x[i]) - log(EC50))))) 
         # response is gamma
         y[i]~dgamma(shape, shape / (theta[i]))
         }
         
         # specify model priors
-        bot ~  dlnorm(0,0.001) #dgamma(1,0.001) # dnorm(0,0.001) #T(0,) #
+        top ~  dlnorm(0,0.001) #dgamma(1,0.001) # dnorm(0,0.001) #T(0,) #
         beta ~ dgamma(0.0001,0.0001)
         EC50 ~  dunif(0.001,0.999) #dbeta(1,1)
         shape ~ dlnorm(0,0.001) #dunif(0,1000)        
-        top ~  dlnorm(0,0.001)
+        bot ~  dlnorm(0,0.001)
 
         # pearson residuals
         for (i in 1:N) {
@@ -363,11 +363,11 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      bot = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.1),
+      top = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.1),
       beta = rgamma(1,0.2,0.001),
       shape = runif(1,0,10),
       EC50 = runif(1, 0.3, 0.6),
-      top =rlnorm(1,log(quantile(mod.dat$y,probs = 0.25)),0.1))} 
+      bot =rlnorm(1,log(quantile(mod.dat$y,probs = 0.25)),0.1))} 
   }
     
   # gamma y; gaussian x -----
@@ -380,17 +380,17 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top + (bot−top) * (1−exp(−exp(beta*(log(x[i]) − log(EC50))))) 
+        theta[i]<-bot + (top-bot) * (1-exp(-exp(beta*(log(x[i]) - log(EC50))))) 
         # response is gamma
         y[i]~dgamma(shape, shape / (theta[i]))
         }
         
         # specify model priors
-        bot ~  dlnorm(0,0.001) # dnorm(0,0.001) T(0,) #dgamma(1,0.001) #
+        top ~  dlnorm(0,0.001) # dnorm(0,0.001) T(0,) #dgamma(1,0.001) #
         beta ~ dgamma(0.0001,0.0001)
         EC50 ~ dnorm(0, 0.0001)
         shape ~ dlnorm(0,0.001) #dunif(0,1000)
-        top ~  dlnorm(0,0.001)
+        bot ~  dlnorm(0,0.001)
 
         # pearson residuals
         for (i in 1:N) {
@@ -413,11 +413,11 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      bot = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.1),
+      top = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.1),
       beta = rgamma(1,0.2,0.001),
       shape = dlnorm(1,1/mean(mod.dat$y),1),
       EC50 = rnorm(1, mean(mod.dat$x), 1),
-      top =rlnorm(1,log(quantile(mod.dat$y,probs = 0.25)),0.1))} 
+      bot =rlnorm(1,log(quantile(mod.dat$y,probs = 0.25)),0.1))} 
   }
   
   # gamma y; gamma x -----
@@ -430,17 +430,17 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top + (bot−top) * (1−exp(−exp(beta*(log(x[i]) − log(EC50))))) 
+        theta[i]<-bot + (top-bot) * (1-exp(-exp(beta*(log(x[i]) - log(EC50))))) 
         # response is gamma
         y[i]~dgamma(shape, shape / (theta[i]))
         }
         
         # specify model priors
-        bot ~  dlnorm(0,0.001) #dgamma(1,0.001) # dnorm(0,0.001) #T(0,) #
+        top ~  dlnorm(0,0.001) #dgamma(1,0.001) # dnorm(0,0.001) #T(0,) #
         beta ~ dgamma(0.0001,0.0001)
         EC50~dgamma(0.0001,0.0001) #dnorm(3, 0.0001) T(0,) dnorm(30, 0.0001) T(0,) #
         shape ~ dlnorm(0,0.001) #dunif(0,1000)
-        top ~  dlnorm(0,0.001)
+        bot ~  dlnorm(0,0.001)
 
         # pearson residuals
         for (i in 1:N) {
@@ -464,11 +464,11 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      bot = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.1),
+      top = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.1),
       beta = rgamma(1,0.2,0.001),
       shape = runif(1,0,10),
       EC50 = rlnorm(1,log(mean(mod.dat$x)),1),
-      top =rlnorm(1,log(quantile(mod.dat$y,probs = 0.25)),0.1))} 
+      bot =rlnorm(1,log(quantile(mod.dat$y,probs = 0.25)),0.1))} 
   }
   
   # gaussian y; gamma x ----
@@ -481,19 +481,19 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
       # likelihood
       for (i in 1:N)
       {
-      theta[i]<-top + (bot−top) * (1−exp(−exp(beta*(log(x[i]) − log(EC50))))) 
+      theta[i]<-bot + (top-bot) * (1-exp(-exp(beta*(log(x[i]) - log(EC50))))) 
       # response is gaussian
       
       y[i]~dnorm(theta[i],tau)
       }
       
       # specify model priors
-      bot ~  dnorm(0,0.1) # dnorm(0,0.001) #T(0,) 
+      top ~  dnorm(0,0.1) # dnorm(0,0.001) #T(0,) 
       beta ~ dgamma(0.0001,0.0001)
       EC50 ~ dnorm(0, 0.0001) T(0,) #dgamma(0.0001,0.0001) Note we haven't used gamma here as the example didn't result in chain missing.
       sigma ~ dunif(0, 20)  #sigma is the SD
       tau  = 1 / (sigma * sigma)  #tau is the reciprical of the variance 
-      top ~  dnorm(0,0.1) # dnorm(0,0.001) #T(0,) 
+      bot ~  dnorm(0,0.1) # dnorm(0,0.001) #T(0,) 
 
       # pearson residuals
       for (i in 1:N) {
@@ -516,11 +516,11 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
   sink()  #Make model in working directory
   
   init.fun <- function(mod.data=mod.data){list(
-    bot = rnorm(1,max(mod.dat$y),1), 
+    top = rnorm(1,max(mod.dat$y),1), 
     beta = rgamma(1,0.2,0.001),
     EC50 = rlnorm(1,log(mean(mod.dat$x)),1),#rgamma(1,0.2,0.001),
     sigma = runif(1, 0, 5),
-    top =rnorm(1,min(mod.dat$y),1))}
+    bot =rnorm(1,min(mod.dat$y),1))}
 
  }
 
@@ -534,19 +534,19 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top + (bot−top) * (1−exp(−exp(beta*(log(x[i]) − log(EC50))))) 
+        theta[i]<-bot + (top-bot) * (1-exp(-exp(beta*(log(x[i]) - log(EC50))))) 
         # response is gaussian
         
         y[i]~dnorm(theta[i],tau)
         }
         
         # specify model priors
-        bot ~  dnorm(0,0.1) # dnorm(0,0.001) #T(0,) 
+        top ~  dnorm(0,0.1) # dnorm(0,0.001) #T(0,) 
         beta ~ dgamma(0.0001,0.0001)
         EC50 ~  dunif(0.001,0.999) #dbeta(1,1)
         sigma ~ dunif(0, 20)  #sigma is the SD
         tau  = 1 / (sigma * sigma)  #tau is the reciprical of the variance 
-        top ~  dnorm(0,0.1) # dnorm(0,0.001) #T(0,) 
+        bot ~  dnorm(0,0.1) # dnorm(0,0.001) #T(0,) 
 
       # pearson residuals
         for (i in 1:N) {
@@ -569,11 +569,11 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      bot = rnorm(1,max(mod.dat$y),1), 
+      top = rnorm(1,max(mod.dat$y),1), 
       beta = rgamma(1,0.2,0.001),
       EC50 =  runif(1, 0.3, 0.6),#rgamma(1,0.2,0.001),
       sigma = runif(1, 0, 5),
-      top =rnorm(1,min(mod.dat$y),1))}
+      bot =rnorm(1,min(mod.dat$y),1))}
     
   }
   
@@ -587,19 +587,19 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top + (bot−top) * (1−exp(−exp(beta*(log(x[i]) − log(EC50))))) 
+        theta[i]<-bot + (top-bot) * (1-exp(-exp(beta*(log(x[i]) - log(EC50))))) 
         # response is gaussian
         
         y[i]~dnorm(theta[i],tau)
         }
         
         # specify model priors
-        bot ~  dnorm(0,0.1) # dnorm(0,0.001) #T(0,) 
+        top ~  dnorm(0,0.1) # dnorm(0,0.001) #T(0,) 
         beta ~ dgamma(0.0001,0.0001)
         EC50 ~  dnorm(0,0.01)
         sigma ~ dunif(0, 20)  #sigma is the SD
         tau  = 1 / (sigma * sigma)  #tau is the reciprical of the variance 
-        top ~  dnorm(0,0.1) # dnorm(0,0.001) #T(0,) 
+        bot ~  dnorm(0,0.1) # dnorm(0,0.001) #T(0,) 
 
       # pearson residuals
         for (i in 1:N) {
@@ -622,11 +622,11 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      bot = rnorm(1,max(mod.dat$y),1), 
+      top = rnorm(1,max(mod.dat$y),1), 
       beta = rgamma(1,0.2,0.001),
       EC50 =  rnorm(1,mean(mod.dat$x),1),
       sigma = runif(1, 0, 5),
-      top =rnorm(1,min(mod.dat$y),1))}
+      bot =rnorm(1,min(mod.dat$y),1))}
     
   }
   
@@ -645,16 +645,16 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
         y[i]~dbeta(shape1[i], shape2[i])
         shape1[i] <- theta[i] * phi
         shape2[i]  <- (1-theta[i]) * phi
-        theta[i]<-top + (bot−top) * (1−exp(−exp(beta*(log(x[i]) − log(EC50))))) 
+        theta[i]<-bot + (top-bot) * (1-exp(-exp(beta*(log(x[i]) - log(EC50))))) 
         }
         
         # specify model priors
-        bot ~  dunif(0.001,0.999)
+        top ~  dunif(0.001,0.999)
         beta ~ dgamma(0.0001,0.0001)
         EC50 ~  dunif(0.001,0.999) #dbeta(1,1)
         t0 ~ dnorm(0, 0.010)
         phi <- exp(t0)
-        top ~  dunif(0.0001,0.99)
+        bot ~  dunif(0.0001,0.99)
 
         # pearson residuals
         for (i in 1:N) {
@@ -677,11 +677,11 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      bot = quantile(mod.dat$y, probs=0.75),
+      top = quantile(mod.dat$y, probs=0.75),
       beta = rgamma(1,0.2,0.001),
       t0 = rnorm(0,100),
       EC50 = runif(1, 0.3, 0.6),
-      top =quantile(mod.dat$y, probs=0.25))} 
+      bot =quantile(mod.dat$y, probs=0.25))} 
   }
   
   # beta y; gamma x ----
@@ -699,16 +699,16 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
         y[i] ~ dbeta(shape1[i], shape2[i])
         shape1[i] <- theta[i] * phi
         shape2[i]  <- (1-theta[i]) * phi
-        theta[i]<-top + (bot−top) * (1−exp(−exp(beta*(log(x[i]) − log(EC50))))) 
+        theta[i]<-bot + (top-bot) * (1-exp(-exp(beta*(log(x[i]) - log(EC50))))) 
         }
         
         # specify model priors
-        bot ~  dunif(0.001,0.999)
+        top ~  dunif(0.001,0.999)
         beta ~ dgamma(0.0001,0.0001)
         EC50 ~ dgamma(0.0001,0.0001) 
         t0 ~ dnorm(0, 0.010)
         phi <- exp(t0)
-        top ~  dunif(0.0001,0.99)
+        bot ~  dunif(0.0001,0.99)
 
         # pearson residuals
         for (i in 1:N) {
@@ -731,11 +731,11 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      bot = quantile(mod.dat$y, probs=0.75),
+      top = quantile(mod.dat$y, probs=0.75),
       beta = rgamma(1,0.2,0.001),
       t0 = rnorm(0,100),
       EC50 = rlnorm(1,log(mean(mod.dat$x)),1),
-      top = quantile(mod.dat$y, probs=0.25))}
+      bot = quantile(mod.dat$y, probs=0.25))}
   }
 
   # beta y; gaussian x ----
@@ -753,16 +753,16 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
         y[i]~dbeta(shape1[i], shape2[i])
         shape1[i] <- theta[i] * phi
         shape2[i]  <- (1-theta[i]) * phi
-        theta[i]<-top + (bot−top) * (1−exp(−exp(beta*(log(x[i]) − log(EC50))))) 
+        theta[i]<-bot + (top-bot) * (1-exp(-exp(beta*(log(x[i]) - log(EC50))))) 
         }
         
         # specify model priors
-        bot ~  dunif(0.001,0.999)
+        top ~  dunif(0.001,0.999)
         beta ~ dgamma(0.0001,0.0001)
         EC50 ~ dnorm(0, 0.0001)
         t0 ~ dnorm(0, 0.010)
         phi <- exp(t0)
-        top ~  dunif(0.0001,0.99)
+        bot ~  dunif(0.0001,0.99)
 
         # pearson residuals
         for (i in 1:N) {
@@ -785,11 +785,11 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      bot = quantile(mod.dat$y, probs=0.75),
+      top = quantile(mod.dat$y, probs=0.75),
       beta = rgamma(1,0.2,0.001),
       t0 = rnorm(0,100),
       EC50 = rnorm(1, 0, 2),
-      top = quantile(mod.dat$y, probs=0.25))}
+      bot = quantile(mod.dat$y, probs=0.25))}
   }
   
   # negbin y; gaussian x ----
@@ -802,7 +802,7 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-size/(size+ top + (bot−top) * (1−exp(−exp(beta*(log(x[i]) − log(EC50))))) )
+        theta[i]<-size/(size+ bot + (top-bot) * (1-exp(-exp(beta*(log(x[i]) - log(EC50))))) )
                             
 
         # response is begative binomial
@@ -810,11 +810,11 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
         }
         
         # specify model priors
-        bot ~ dgamma(1,0.001) # dnorm(0,0.001) T(0,) dnorm(100,0.0001)T(0,) #
+        top ~ dgamma(1,0.001) # dnorm(0,0.001) T(0,) dnorm(100,0.0001)T(0,) #
         beta ~ dgamma(0.0001,0.0001)
         EC50 ~ dnorm(0.0001,0.0001) #dnorm(3, 0.0001) T(0,) dnorm(30, 0.0001) T(0,) #
         size ~ dunif(0,50)
-        top ~ dgamma(1,0.001)
+        bot ~ dgamma(1,0.001)
         
         # pearson residuals
         for (i in 1:N) {
@@ -838,11 +838,11 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      bot = rpois(1,max(mod.dat$y)), 
+      top = rpois(1,max(mod.dat$y)), 
       beta = runif(1,0.0001,0.999), #rlnorm(1,0,1), #rgamma(1,0.2,0.001),
       EC50 =  rnorm(1,mean(mod.dat$x),1),#rnorm(1,30,10))} #rgamma(1,0.2,0.001)),
       size=runif(1, 0.1, 40),
-      top =rpois(1,min(mod.dat$y)))} #
+      bot =rpois(1,min(mod.dat$y)))} #
   } 
 
     # negbin y; gamma x ----
@@ -855,17 +855,17 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-size/(size+ top + (bot−top) * (1−exp(−exp(beta*(log(x[i]) − log(EC50))))) )
+        theta[i]<-size/(size+ bot + (top-bot) * (1-exp(-exp(beta*(log(x[i]) - log(EC50))))) )
         # response is begative binomial
         y[i]~dnegbin(theta[i], size)
         }
         
         # specify model priors
-        bot ~ dgamma(1,0.001) # dnorm(0,0.001) T(0,) dnorm(100,0.0001)T(0,) #
+        top ~ dgamma(1,0.001) # dnorm(0,0.001) T(0,) dnorm(100,0.0001)T(0,) #
         beta ~ dgamma(0.0001,0.0001)
         EC50~dgamma(0.0001,0.0001) #dnorm(3, 0.0001) T(0,) dnorm(30, 0.0001) T(0,) #
         size ~ dunif(0,50)
-        top ~ dgamma(1,0.001)
+        bot ~ dgamma(1,0.001)
         
         # pearson residuals
         for (i in 1:N) {
@@ -889,11 +889,11 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      bot = rpois(1,max(mod.dat$y)), 
+      top = rpois(1,max(mod.dat$y)), 
       beta = runif(1,0.0001,0.999), #rlnorm(1,0,1), #rgamma(1,0.2,0.001),
       EC50 = rlnorm(1,log(mean(mod.dat$x)),1),#rnorm(1,30,10))} #rgamma(1,0.2,0.001)),
       size=runif(1, 0.1, 40),
-      top =rpois(1,min(mod.dat$y)))} #
+      bot =rpois(1,min(mod.dat$y)))} #
   }  
  
   # negbin y; beta x ----
@@ -906,17 +906,17 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-size/(size+ top + (bot−top) * (1−exp(−exp(beta*(log(x[i]) − log(EC50))))) )
+        theta[i]<-size/(size+ bot + (top-bot) * (1-exp(-exp(beta*(log(x[i]) - log(EC50))))) )
         # response is begative binomial
         y[i]~dnegbin(theta[i], size)
         }
         
         # specify model priors
-        bot ~ dgamma(1,0.001) # dnorm(0,0.001) T(0,) dnorm(100,0.0001)T(0,) #
+        top ~ dgamma(1,0.001) # dnorm(0,0.001) T(0,) dnorm(100,0.0001)T(0,) #
         beta ~ dgamma(0.0001,0.0001)
         EC50 ~  dunif(0.001,0.999) #dbeta(1,1)
         size ~ dunif(0,50)
-        top ~ dgamma(1,0.001)
+        bot ~ dgamma(1,0.001)
         
         # pearson residuals
         for (i in 1:N) {
@@ -940,11 +940,11 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
     sink()  #Make model in working directory
     
     init.fun <- function(mod.data=mod.data){list(
-      bot = rpois(1,max(mod.dat$y)), 
+      top = rpois(1,max(mod.dat$y)), 
       beta = runif(1,0.0001,0.999),
       EC50 = runif(1, 0.3, 0.6),
       size=runif(1, 0.1, 40),
-      top =rpois(1,min(mod.dat$y)))} #
+      bot =rpois(1,min(mod.dat$y)))} #
   }  
   
   # return the initial function
@@ -952,7 +952,7 @@ write.jags.ECxWeibull2.mod <- function(x="gamma", y, mod.dat){
       return(init.fun) 
   }
   else{
-    sbot(paste("jagsEC50 does not currently support ", x, " distributed concentration data with ", y, 
+    stop(paste("jagsEC50 does not currently support ", x, " distributed concentration data with ", y, 
                  " distributed response data. Please check this is the correct distribution to use, and if so
           feel free to contact the developers to request to add this distribution", sep=""))
   }

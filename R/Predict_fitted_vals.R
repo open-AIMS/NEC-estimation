@@ -75,6 +75,57 @@ predict_ECxmod <- function(x.vec, EC50, top, beta, bot=0){
   
 }
 
+#' predict_WB1mod
+#'
+#' Calculates predicted y (response) values for a supplied vector of x (concentration) values for a given set of EC50, top, bottom and beta values
+#'
+#' @param  x.vec the x vector over which to calculate
+#' 
+#' @param EC50 the 50 percent effect concentration
+#' 
+#' @param top the upper plateau
+#' 
+#' @param beta the exponential decay rate (hillslope)
+#' 
+#' @param bot the lower plateau
+#'
+#' @export
+#' @return A list containing x and fitted y, with up and lw values
+
+predict_WB1mod <- function(x.vec, EC50, top, beta, bot=0){
+  
+  x.seq <- x.vec 
+  y.pred <- bot + (top-bot) * exp(-exp(beta*(log(x.seq)-log(EC50)))) #WB1
+  
+  return(y.pred)
+}  
+
+
+#' predict_WB2mod
+#'
+#' Calculates predicted y (response) values for a supplied vector of x (concentration) values for a given set of EC50, top, bottom and beta values
+#'
+#' @param  x.vec the x vector over which to calculate
+#' 
+#' @param EC50 the 50 percent effect concentration
+#' 
+#' @param top the upper plateau
+#' 
+#' @param beta the exponential decay rate (hillslope)
+#' 
+#' @param bot the lower plateau
+#'
+#' @export
+#' @return A list containing x and fitted y, with up and lw values
+
+predict_WB2mod <- function(x.vec, EC50, top, beta, bot=0){
+  
+  x.seq <- x.vec 
+  y.pred <- bot + (top-bot) * (1-exp(-exp(beta*(log(x.seq)-log(EC50))))) #WB2
+  
+  return(y.pred)
+}
+
 #' predict_NECbugsmod
 #'
 #' 
@@ -142,6 +193,24 @@ predict_NECbugsmod <- function(X, precision=100){
   if(X$model == "ECx4param"){
     pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
       predict_ECxmod(x.vec=x.seq,
+                     top=X$sims.list$top[x],
+                     beta=X$sims.list$beta[x],
+                     EC50=X$sims.list$EC50[x],
+                     bot=X$sims.list$bot[x])}))
+  }
+  
+  if(X$model == "ECxWeibull1"){
+    pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
+      predict_WB1mod(x.vec=x.seq,
+                     top=X$sims.list$top[x],
+                     beta=X$sims.list$beta[x],
+                     EC50=X$sims.list$EC50[x],
+                     bot=X$sims.list$bot[x])}))
+  }
+  
+  if(X$model == "ECxWeibull2"){
+    pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
+      predict_WB2mod(x.vec=x.seq,
                      top=X$sims.list$top[x],
                      beta=X$sims.list$beta[x],
                      EC50=X$sims.list$EC50[x],
