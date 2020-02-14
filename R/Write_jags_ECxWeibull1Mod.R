@@ -35,7 +35,7 @@ write.jags.ECxWeibull1.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-bot + (top-bot) * exp(-exp(beta*(log(x[i]) - log(EC50))))
+        theta[i]<-bot + (top-bot) * exp(-exp(beta*(x[i] - EC50)))
         
         # response is binomial
         y[i]~dbin(theta[i],trials[i])
@@ -86,7 +86,7 @@ write.jags.ECxWeibull1.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-bot + (top-bot) * exp(-exp(beta*(log(x[i]) - log(EC50))))
+        theta[i]<-bot + (top-bot) * exp(-exp(beta*(x[i] - EC50)))
         # response is binomial
         y[i]~dbin(theta[i],trials[i])
         }
@@ -136,7 +136,7 @@ write.jags.ECxWeibull1.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-bot + (top-bot) * exp(-exp(beta*(log(x[i]) - log(EC50))))
+        theta[i]<-bot + (top-bot) * exp(-exp(beta*(x[i] - EC50)))
         # response is binomial
         y[i]~dbin(theta[i],trials[i])
         }
@@ -185,7 +185,7 @@ write.jags.ECxWeibull1.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-bot + (top-bot) * exp(-exp(beta*(log(x[i]) - log(EC50))))
+        theta[i]<-bot + (top-bot) * exp(-exp(beta*(x[i] - EC50)))
         # response is poisson
         y[i]~dpois(theta[i])
         }
@@ -234,7 +234,7 @@ write.jags.ECxWeibull1.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-bot + (top-bot) * exp(-exp(beta*(log(x[i]) - log(EC50))))
+        theta[i]<-bot + (top-bot) * exp(-exp(beta*(x[i] - EC50)))
         # response is poisson
         y[i]~dpois(theta[i])
         }
@@ -282,7 +282,7 @@ write.jags.ECxWeibull1.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-bot + (top-bot) * exp(-exp(beta*(log(x[i]) - log(EC50))))
+        theta[i]<-bot + (top-bot) * exp(-exp(beta*(x[i] - EC50)))
         # response is poisson
         y[i]~dpois(theta[i])
         }
@@ -330,7 +330,7 @@ write.jags.ECxWeibull1.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-bot + (top-bot) * exp(-exp(beta*(log(x[i]) - log(EC50))))
+        theta[i]<-bot + (top-bot) * exp(-exp(beta*(x[i] - EC50)))
         # response is gamma
         y[i]~dgamma(shape, shape / (theta[i]))
         }
@@ -380,7 +380,7 @@ write.jags.ECxWeibull1.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-bot + (top-bot) * exp(-exp(beta*(log(x[i]) - log(EC50))))
+        theta[i]<-bot + (top-bot) * exp(-exp(beta*(x[i] - EC50)))
         # response is gamma
         y[i]~dgamma(shape, shape / (theta[i]))
         }
@@ -430,7 +430,7 @@ write.jags.ECxWeibull1.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-bot + (top-bot) * exp(-exp(beta*(log(x[i]) - log(EC50))))
+        theta[i]<-bot + (top-bot) * exp(-exp(beta*(x[i] - EC50)))
         # response is gamma
         y[i]~dgamma(shape, shape / (theta[i]))
         }
@@ -481,7 +481,7 @@ write.jags.ECxWeibull1.mod <- function(x="gamma", y, mod.dat){
       # likelihood
       for (i in 1:N)
       {
-      theta[i]<-bot + (top-bot) * exp(-exp(beta*(log(x[i]) - log(EC50))))
+      theta[i]<-bot + (top-bot) * exp(-exp(beta*(x[i] - EC50)))
       # response is gaussian
       
       y[i]~dnorm(theta[i],tau)
@@ -534,7 +534,7 @@ write.jags.ECxWeibull1.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-bot + (top-bot) * exp(-exp(beta*(log(x[i]) - log(EC50))))
+        theta[i]<-bot + (top-bot) * exp(-exp(beta*(x[i] - EC50)))
         # response is gaussian
         
         y[i]~dnorm(theta[i],tau)
@@ -587,7 +587,7 @@ write.jags.ECxWeibull1.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-bot + (top-bot) * exp(-exp(beta*(log(x[i]) - log(EC50))))
+        theta[i]<-bot + (top-bot) * exp(-exp(beta*(x[i] - EC50)))
         # response is gaussian
         
         y[i]~dnorm(theta[i],tau)
@@ -645,7 +645,7 @@ write.jags.ECxWeibull1.mod <- function(x="gamma", y, mod.dat){
         y[i]~dbeta(shape1[i], shape2[i])
         shape1[i] <- theta[i] * phi
         shape2[i]  <- (1-theta[i]) * phi
-        theta[i]<-bot + (top-bot) * exp(-exp(beta*(log(x[i]) - log(EC50))))
+        theta[i]<-bot + (top-bot) * exp(-exp(beta*(x[i] - EC50)))
         }
         
         # specify model priors
@@ -699,7 +699,7 @@ write.jags.ECxWeibull1.mod <- function(x="gamma", y, mod.dat){
         y[i] ~ dbeta(shape1[i], shape2[i])
         shape1[i] <- theta[i] * phi
         shape2[i]  <- (1-theta[i]) * phi
-        theta[i]<-bot + (top-bot) * exp(-exp(beta*(log(x[i]) - log(EC50))))
+        theta[i]<-bot + (top-bot) * exp(-exp(beta*(x[i] - EC50)))
         }
         
         # specify model priors
@@ -753,7 +753,7 @@ write.jags.ECxWeibull1.mod <- function(x="gamma", y, mod.dat){
         y[i]~dbeta(shape1[i], shape2[i])
         shape1[i] <- theta[i] * phi
         shape2[i]  <- (1-theta[i]) * phi
-        theta[i]<-bot + (top-bot) * exp(-exp(beta*(log(x[i]) - log(EC50))))
+        theta[i]<-bot + (top-bot) * exp(-exp(beta*(x[i] - EC50)))
         }
         
         # specify model priors
@@ -802,7 +802,7 @@ write.jags.ECxWeibull1.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-size/(size+ bot + (top-bot) * exp(-exp(beta*(log(x[i]) - log(EC50)))))
+        theta[i]<-size/(size+ bot + (top-bot) * exp(-exp(beta*(x[i] - EC50))))
                             
 
         # response is begative binomial
@@ -855,7 +855,7 @@ write.jags.ECxWeibull1.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-size/(size+ bot + (top-bot) * exp(-exp(beta*(log(x[i]) - log(EC50)))))
+        theta[i]<-size/(size+ bot + (top-bot) * exp(-exp(beta*(x[i] - EC50))))
         # response is begative binomial
         y[i]~dnegbin(theta[i], size)
         }
@@ -906,7 +906,7 @@ write.jags.ECxWeibull1.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-size/(size+ bot + (top-bot) * exp(-exp(beta*(log(x[i]) - log(EC50)))))
+        theta[i]<-size/(size+ bot + (top-bot) * exp(-exp(beta*(x[i] - EC50))))
         # response is begative binomial
         y[i]~dnegbin(theta[i], size)
         }
