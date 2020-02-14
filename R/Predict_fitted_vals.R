@@ -95,7 +95,7 @@ predict_ECxmod <- function(x.vec, EC50, top, beta, bot=0){
 predict_WB1mod <- function(x.vec, EC50, top, beta, bot=0){
   
   x.seq <- x.vec 
-  y.pred <- bot + (top-bot) * exp(-exp(beta*(log(x.seq)-log(EC50)))) #WB1
+  y.pred <- bot + (top-bot) * exp(-exp(beta*(x.seq-EC50))) #WB1
   
   return(y.pred)
 }  
@@ -121,7 +121,7 @@ predict_WB1mod <- function(x.vec, EC50, top, beta, bot=0){
 predict_WB2mod <- function(x.vec, EC50, top, beta, bot=0){
   
   x.seq <- x.vec 
-  y.pred <- bot + (top-bot) * (1-exp(-exp(beta*(log(x.seq)-log(EC50))))) #WB2
+  y.pred <- bot + (top-bot) * (1-exp(-exp(beta*(x.seq-EC50)))) #WB2
   
   return(y.pred)
 }
