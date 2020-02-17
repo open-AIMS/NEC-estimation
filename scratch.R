@@ -1,10 +1,11 @@
 
 
-data=dat #count.data#binom.data##
-x.var="light.stress" #log.x" # "concentration" #
-y.var="col.intensity" # "suc" #"count" #"response" #"suc" # 
-#model="NECHormesis"#"NEC3param"#"NECsigmoidal"#"ECx4param"  #
-trials.var=NA#"tot"
+data=dat #data1#count.data#binom.data##
+x.var="light.stress" # "log.x" #"concentration" #
+y.var="range01.col"#"suc" #"col.intensity" # "count" #"response" #"suc" #
+trials.var=NA#"tot"#
+model="NECHormesis"#"ECxWeibull1"#"ECxWeibull1"#"NEC3param"#"NECsigmoidal"#"ECx4param"  #
+
 x.type = NA #"gamma"
 y.type = NA #"gaussian"#"poisson" # #binomial"#"gaussian" #
 params=c("top", "beta", "NEC", "SS", "SSsim")#, "slope")
@@ -22,18 +23,18 @@ median.model=FALSE
 add.NEC=TRUE
 
 precision=10000
-
+ECx.val=10
 type="absolute"
 prob.vals=c(0.5, 0.025, 0.975)
-
+xform=NA
 posterior = FALSE
 
 
-X=out
+X=out.ma
 
 legend.loc="topright"
 add.EC10=FALSE
-xform=NA
+
 lxform=NA
 
 jitter.x=FALSE
@@ -42,3 +43,4 @@ ylab="response"
 xlab="concentration"
 xlim=NA
 xticks=NA
+

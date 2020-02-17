@@ -26,7 +26,7 @@
 #' @return A list of within and between coefficient of variations for parameter, 
 #' the outcome of the test if between is greater than within, and the ratio.
 
-check.mixing <- function(J, prob.val=0.90){
+check.mixing <- function(J, prob.val=0.8){
 
   x <- J$BUGSoutput$sims.array
   params <- J$parameters.to.save

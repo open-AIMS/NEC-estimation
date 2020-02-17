@@ -40,9 +40,11 @@
 #'
 #' @param over.disp. If an overdispersed model should be used. Only changes the model fit for poisson and binomial y.type data. For poisson, a negative binomial model will be fit. For binomial a beta model will be fit.
 #'
-#' @param model A vector of the names of model types to be fit. Currently defaults to 
-#' c("NEC3param", "NEC4param", "NECHormesis"). This method is under development 
-#' and desting and should not yet be used for NEC reporting.
+#' @param model.set A vector of the names of model types to be fit. Currently defaults to 
+#' all available model types. If "NEC" is supplied, only the NEC models will be fit. If "ECx" is supplied,
+#'  only continuous curve models will be fit. 
+#'  This method is under development 
+#' and testing and should not yet be used for NEC reporting.
 #'
 #' @export
 #' @return All successully fitted jags model fits, mod.stats a data.frame of model fit statistics, NEC a model
@@ -60,12 +62,19 @@ fit.jagsMANEC <- function(data,
                         n.tries=3,
                         params=c("top", "beta", "NEC", "SS", "SSsim"),
                         over.disp=FALSE,
-                        model.set=c("NEC3param", "NEC4param", "NECHormesis"),#, "NECsigmoidal", "ECx4param"),
+                        model.set="all",
                         ...){
   
+  if(model.set=="NEC"){model.set=c("NEC3param", "NEC4param", "NECHormesis", "NECsigmoidal")}
+  if(model.set=="ECx"){model.set=c("ECx4param", "ECxWeibull1", "ECxWeibull2")}
+  if(model.set=="all"){model.set=c("NEC3param", "NEC4param", "NECHormesis", "NECsigmoidal", 
+                                   "ECx4param", "ECxWeibull1", "ECxWeibull2")}
+  
  # Fit each of the models
- mod.fits <- list()   
- for(m in 1: length(model.set)){
+ mod.fits <- vector(mode = 'list', length = length(model.set))
+ names(mod.fits) <- model.set
+ 
+ for(m in seq_along(model.set)){
     model <- model.set[m] 
     fit.m <- try(
       fit.jagsNEC(data=data,
@@ -81,22 +90,28 @@ fit.jagsMANEC <- function(data,
                             params=params,
                             over.disp=over.disp,
                             model=model), 
-      silent=T)
-    mod.fits <- c(mod.fits, list(fit.m))
+      silent = TRUE)
+    if (!inherits(fit.m, 'try-error')) {
+      mod.fits[[m]] <- fit.m  
+    } else {
+      mod.fits[[m]] <- NA 
+    }
+    
     }
 
-  names(mod.fits) <- model.set
   
    # extract model parameters that do not vary across models
-   success.models <- model.set[unlist(lapply(mod.fits, FUN=class))=="jagsNECfit"]
+   success.models <- model.set[sapply(mod.fits, FUN=class)=="jagsNECfit"]
    if(length(success.models)==0){
      stop("None of the models fit successfully, 
      try using fit.jagsNEC instead using the default settings as a starting point for trouble shooting.")}else{
        warning(paste("successfully fitted the models: ", paste(success.models, collapse=" ")))
      }
   
+  mod.fits <- mod.fits[success.models] 
+   
   # extract the model statistics for each fit
-  mod.stats <- data.frame(DIC = unlist(lapply(mod.fits, FUN=function(x){x$DIC})))
+  mod.stats <- data.frame(DIC = sapply(mod.fits, FUN=function(x){x$DIC}))
   mod.stats$DIC.delta <- mod.stats$DIC-min(mod.stats$DIC, na.rm = TRUE)
   mod.stats$wi <- wi(mod.stats$DIC)
   mod.stats$pD <- unlist(lapply(mod.fits, FUN=function(x){x$pD}))
@@ -107,10 +122,7 @@ fit.jagsMANEC <- function(data,
     })))
   mcmc.list <- do.call("list", mcmc.stats)
   names(mcmc.list) <- colnames(mcmc.stats)
-  
-  #tt2 <- (lapply(mod.fits, FUN=function(x){
-  #  do.call("rbind", x[c("NEC", "top", "beta", "bot", "slope", "d", "alpha")])
-  #}))
+  sample.size <- mcmc.list$n.sims 
   
   # model averaged NEC posterior
   NEC.posterior <- unlist(lapply(success.models, FUN=function(x){
@@ -124,30 +136,12 @@ fit.jagsMANEC <- function(data,
   
   # model averaged pred.vals
   x <- mod.fits[[success.models[1]]]$pred.vals$x
-  sample.size <- length(NEC.posterior) 
-  # for model averaged predictions - no used
-  
-  # y <- rowSums(do.call("cbind", lapply(success.models, FUN=function(x){
-  #                     mod.fits[[x]]$pred.vals$y*mod.stats[x, "wi"]
-  #                   })))
-  # 
-  # up <- rowSums(do.call("cbind", lapply(success.models, FUN=function(x){
-  #                     mod.fits[[x]]$pred.vals$up*mod.stats[x, "wi"]
-  #                   })))
-  # 
-  # lw <- rowSums(do.call("cbind", lapply(success.models, FUN=function(x){
-  #                     mod.fits[[x]]$pred.vals$lw*mod.stats[x, "wi"]
-  #                   })))
-  # 
-  # posterior <- Reduce("+", lapply(success.models, FUN=function(x){
-  #                 mod.fits[[x]]$pred.vals$posterior*mod.stats[x, "wi"]    
-  #                    }))
-  #   
+
   y.m <- rowSums(do.call("cbind", lapply(success.models, FUN=function(x){
                       mod.fits[[x]]$pred.vals$y.m*mod.stats[x, "wi"]
                     })))
   
-  # for model weighted posterior - used
+  # model weighted posterior
   posterior.predicted <- do.call("cbind", lapply(success.models, FUN=function(x){
                  mod.fits[[x]]$pred.vals$posterior[,
                  base::sample(1:sample.size, round(sample.size*mod.stats[x, "wi"]))] 
@@ -157,13 +151,14 @@ fit.jagsMANEC <- function(data,
   up <- apply(posterior.predicted, MARGIN=1, FUN=quantile, probs=0.975)
   lw <- apply(posterior.predicted, MARGIN=1, FUN=quantile, probs=0.025)
 
-
   # collate all the elements
   export.list <- 
     c(mcmc.list,
            list(mod.fits=mod.fits,
-              mod.dat=mod.dat,
+              success.models=success.models,
+              mod.dat=mod.fits[[1]]$mod.dat,
               mod.stats=mod.stats,
+              mcmc.stats=mcmc.stats,
               sims.list=list(NEC=NEC.posterior),
               predicted.y=predicted.y,
               residuals=mod.dat$y-predicted.y,
