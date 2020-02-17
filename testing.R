@@ -31,7 +31,7 @@ dat<-read.csv(paste(path,'test_dat1.csv',sep="/"))
 out <- fit.jagsNEC(data=dat,
                    x.var="light.stress", 
                    y.var="col.intensity",
-                   model="NECHormesis")#"ECxWeibull1") #
+                   model="NECHormesis")#"ECxWeibull2") #
 
 check.chains(out)
 
@@ -40,7 +40,8 @@ plot(out)
 
 out.ma <- fit.jagsMANEC(data=dat, 
                           x.var="light.stress", 
-                          y.var="col.intensity", 
+                          y.var="col.intensity")
+#, 
                           model.set=c("NEC3param", "NECsigmoidal", "NEC4param", 
                                                              "NECHormesis",
                                                              "ECx4param", "ECxWeibull1", "ECxWeibull2")
@@ -70,9 +71,13 @@ dat<-read.csv(paste(path,'test_dat3.csv',sep="/"))
 out <- fit.jagsNEC(data=dat,
                    x.var="light.stress", 
                    y.var="range01.col",
-                   #model="NEC3param")
                    model="NECHormesis")
 check.chains(out)
+
+out <- fit.jagsMANEC(data=dat,
+                   x.var="light.stress", 
+                   y.var="range01.col")
+
 
 par(mfrow=c(1,1))
 plot(out)
@@ -136,7 +141,8 @@ plot(out)
 out.ma <- fit.jagsMANEC(data=data1, 
                         x.var="log.x", 
                         y.var="suc",
-                        trials.var = "tot")
+                        trials.var = "tot",
+                        over.disp = TRUE)
 
 ### Testing/troubleshooting alternative models ----
 #source("R/Write_jags_NECHormesisMod.R")
@@ -144,6 +150,12 @@ out.ma <- fit.jagsMANEC(data=data1,
 data1 <-  read.table("https://pastebin.com/raw/dUMSAvYi", header= TRUE,dec=",")  %>%
   mutate(raw.x=as.numeric(as.character(raw.x)),
          log.x=log(raw.x))
+
+out.ma <- fit.jagsMANEC(data=data1,
+                    x.var="log.x",
+                    y.var="suc",
+                    over.disp = TRUE,
+                    trials.var = "tot")
 
 out1 <- fit.jagsNEC(data=data1,
                    x.var="log.x",
@@ -219,7 +231,11 @@ extract_ECx(out, ECx.val=50)
 data1 <-  read.table("https://pastebin.com/raw/dKVi6L3t", header= TRUE,dec=",")  %>%
   mutate(raw.x=as.numeric(as.character(raw.x)),
          log.x=log(raw.x))
-
+out.ma=fit.jagsMANEC(data=data1,
+                     x.var="log.x",#"raw.x", # 
+                     y.var="suc",
+                     over.disp=1,
+                     trials.var = "tot")
 out <- fit.jagsNEC(data=data1,
                    x.var="log.x",#"raw.x", # 
                    y.var="suc",

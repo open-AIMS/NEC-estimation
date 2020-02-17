@@ -145,8 +145,8 @@ fit.jagsNEC <- function(data,
   
   # check there is a valid model type
   if(is.na(match(model, c("NEC3param", "NECsigmoidal", "NEC4param", "NECHormesis",
-                          "ECx4param", "ECxWeibull1", "ECxWeibull1"
-                          )))){
+                          "ECx4param", "ECxWeibull1", "ECxWeibull2")
+                 ))){
     stop("The model type you have specified does not extist.")    
   }
   
@@ -244,7 +244,7 @@ fit.jagsNEC <- function(data,
   }
   
   if(model=="ECxWeibull2"){
-    init.fun <- write.jags.ECxECxWeibull2.mod(x=x.type,y=y.type, mod.dat=mod.dat)
+    init.fun <- write.jags.ECxWeibull2.mod(x=x.type,y=y.type, mod.dat=mod.dat)
     params <- setdiff(c(params, "bot", "EC50"), c("NEC", "alpha"))
   }
   
@@ -334,12 +334,7 @@ fit.jagsNEC <- function(data,
   min.x <- min(mod.dat$x)
   max.x <- max(mod.dat$x)
   x.seq <- seq(min.x, max.x, length=1000)
-  
-  # extract the model paramters - depending on the model types
-  # NEC <-   rep(min.x,3); names(NEC) <- c("2.5%",  "50%", "97.5%")
-  #top <-  quantile(out$sims.list$top,c(0.025, 0.5, 0.975))
-  #beta <-  quantile(out$sims.list$beta,c(0.025, 0.5, 0.975)) 
- 
+
   # extract the relevant model parameters
   extract.params <- c("top", "beta", "NEC", "alpha", "bot", "d", "slope", "EC50")
   extracted.params <- lapply(extract.params, FUN=function(x){
@@ -379,8 +374,8 @@ fit.jagsNEC <- function(data,
   }
   
   # calculate the predicted values based on the median parameter estimates
-  mod.class <- "NEC"
-  if(length(grep("ECx", model))>0){mod.class <- "ECx"}
+ 
+  if(length(grep("ECx", model))>0){mod.class <- "ECx"}else{ mod.class <- "NEC"}
     
   if(mod.class!="ECx"){
     y.pred.m <- predict_NECmod(x.vec=x.seq, 
@@ -428,7 +423,7 @@ fit.jagsNEC <- function(data,
   
   # calculate the NEC from the predicted values for the ECx model
   if(mod.class=="ECx"){
-    reference <-  quantile(out$sims.list$top, 0.5)
+    reference <-  quantile(pred.vals$posterior[1, ], 0.01)
     out$sims.list$NEC  <-  sapply(1:out$n.sims, function (x, pred.vals, reference) {
       pred.vals$x[which.min(abs(pred.vals$posterior[, x] - reference))]}, 
       pred.vals = pred.vals, reference = reference)
