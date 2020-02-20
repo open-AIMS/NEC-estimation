@@ -659,7 +659,7 @@ write.jags.NECHormesis.mod <- function(x="gamma", y, mod.dat){
         NEC ~  dunif(0.001,0.999) #dbeta(1,1)
         t0 ~ dnorm(0, 0.010)
         phi <- exp(t0)
-        slope ~ dnorm(0, 0.01) T(0,)#dunif(0,0.2)
+        slope ~ dnorm(0, 0.001) T(0,)#dunif(0,0.2)
 
         # pearson residuals
         for (i in 1:N) {
