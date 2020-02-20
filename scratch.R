@@ -2,7 +2,7 @@
 
 data=dat #data1#count.data#binom.data##
 x.var="light.stress" # "log.x" #"concentration" #
-y.var="range01.col"#"suc" #"col.intensity" # "count" #"response" #"suc" #
+y.var= "scaled.col"#"range01.col"#"suc" #"col.intensity" # "count" #"response" #"suc" #
 trials.var=NA#"tot"#
 model="NECHormesis"#"ECxWeibull1"#"ECxWeibull1"#"NEC3param"#"NECsigmoidal"#"ECx4param"  #
 

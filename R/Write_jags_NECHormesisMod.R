@@ -548,7 +548,7 @@ write.jags.NECHormesis.mod <- function(x="gamma", y, mod.dat){
         NEC ~  dunif(0.001,0.999) #dbeta(1,1)
         sigma ~ dunif(0, 20)  #sigma is the SD
         tau  = 1 / (sigma * sigma)  #tau is the reciprical of the variance
-        slope ~ dlnorm(0,0.01)
+        slope ~ dnorm(0,0.01) T(0,) # dlnorm(0,0.01)
 
       # pearson residuals
         for (i in 1:N) {
@@ -655,7 +655,7 @@ write.jags.NECHormesis.mod <- function(x="gamma", y, mod.dat){
         
         # specify model priors
         top ~  dunif(0.001,0.999)
-        beta ~ dgamma(0.0001,0.0001)
+        beta ~ dnorm(0, 0.001) T(0,)#dgamma(0.0001,0.0001)
         NEC ~  dunif(0.001,0.999) #dbeta(1,1)
         t0 ~ dnorm(0, 0.010)
         phi <- exp(t0)

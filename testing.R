@@ -1,5 +1,5 @@
 
-devtools::install_github("AIMS/NEC-estimation", ref="Weibull")
+devtools::install_github("AIMS/NEC-estimation")
 require(jagsNEC)
 
 library(R2jags)
@@ -25,8 +25,8 @@ source("R/plot_jagsNECfit.R")
 source("R/extract_ECx.R")
 source("R/wi.R")
 
-### testing model averaging function -----
 
+#----test_dat1.csv ----
 dat<-read.csv(paste(path,'test_dat1.csv',sep="/"))
 out <- fit.jagsNEC(data=dat,
                    x.var="light.stress", 
@@ -41,18 +41,17 @@ plot(out)
 out.ma <- fit.jagsMANEC(data=dat, 
                           x.var="light.stress", 
                           y.var="col.intensity")
-#, 
-                          model.set=c("NEC3param", "NECsigmoidal", "NEC4param", 
-                                                             "NECHormesis",
-                                                             "ECx4param", "ECxWeibull1", "ECxWeibull2")
-                          )
 
-#---
+check.chains(out.ma)
+
+
+
+#----test_dat2.csv-----
 
 dat<-read.csv(paste(path,'test_dat2.csv',sep="/"))
 out <- fit.jagsNEC(data=dat,
                    x.var="light.stress", 
-                   y.var="scaled.col",
+                   y.var="scaled.col", n.tries=1,
                    #model="NEC3param")
                    model="NECHormesis")
 check.chains(out)
@@ -65,38 +64,46 @@ out.ma <- fit.jagsMANEC(data=dat,
                         x.var="light.stress", 
                         y.var="col.intensity")
 
-#----
+#----test_dat3.csv-----
 
 dat<-read.csv(paste(path,'test_dat3.csv',sep="/"))
 out <- fit.jagsNEC(data=dat,
                    x.var="light.stress", 
-                   y.var="range01.col",
+                   y.var="range01.col", 
+                   n.tries=1,
                    model="NECHormesis")
+                  #model="NEC3param")
+
 check.chains(out)
+par(mfrow=c(1,1))
+plot(out)
+
 
 out <- fit.jagsMANEC(data=dat,
-                   x.var="light.stress", 
+                   x.var="light.stress",  n.tries=1,
                    y.var="range01.col")
 
 
 par(mfrow=c(1,1))
 plot(out)
 
+#----test_dat4.csv-----
 dat<-read.csv(paste(path,'test_dat4.csv',sep="/"))
-out <- fit.jagsNEC(data=dat,
+out3 <- fit.jagsNEC(data=dat,
                    x.var="light.stress", 
-                   y.var="scaled.col",
+                   y.var="scaled.col", n.tries=1,
                    #model="NEC3param")
                    model="NECHormesis")
-check.chains(out)
+check.chains(out3)
 
 par(mfrow=c(1,1))
-plot(out)
+plot(out3)
 
+#-----test_dat5.csv-----
 dat<-read.csv(paste(path,'test_dat5.csv',sep="/"))
 out <- fit.jagsNEC(data=dat,
                    x.var="light.stress", 
-                   y.var="scaled.col",
+                   y.var="scaled.col", n.tries=1,
                    #model="NEC3param")
                    model="NECHormesis")
 check.chains(out)
@@ -104,10 +111,11 @@ check.chains(out)
 par(mfrow=c(1,1))
 plot(out)
 
+#----test_dat6.csv-----
 dat<-read.csv(paste(path,'test_dat6.csv',sep="/"))
 out <- fit.jagsNEC(data=dat,
                    x.var="light.stress", 
-                   y.var="scaled.col",
+                   y.var="scaled.col", n.tries=1,
                    #model="NEC3param")
                    model="NECHormesis")
 check.chains(out)
