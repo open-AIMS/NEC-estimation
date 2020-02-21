@@ -72,20 +72,20 @@ out <- fit.jagsNEC(data=dat,
                    y.var="range01.col", 
                    n.tries=1,
                    model="NECHormesis")
-                  #model="NEC3param")
+                 # model="NEC3param")
 
 check.chains(out)
 par(mfrow=c(1,1))
 plot(out)
 
 
-out <- fit.jagsMANEC(data=dat,
+out.ma <- fit.jagsMANEC(data=dat,
                    x.var="light.stress",  n.tries=1,
                    y.var="range01.col")
 
 
 par(mfrow=c(1,1))
-plot(out)
+plot(out.ma)
 
 #----test_dat4.csv-----
 dat<-read.csv(paste(path,'test_dat4.csv',sep="/"))

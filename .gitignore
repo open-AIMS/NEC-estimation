@@ -5,6 +5,7 @@
 *.pdf
 *.txt
 *.html
+*.docx
 HighstatLibV9.R
 MCMCSupportHighstatV4.R
 Tenan_et_al_suppl_Product_space.r
