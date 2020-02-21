@@ -40,7 +40,7 @@ predict_NECmod <- function(x.vec, NEC=min(x.vec), top, beta, alpha=0, d=1, bot=0
   y.pred <- rep(NA, length(x.vec))
   
   y.pred.pre <- (top + slope*x.seq.pre)-alpha
-  y.pred.post <- bot + ((top-bot)*exp(-beta*(x.seq.post-NEC)^d))-alpha  
+  y.pred.post <- bot + (((top + slope*x.seq.post)-bot)*exp(-beta*(x.seq.post-NEC)^d))-alpha  
   
   y.pred[pre.index] <- y.pred.pre
   y.pred[post.index] <- y.pred.post
