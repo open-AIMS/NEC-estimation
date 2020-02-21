@@ -51,7 +51,7 @@ check.chains(out.ma)
 dat<-read.csv(paste(path,'test_dat2.csv',sep="/"))
 out <- fit.jagsNEC(data=dat,
                    x.var="light.stress", 
-                   y.var="scaled.col", n.tries=1,
+                   y.var="scaled.col", n.tries=3,
                    #model="NEC3param")
                    model="NECHormesis")
 check.chains(out)
