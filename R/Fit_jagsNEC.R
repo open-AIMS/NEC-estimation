@@ -169,38 +169,38 @@ fit.jagsNEC <- function(data,
   if(min(data[,x.var])==0 & x.type=="gamma"){
    tt <- data[,x.var]
    min.val <- min(tt[which(tt>0)])
-   data[which(tt==0),x.var] <- tt[which(tt==0)]+(min.val/10^2) 
+   data[which(tt==0),x.var] <- tt[which(tt==0)]+(min.val/10) 
   } 
   
   if(min(data[,y.var])==0 & y.type=="gamma"){
     tt <- data[,y.var]
     min.val <- min(tt[which(tt>0)])
-    data[which(tt==0),y.var] <- tt[which(tt==0)]+(min.val/10^2) 
+    data[which(tt==0),y.var] <- tt[which(tt==0)]+(min.val/10) 
   } 
   # error catching for 0 for beta by adding very small value (beta does not take zero)
   if(min(data[,x.var])==0 & x.type=="beta"){
     tt <- data[,x.var]
     min.val <- min(tt[which(tt>0)])
-    data[which(tt==0),x.var] <- tt[which(tt==0)]+(min.val/10^2) 
+    data[which(tt==0),x.var] <- tt[which(tt==0)]+(min.val/10) 
   } 
   
   if(min(data[,y.var])==0 & y.type=="beta"){
     tt <- data[,y.var]
     min.val <- min(tt[which(tt>0)])
-    data[which(tt==0),y.var] <- tt[which(tt==0)]+(min.val/10^2) 
+    data[which(tt==0),y.var] <- tt[which(tt==0)]+(min.val/10) 
   } 
   
   # error catching for 1 for beta by subtracting very small value (beta does not take 1)
   if(max(data[,x.var])==1 & x.type=="beta"){
     tt <- data[,x.var]
     max.val <- max(tt[which(tt<1)])
-    data[which(tt==1),x.var] <- tt[which(tt==1)]-((max.val)/10^2) 
+    data[which(tt==1),x.var] <- tt[which(tt==1)]-((max.val)/10) 
   } 
   
   if(max(data[,y.var])==1 & y.type=="beta"){
     tt <- data[,y.var]
     max.val <- max(tt[which(tt<1)])
-    data[which(tt==1),y.var] <- tt[which(tt==1)]-(max.val/10^2) 
+    data[which(tt==1),y.var] <- tt[which(tt==1)]-(max.val/10) 
   }
   
   # create jags model data list
