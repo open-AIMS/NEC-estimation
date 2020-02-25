@@ -49,6 +49,8 @@
 #'
 #' @param model The type of model to be fit. Currently takes values of "NEC3param",  
 #' "NEC4param", "NECsigmoidal", "NECHormesis", "ECx4param", "ECxWeibull1", or "ECxWeibull2".
+#' 
+#' @param init.value.warning Indicates if a warning should be given if the init.fun generated fails.
 #'
 #' @details   
 #' 
@@ -89,6 +91,7 @@ fit.jagsNEC <- function(data,
                         params=c("top", "beta", "NEC", "SS", "SSsim"),
                         over.disp=FALSE,
                         model="NEC3param",
+                        init.value.warning=FALSE,
                         ...){
   
   y.dat <- data[, y.var]
@@ -267,12 +270,12 @@ fit.jagsNEC <- function(data,
     all.Js <- c(all.Js, list(J1))   
     if(max(unlist(check.mixing(J1)$cv.test))==1){class(J1)="try-error"}
   }
-  #if(class(J1)=="try-error"){ 
-  # warning("The generated init.fun failed to yield a valid model. Model based on default jags initial values")
-  #}
-  # if the attempt fails try 10 more times
-  #warn = getOption("warn")
-  #options(warn=-1)
+  if(init.value.warning==TRUE){
+  warning("The generated init.fun failed to yield a valid model. Model based on default jags initial values")
+  }
+  #if the attempt fails try 10 more times
+  warn = getOption("warn")
+  options(warn=-1)
   w <- 1
     while(class(J1)=="try-error" & w <= n.tries){
     w <- w+1      
@@ -314,7 +317,7 @@ fit.jagsNEC <- function(data,
     if(length(all.Js)>0){
       J1 <- all.Js[[ which.min(unlist(lapply(all.Js, FUN=function(x){check.mixing(x)$cv.ratio})))]]
       warning(paste("The function fit.jagsNEC was unable to find a set of starting parameters for the ", model,  
-              " model resulting in good chain mixing. Exmine the model using check.chains and criticially evaluate the outcome 
+              " model resulting in good chain mixing. Examine the model using check.chains and carefully evaluate the outcome 
               of the estimated values. Caution should be used in interpreting the model results."), sep="")
          } 
     if(length(all.Js)==0 & nchar(round(diff(range(x.dat))))>=3){
