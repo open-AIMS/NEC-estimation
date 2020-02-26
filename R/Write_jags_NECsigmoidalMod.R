@@ -12,7 +12,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-#' write.jags.NECsigmoidal
+#' write.jags.NECsigmoidal.mod
 #'
 #' Writes an NEC model file and generates a function for initial values to pass to jags
 #' 

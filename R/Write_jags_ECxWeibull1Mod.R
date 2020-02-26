@@ -12,7 +12,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-#' write.jags.4param.EC50mod
+#' write.jags.ECxWeibull1.mod
 #'
 #' Writes an EC50 model (log logistic) file and generates a function for initial values to pass to jags
 #' 
