@@ -93,7 +93,18 @@ fit.jagsNEC <- function(data,
                         model="NEC3param",
                         init.value.warning=FALSE,
                         ...){
+  # check the specified columns exist in data
+  use.vars <- na.omit(c(y.var=y.var, x.var=x.var, trials.var))
+  var.colms <- match(use.vars, colnames(data))
+  missing.colms <- data.frame(val=use.vars[which(is.na(var.colms))], stringsAsFactors = FALSE)
+  missing.colms$element <- rownames(missing.colms)
+  if(length(na.omit(var.colms))<length(use.vars)){
+    stop(paste("Your indicated ", paste(paste(missing.colms$element, " '", missing.colms$val,"'", sep=""), 
+                                        collapse = ", "),
+    " is not present in your input data. Has this been mispecified?", sep=""))    
+  }
   
+  # extract the data
   y.dat <- data[, y.var]
   x.dat <- data[, x.var] 
    
@@ -148,7 +159,7 @@ fit.jagsNEC <- function(data,
   
   # check there is a valid model type
   if(is.na(match(model, c("NEC3param", "NECsigmoidal", "NEC4param", "NECHormesis",
-                          "ECx4param", "ECxWeibull1", "ECxWeibull2")
+                          "ECx4param", "ECxWeibull1", "ECxWeibull2", "ECxLinear")
                  ))){
     stop("The model type you have specified does not extist.")    
   }
@@ -249,6 +260,11 @@ fit.jagsNEC <- function(data,
   if(model=="ECxWeibull2"){
     init.fun <- write.jags.ECxWeibull2.mod(x=x.type,y=y.type, mod.dat=mod.dat)
     params <- setdiff(c(params, "bot", "EC50"), c("NEC", "alpha"))
+  }
+  
+  if(model=="ECxLinear"){
+    init.fun <- write.jags.ECxLinear.mod(x=x.type,y=y.type, mod.dat=mod.dat)
+    params <- setdiff(params, "NEC")
   }
   
   all.Js <- list()
@@ -415,6 +431,12 @@ fit.jagsNEC <- function(data,
                                   EC50=EC50["50%"], top=top["50%"], beta=beta["50%"], 
                                   bot=bot["50%"])    
   }
+  
+  if(model=="ECxLinear"){
+    y.pred.m <- predict_Linearmod(x.vec=x.seq, top=top["50%"], beta=beta["50%"]) 
+    predicted.y <- predict_Linearmod(x.vec=mod.dat$x, top=top["50%"], beta=beta["50%"])    
+  }
+  
   # calculate the predicted values using the entire posterior
   pred.vals <- c(predict_NECbugsmod(X=out, precision = 1000), list(y.m=y.pred.m))  
   
