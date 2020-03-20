@@ -139,7 +139,7 @@ fit.jagsNEC <- function(data,
          a numeric x.var")}    
     if(class(x.dat)=="numeric" & max(x.dat)>1 & min(x.dat)>=0){x.type="gamma"}
     if(class(x.dat)=="numeric" & max(x.dat)<=1 & min(x.dat)>=0){x.type="beta"} 
-    if(class(x.dat)=="numeric" & max(x.dat)>1 & min(x.dat)<0){x.type="gaussian"}    
+    if(class(x.dat)=="numeric" & min(x.dat)<0){x.type="gaussian"}    
   }
 
   # check variable type y.var
