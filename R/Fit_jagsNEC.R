@@ -93,193 +93,36 @@ fit.jagsNEC <- function(data,
                         model="NEC3param",
                         init.value.warning=FALSE,
                         ...){
-  # check the specified columns exist in data
-  use.vars <- na.omit(c(y.var=y.var, x.var=x.var, trials.var))
-  var.colms <- match(use.vars, colnames(data))
-  missing.colms <- data.frame(val=use.vars[which(is.na(var.colms))], stringsAsFactors = FALSE)
-  missing.colms$element <- rownames(missing.colms)
-  if(length(na.omit(var.colms))<length(use.vars)){
-    stop(paste("Your indicated ", paste(paste(missing.colms$element, " '", missing.colms$val,"'", sep=""), 
-                                        collapse = ", "),
-    " is not present in your input data. Has this been mispecified?", sep=""))    
-  }
   
-  # extract the data
-  y.dat <- data[, y.var]
-  x.dat <- data[, x.var] 
-   
-  # check the x data are numeric
-  if(class(x.dat)!="numeric"){
-    stop(paste("Your indicated x.var column ", x.var," contains data that is class ", class(x.dat),". 
-               The function jagsNEC requires the concentration data (argument x.var) to be numeric.",sep=""))    
-  } 
-  
-  # check data contains only finite values
-  test.x <- mean(x.dat)
-  test.y <- mean(y.dat)
-  if(is.finite(test.x)!=TRUE){
-    stop("Your x.var column contains values that are not finite.")    
-  } 
-  if(is.finite(test.y)!=TRUE){
-    stop("Your y.var column contains values that are not finite.")    
-  } 
-  
-  # check the data are lower at high x compared to low x (ie the response variable declines within increase in the x)
-  if(mean(y.dat[which(x.dat<mean(x.dat))])< mean(y.dat[which(x.dat>mean(x.dat))]) & model != "NECHormesis"){
-    stop("The mean value of the response for the lower half of the 
-         concentration data are lower than that of the upper half of the concentration data. 
-         jagsNEC only fits concentration response data where the 
-         response declines with increasing values of concentration.")    
-  }
-
-  # check variable type x.var
-  if(is.na(x.type)==TRUE){ # if the x.var is not specified, then guess
-     if(class(x.dat)=="integer"){
-     stop("jagsNEC does not currently support integer concentration data. Please provide
-         a numeric x.var")}    
-    if(class(x.dat)=="numeric" & max(x.dat)>1 & min(x.dat)>=0){x.type="gamma"}
-    if(class(x.dat)=="numeric" & max(x.dat)<=1 & min(x.dat)>=0){x.type="beta"} 
-    if(class(x.dat)=="numeric" & min(x.dat)<0){x.type="gaussian"}    
-  }
-
-  # check variable type y.var
-  if(is.na(y.type)==T){ # if the y.var is not specified, then guess
-    if(class(y.dat)=="numeric" & max(y.dat)>1 & min(y.dat)>=0){y.type="gamma"}
-    if(class(y.dat)=="numeric" & max(y.dat)<=1 & min(y.dat)>=0){y.type="beta"}
-    if(class(y.dat)=="numeric" & min(y.dat)<0){y.type="gaussian"}  
-    if(class(y.dat)=="integer" & min(y.dat)>=0 & is.na(trials.var) == TRUE){
-      y.type="poisson"} 
-    if(is.na(trials.var)!= TRUE & class(y.dat)!="integer"){
-      stop("You have supplied a trials.var argument, suggesting you wish to model a binomial.
-           Please ensure y.var is an integer representing the number of successes.")}
-      
-    if(class(y.dat)=="integer" & min(y.dat)>=0 & is.na(trials.var)!= TRUE){
-      y.type="binomial"}   
-  } 
-  
-  # check there is a valid model type
-  if(is.na(match(model, c("NEC3param", "NECsigmoidal", "NEC4param", "NECHormesis",
-                          "ECx4param", "ECxWeibull1", "ECxWeibull2", "ECxLinear")
-                 ))){
-    stop("The model type you have specified does not extist.")    
-  }
-  
-  if(y.type=="poisson" & over.disp==TRUE){
-          y.type="negbin"}
-  if(y.type=="binomial" & over.disp==TRUE){
-          y.type <- "beta"
-          data[,y.var] <-  data[,y.var]/data[,trials.var]  
-          
-          }  
-
-  if(y.type=="gamma"){params=c(params,"shape")}
-  if(y.type=="gaussian"){params=c(params,"alpha","sigma")}
-  if(y.type=="negbin"){params=c(params,"size")}  
-    
-  # error catching for 0 for gamma by adding very small value (no tweedie available in jags)
-  if(min(data[,x.var])==0 & x.type=="gamma"){
-   tt <- data[,x.var]
-   min.val <- min(tt[which(tt>0)])
-   data[which(tt==0),x.var] <- tt[which(tt==0)]+(min.val/10) 
-  } 
-  
-  if(min(data[,y.var])==0 & y.type=="gamma"){
-    tt <- data[,y.var]
-    min.val <- min(tt[which(tt>0)])
-    data[which(tt==0),y.var] <- tt[which(tt==0)]+(min.val/10) 
-  } 
-  # error catching for 0 for beta by adding very small value (beta does not take zero)
-  if(min(data[,x.var])==0 & x.type=="beta"){
-    tt <- data[,x.var]
-    min.val <- min(tt[which(tt>0)])
-    data[which(tt==0),x.var] <- tt[which(tt==0)]+(min.val/10) 
-  } 
-  
-  if(min(data[,y.var])==0 & y.type=="beta"){
-    tt <- data[,y.var]
-    min.val <- min(tt[which(tt>0)])
-    data[which(tt==0),y.var] <- tt[which(tt==0)]+(min.val/10) 
-  } 
-  
-  # error catching for 1 for beta by subtracting very small value (beta does not take 1)
-  if(max(data[,x.var])==1 & x.type=="beta"){
-    tt <- data[,x.var]
-    max.val <- max(tt[which(tt<1)])
-    data[which(tt==1),x.var] <- tt[which(tt==1)]-((max.val)/10) 
-  } 
-  
-  if(max(data[,y.var])==1 & y.type=="beta"){
-    tt <- data[,y.var]
-    max.val <- max(tt[which(tt<1)])
-    data[which(tt==1),y.var] <- tt[which(tt==1)]-(max.val/10) 
-  }
-  
-  # create jags model data list
-  mod.dat <<- list(
-    x = data[,x.var],   # concentration
-    y = data[,y.var], # response (successes)
-
-    N = nrow(data))  # Sample size
-
-  
-  response = data[,y.var]
- 
-  if(y.type=="binomial"){
-   mod.dat$trials = data[, trials.var] # number of "trials"
-   response = data[, y.var]/data[,trials.var]
-  }
-  
-  # set the type of model to fit
-  if(model=="NEC3param"){
-     init.fun <- write.jags.NEC3param.mod(x=x.type,y=y.type, mod.dat=mod.dat) 
-  }
-   if(model=="NECsigmoidal"){
-    init.fun <- write.jags.NECsigmoidal.mod(x=x.type,y=y.type, mod.dat=mod.dat)
-    params <- c(params, "d")
-  } 
-  if(model=="NEC4param"){
-    init.fun <- write.jags.NEC4param.mod(x=x.type,y=y.type, mod.dat=mod.dat)
-    params <- setdiff(c(params, "bot"), c("alpha"))
-  }
-  
-  if(model=="NECHormesis"){
-    init.fun <- write.jags.NECHormesis.mod(x=x.type,y=y.type, mod.dat=mod.dat)
-    params <- c(params, "slope")
-  }
-  
-  if(model=="ECx4param"){
-    init.fun <- write.jags.ECx4param.mod(x=x.type,y=y.type, mod.dat=mod.dat)
-    params <- setdiff(c(params, "bot", "EC50"), c("NEC", "alpha"))
-  }
-  
-  if(model=="ECxWeibull1"){
-    init.fun <- write.jags.ECxWeibull1.mod(x=x.type,y=y.type, mod.dat=mod.dat)
-    params <- setdiff(c(params, "bot", "EC50"), c("NEC", "alpha"))
-  }
-  
-  if(model=="ECxWeibull2"){
-    init.fun <- write.jags.ECxWeibull2.mod(x=x.type,y=y.type, mod.dat=mod.dat)
-    params <- setdiff(c(params, "bot", "EC50"), c("NEC", "alpha"))
-  }
-  
-  if(model=="ECxLinear"){
-    init.fun <- write.jags.ECxLinear.mod(x=x.type,y=y.type, mod.dat=mod.dat)
-    params <- setdiff(params, "NEC")
-  }
+  data.check <- jagsNEC_input(data=data,
+                              x.var=x.var,
+                              y.var=y.var,
+                              trials.var = trials.var,
+                              x.type = x.type, 
+                              y.type = y.type,
+                              params=params,
+                              over.disp=over.disp,
+                              model=model)
+  mod.dat <- data.check$mod.dat
+  params <- data.check$params
+  y.type <- data.check$y.type
+  x.type <- data.check$x.type
+  response <- data.check$response
+  data <- data.check$data
   
   all.Js <- list()
   
   warn = getOption("warn")
   options(warn=-1)
   J1 <- try(jags(data   = mod.dat,
-             inits      = init.fun,
-             parameters = params,
-             model      = "NECmod.txt",
-             n.thin     = 10,
-             n.chains   = 5,
-             n.burnin   = burnin,
-             n.iter     = n.iter,
-             progress.bar = "none"), silent = T)
+                 inits      = init.fun,
+                 parameters = params,
+                 model      = "NECmod.txt",
+                 n.thin     = 10,
+                 n.chains   = 5,
+                 n.burnin   = burnin,
+                 n.iter     = n.iter,
+                 progress.bar = "none"), silent = T)
   options(warn=warn)
   
   if(class(J1)!="try-error"){ # make sure the fitted model had good mixing
@@ -296,14 +139,14 @@ fit.jagsNEC <- function(data,
     while(class(J1)=="try-error" & w <= n.tries){
     w <- w+1      
     J1 <- try(R2jags::jags(data       = mod.dat,
-                   inits      = init.fun,
-                   parameters = params,
-                   model      = "NECmod.txt",
-                   n.thin     = 10,
-                   n.chains   = 5,
-                   n.burnin   = burnin,
-                   n.iter     = n.iter,
-                   progress.bar = "none"), silent = T)  
+                           inits      = init.fun,
+                           parameters = params,
+                           model      = "NECmod.txt",
+                           n.thin     = 10,
+                           n.chains   = 5,
+                           n.burnin   = burnin,
+                           n.iter     = n.iter,
+                           progress.bar = "none"), silent = T)  
     if(class(J1)!="try-error"){ # make sure the fitted model had good mixing
       all.Js <- c(all.Js, list(J1))   
       if(max(unlist(check.mixing(J1)$cv.test))==1){class(J1)="try-error"}
@@ -314,14 +157,14 @@ fit.jagsNEC <- function(data,
   w <- 1
   while(class(J1)=="try-error" & w <= n.tries){
     w <- w+1 
-    J1 <- try(R2jags::jags(data       = mod.dat,
-                   parameters = params,
-                   model      = "NECmod.txt",
-                   n.thin     = 10,
-                   n.chains   = 5,
-                   n.burnin   = burnin,
-                   n.iter     = n.iter,
-                   progress.bar = "none"), silent = T) 
+    J1 <- try(R2jags::jags(data = mod.dat,
+                           parameters = params,
+                           model      = "NECmod.txt",
+                           n.thin     = 10,
+                           n.chains   = 5,
+                           n.burnin   = burnin,
+                           n.iter     = n.iter,
+                           progress.bar = "none"), silent = T) 
     if(class(J1)!="try-error"){ # make sure the fitted model had good mixing
       all.Js <- c(all.Js, list(J1))   
       if(max(unlist(check.mixing(J1)$cv.test))==1){class(J1)="try-error"}

@@ -4,10 +4,23 @@
 \alias{fit.jagsNEC}
 \title{fit.jagsNEC}
 \usage{
-fit.jagsNEC(data, x.var, y.var, trials.var = NA, x.type = NA,
-  y.type = NA, burnin = 10000, n.iter = burnin + 500,
-  n.iter.update = 10000, n.tries = 3, params = c("top", "beta",
-  "NEC", "SS", "SSsim"), over.disp = FALSE, model = "NEC3param", ...)
+fit.jagsNEC(
+  data,
+  x.var,
+  y.var,
+  trials.var = NA,
+  x.type = NA,
+  y.type = NA,
+  burnin = 10000,
+  n.iter = burnin + 500,
+  n.iter.update = 10000,
+  n.tries = 3,
+  params = c("top", "beta", "NEC", "SS", "SSsim"),
+  over.disp = FALSE,
+  model = "NEC3param",
+  init.value.warning = FALSE,
+  ...
+)
 }
 \arguments{
 \item{data}{a data.frame containing the data to use for the model}
@@ -36,6 +49,8 @@ x.type.}
 
 \item{model}{The type of model to be fit. Currently takes values of "NEC3param",
 "NEC4param", "NECsigmoidal", "NECHormesis", "ECx4param", "ECxWeibull1", or "ECxWeibull2".}
+
+\item{init.value.warning}{Indicates if a warning should be given if the init.fun generated fails.}
 
 \item{n.iter.burnin}{the number of interations to run overall. This should be large. Defaults to 10000.}
 

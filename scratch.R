@@ -1,10 +1,10 @@
 
 
 data=dat #data1#count.data#binom.data##
-x.var="light.stress" # "log.x" #"concentration" #
-y.var= "scaled.col"#"range01.col"#"suc" #"col.intensity" # "count" #"response" #"suc" #
+x.var="x"#"light.stress" # "log.x" #"concentration" #
+y.var="y"#"range01.col"# "col.intensity" # "scaled.col"#"suc" #"count" #"response" #"suc" #
 trials.var=NA#"tot"#
-model="NECHormesis"#"ECxWeibull1"#"ECxWeibull1"#"NEC3param"#"NECsigmoidal"#"ECx4param"  #
+model="ECxLinear" #"NECHormesis"#"ECxWeibull1"#"ECxWeibull1"#"NEC3param"#"NECsigmoidal"#"ECx4param"  #
 
 x.type = NA #"gamma"
 y.type = NA #"gaussian"#"poisson" # #binomial"#"gaussian" #
@@ -16,6 +16,7 @@ n.tries=1
 over.disp=FALSE
 model.set=c("NEC3param", "NEC4param", "NECsigmoidal", "NECHormesis", "ECx4param")
 name=""
+init.value.warning=TRUE
 
 CI=TRUE
 posterior.median=TRUE
