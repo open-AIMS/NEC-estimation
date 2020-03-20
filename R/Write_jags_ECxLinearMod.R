@@ -35,7 +35,8 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top - x[i]*beta
+        theta[i]<- top - x[i]*beta
+        #theta[i]<- top * exp(-beta*x[i])
         # response is binomial
         y[i]~dbin(theta[i],trials[i])
         }
@@ -80,7 +81,8 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top - x[i]*beta
+        theta[i]<- top - x[i]*beta
+        #theta[i]<- top * exp(-beta*x[i])
         # response is binomial
         y[i]~dbin(theta[i],trials[i])
         }
@@ -125,7 +127,8 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top - x[i]*beta
+        theta[i]<- top - x[i]*beta
+        #theta[i]<- top * exp(-beta*x[i])
         # response is binomial
         y[i]~dbin(theta[i],trials[i])
         }
@@ -169,7 +172,8 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top -x[i]*beta
+        theta[i]<- top - x[i]*beta
+        #theta[i]<- top * exp(-beta*x[i])
         # response is poisson
         y[i]~dpois(theta[i])
         }
@@ -214,7 +218,8 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top -x[i]*beta
+        theta[i]<- top - x[i]*beta
+        #theta[i]<- top * exp(-beta*x[i])
         # response is poisson
         y[i]~dpois(theta[i])
         }
@@ -258,7 +263,8 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top -x[i]*beta
+        theta[i]<- top - x[i]*beta
+        #theta[i]<- top * exp(-beta*x[i])
         # response is poisson
         y[i]~dpois(theta[i])
         }
@@ -302,7 +308,8 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top -x[i]*beta
+        theta[i]<- top - x[i]*beta
+        #theta[i]<- top * exp(-beta*x[i])
         # response is gamma
         y[i]~dgamma(shape, shape / (theta[i]))
         }
@@ -348,7 +355,8 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top -x[i]*beta
+        theta[i]<- top - x[i]*beta
+        #theta[i]<- top * exp(-beta*x[i])
         # response is gamma
         y[i]~dgamma(shape, shape / (theta[i]))
         }
@@ -394,7 +402,8 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top -x[i]*beta
+        theta[i]<- top - x[i]*beta
+        #theta[i]<- top * exp(-beta*x[i])
         # response is gamma
         y[i]~dgamma(shape, shape / (theta[i]))
         }
@@ -441,7 +450,8 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
       # likelihood
       for (i in 1:N)
       {
-      theta[i]<-top -x[i]*beta
+        theta[i]<- top - x[i]*beta
+        #theta[i]<- top * exp(-beta*x[i])
       # response is gaussian
       
       y[i]~dnorm(theta[i],tau)
@@ -490,7 +500,8 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top -x[i]*beta
+        theta[i]<- top - x[i]*beta
+        #theta[i]<- top * exp(-beta*x[i])
         # response is gaussian
         
         y[i]~dnorm(theta[i],tau)
@@ -539,7 +550,8 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-top -x[i]*beta
+        theta[i]<- top - x[i]*beta
+        #theta[i]<- top * exp(-beta*x[i])
         # response is gaussian
         
         y[i]~dnorm(theta[i],tau)
@@ -593,13 +605,15 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         y[i]~dbeta(shape1[i], shape2[i])
         shape1[i] <- theta[i] * phi
         shape2[i]  <- (1-theta[i]) * phi
-        theta[i]<-top -x[i]*beta
+        #theta[i]<- top - x[i]*beta
+        theta[i]<- top * exp(-beta*x[i])
         }
         
         # specify model priors
         beta ~ dgamma(0.0001,0.0001)
         t0 ~ dnorm(0, 0.010)
         phi <- exp(t0)
+        top ~  dunif(0.0001,0.99)
 
         # pearson residuals
         for (i in 1:N) {
@@ -642,7 +656,8 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         y[i] ~ dbeta(shape1[i], shape2[i])
         shape1[i] <- theta[i] * phi
         shape2[i]  <- (1-theta[i]) * phi
-        theta[i]<-top -x[i]*beta
+        theta[i]<- top - x[i]*beta
+        #theta[i]<- top * exp(-beta*x[i])
         }
         
         # specify model priors
@@ -692,7 +707,8 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         y[i]~dbeta(shape1[i], shape2[i])
         shape1[i] <- theta[i] * phi
         shape2[i]  <- (1-theta[i]) * phi
-        theta[i]<-top -x[i]*beta
+        theta[i]<- top - x[i]*beta
+        #theta[i]<- top * exp(-beta*x[i])
         }
         
         # specify model priors
@@ -737,7 +753,8 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-size/(size+ top -x[i]*beta)
+        #theta[i]<-size/(size+ top * exp(-beta*x[i]))
+        theta[i]<-size/(size+ top * -beta*x[i])
         # response is begative binomial
         y[i]~dnegbin(theta[i], size)
         }
@@ -784,7 +801,8 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-size/(size + top -x[i]*beta)
+        #theta[i]<-size/(size+ top * exp(-beta*x[i]))
+        theta[i]<-size/(size+ top * -beta*x[i])
         # response is begative binomial
         y[i]~dnegbin(theta[i], size)
         }
@@ -831,7 +849,8 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         # likelihood
         for (i in 1:N)
         {
-        theta[i]<-size/(size + top -x[i]*beta)
+        #theta[i]<-size/(size+ top * exp(-beta*x[i]))
+        theta[i]<-size/(size+ top * -beta*x[i])
         # response is begative binomial
         y[i]~dnegbin(theta[i], size)
         }
