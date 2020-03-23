@@ -4,11 +4,24 @@
 \alias{plot.jagsNECfit}
 \title{plot.jagsNEC}
 \usage{
-\method{plot}{jagsNECfit}(X, CI = TRUE, posterior.median = TRUE,
-  median.model = FALSE, add.NEC = TRUE, legend.loc = "topright",
-  add.EC10 = FALSE, xform = NA, lxform = NA, jitter.x = FALSE,
-  jitter.y = FALSE, ylab = "response", xlab = "concentration",
-  xlim = NA, xticks = NA, ...)
+\method{plot}{jagsNECfit}(
+  X,
+  CI = TRUE,
+  posterior.median = TRUE,
+  median.model = FALSE,
+  add.NEC = TRUE,
+  legend.loc = "topright",
+  add.EC10 = FALSE,
+  xform = NA,
+  lxform = NA,
+  jitter.x = FALSE,
+  jitter.y = FALSE,
+  ylab = "response",
+  xlab = "concentration",
+  xlim = NA,
+  xticks = NA,
+  ...
+)
 }
 \arguments{
 \item{X}{the jags NEC model fit as returned by fit.jagsNEC.}

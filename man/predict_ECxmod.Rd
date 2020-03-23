@@ -21,5 +21,5 @@ predict_ECxmod(x.vec, EC50, top, beta, bot = 0)
 A list containing x and fitted y, with up and lw values
 }
 \description{
-Calculates predicted y (response) values for a supplied vector of x (concentration) values for a given set of EC50, top, bottom and beta values
+Calculates predicted y (response) values for a supplied vector of x (concentration) values
 }

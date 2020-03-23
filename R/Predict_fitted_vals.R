@@ -12,9 +12,11 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
+
+
 #' predict_NECmod
 #'
-#' Calculates predicted y (response) values for a supplied vector of x (concentration) values for a given set of NEC, top and beta values
+#' Calculates predicted y (response) values for a supplied vector of x (concentration) values
 #'
 #' @param  x.vec the x vector over which to calculate
 #' 
@@ -51,7 +53,7 @@ predict_NECmod <- function(x.vec, NEC=min(x.vec), top, beta, alpha=0, d=1, bot=0
 
 #' predict_ECxmod
 #'
-#' Calculates predicted y (response) values for a supplied vector of x (concentration) values for a given set of EC50, top, bottom and beta values
+#' Calculates predicted y (response) values for a supplied vector of x (concentration) values
 #'
 #' @param  x.vec the x vector over which to calculate
 #' 
@@ -77,7 +79,7 @@ predict_ECxmod <- function(x.vec, EC50, top, beta, bot=0){
 
 #' predict_WB1mod
 #'
-#' Calculates predicted y (response) values for a supplied vector of x (concentration) values for a given set of EC50, top, bottom and beta values
+#' Calculates predicted y (response) values for a supplied vector of x (concentration) values
 #'
 #' @param  x.vec the x vector over which to calculate
 #' 
@@ -100,10 +102,9 @@ predict_WB1mod <- function(x.vec, EC50, top, beta, bot=0){
   return(y.pred)
 }  
 
-
 #' predict_WB2mod
 #'
-#' Calculates predicted y (response) values for a supplied vector of x (concentration) values for a given set of EC50, top, bottom and beta values
+#' Calculates predicted y (response) values for a supplied vector of x (concentration) values
 #'
 #' @param  x.vec the x vector over which to calculate
 #' 
@@ -126,6 +127,60 @@ predict_WB2mod <- function(x.vec, EC50, top, beta, bot=0){
   return(y.pred)
 }
 
+
+#' predict_Linearmod
+#'
+#' Calculates predicted y (response) values for a supplied vector of x (concentration) values
+#'
+#' @param  x.vec the x vector over which to calculate
+#' 
+#' @param EC50 the 50 percent effect concentration
+#' 
+#' @param top the upper plateau
+#' 
+#' @param beta the exponential decay rate (hillslope)
+#' 
+#' @param bot the lower plateau
+#'
+#' @export
+#' @return A list containing x and fitted y, with up and lw values
+
+predict_Linearmod <- function(x.vec, top, beta, link){
+  
+  x.seq <- x.vec 
+  y.pred <- xform_link(top - beta*x.seq, use.link = link)   
+  
+  return(y.pred)
+}
+
+#' xform_link
+#'
+#' Calculates predicted y (response) values for a supplied vector of x (concentration) values
+#'
+#' @param  x.vec the x vector over which to calculate
+#' 
+#' @param link The link function used
+#' 
+#' @export
+#' @return A list containing x and fitted y, with up and lw values
+
+xform_link <- function(pred.vec, use.link){
+  y.pred <- pred.vec
+  
+  if(use.link=="identity"){
+    y.pred <- pred.vec
+  }  
+  if(use.link=="logit"){
+    y.pred <- exp(pred.vec)/(1+exp(pred.vec))
+  }
+  if(use.link=="log"){
+    y.pred <- exp(pred.vec)
+  } 
+  
+  return(y.pred)
+}
+
+
 #' predict_NECbugsmod
 #'
 #' 
@@ -134,7 +189,7 @@ predict_WB2mod <- function(x.vec, EC50, top, beta, bot=0){
 #' @param precision the number of x values over which to predict values
 #'
 #' @export
-#' @return a list containing x (the x.seq), y (the median predicted y values at each value of x), up.vals (the upper 97.5% percentile of the predicted y values at each value of x), and lw (the lower 2.5% percentile of the predicted y values at each value of x)
+#' @return A list containing x and fitted y, with up and lw values
 
 predict_NECbugsmod <- function(X, precision=100){
   mod.dat <- X$mod.dat
@@ -236,6 +291,14 @@ predict_NECbugsmod <- function(X, precision=100){
                      alpha=X$sims.list$alpha[x],
                      slope=X$sims.list$slope[x])}))
   } 
+ 
+  if(X$model == "ECxLinear"){
+    pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
+      predict_Linearmod(x.vec=x.seq,
+                     top=X$sims.list$top[x],
+                     beta=X$sims.list$beta[x],
+                     link=X$link)}))
+  }
   
   m.vals <- apply(pred.vals.out, MARGIN=1, FUN=quantile, probs=0.5)
   up.vals <- apply(pred.vals.out, MARGIN=1, FUN=quantile, probs=0.975)

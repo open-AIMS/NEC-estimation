@@ -842,7 +842,7 @@ write.jags.ECx4param.mod <- function(x="gamma", y, mod.dat){
       top =rpois(1,min(mod.dat$y)))} #
   } 
 
-    # negbin y; gamma x ----
+  # negbin y; gamma x ----
   if(x=="gamma" & y=="negbin"){
     sink("NECmod.txt")
     cat("

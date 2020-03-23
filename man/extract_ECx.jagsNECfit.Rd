@@ -4,9 +4,15 @@
 \alias{extract_ECx.jagsNECfit}
 \title{extract_ECx.jagsNEC}
 \usage{
-extract_ECx.jagsNECfit(X, ECx.val = 10, precision = 10000,
-  posterior = FALSE, type = "absolute", xform = NA,
-  prob.vals = c(0.5, 0.025, 0.975))
+extract_ECx.jagsNECfit(
+  X,
+  ECx.val = 10,
+  precision = 10000,
+  posterior = FALSE,
+  type = "absolute",
+  xform = NA,
+  prob.vals = c(0.5, 0.025, 0.975)
+)
 }
 \arguments{
 \item{X}{a jag model fit as returned by a call to jags from fit.jagsNEC}

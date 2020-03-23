@@ -816,7 +816,7 @@ write.jags.NEC3param.mod <- function(x="gamma", y, mod.dat){
       size=runif(1, 0.1, 40))} #
   } 
 
-    # negbin y; gamma x ----
+  # negbin y; gamma x ----
   if(x=="gamma" & y=="negbin"){
     sink("NECmod.txt")
     cat("

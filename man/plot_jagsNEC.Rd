@@ -4,10 +4,20 @@
 \alias{plot_jagsNEC}
 \title{plot.jagsNEC}
 \usage{
-plot_jagsNEC(X, CI = TRUE, posterior.median = TRUE,
-  median.model = FALSE, add.NEC = TRUE, xform = NA,
-  jitter.x = FALSE, jitter.y = FALSE, y.lab = "response",
-  x.lab = "concentration", log.x = "", ...)
+plot_jagsNEC(
+  X,
+  CI = TRUE,
+  posterior.median = TRUE,
+  median.model = FALSE,
+  add.NEC = TRUE,
+  xform = NA,
+  jitter.x = FALSE,
+  jitter.y = FALSE,
+  y.lab = "response",
+  x.lab = "concentration",
+  log.x = "",
+  ...
+)
 }
 \arguments{
 \item{X}{the jags NEC model fit as returned by fit.jagsNEC.}

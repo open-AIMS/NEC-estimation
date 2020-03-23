@@ -4,8 +4,16 @@
 \alias{extract_ECx}
 \title{extract_ECx}
 \usage{
-extract_ECx(X, ECx.val = 10, precision = 10000, posterior = FALSE,
-  type = "absolute", xform = NA, prob.vals = c(0.5, 0.025, 0.975))
+extract_ECx(
+  X,
+  ECx.val = 10,
+  precision = 10000,
+  posterior = FALSE,
+  type = "absolute",
+  xform = NA,
+  prob.vals = c(0.5, 0.025, 0.975),
+  link = "identity"
+)
 }
 \arguments{
 \item{X}{a jag model fit as returned by a call to jags from fit.jagsNEC}

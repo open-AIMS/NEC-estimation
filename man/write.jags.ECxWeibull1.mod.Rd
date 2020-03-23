@@ -2,7 +2,7 @@
 % Please edit documentation in R/Write_jags_ECxWeibull1Mod.R
 \name{write.jags.ECxWeibull1.mod}
 \alias{write.jags.ECxWeibull1.mod}
-\title{write.jags.4param.EC50mod}
+\title{write.jags.ECxWeibull1.mod}
 \usage{
 write.jags.ECxWeibull1.mod(x = "gamma", y, mod.dat)
 }

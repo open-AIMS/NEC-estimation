@@ -1,10 +1,10 @@
 
 
-data=dat #data1#count.data#binom.data##
-x.var="light.stress" # "log.x" #"concentration" #
-y.var= "scaled.col"#"range01.col"#"suc" #"col.intensity" # "count" #"response" #"suc" #
+data=count.data#dat #data1#binom.data##
+x.var="log.x" #"x"#"light.stress" # "concentration" #
+y.var="count" #"y"#"range01.col"# "col.intensity" # "scaled.col"#"suc" #"count" #"response" #"suc" #
 trials.var=NA#"tot"#
-model="NECHormesis"#"ECxWeibull1"#"ECxWeibull1"#"NEC3param"#"NECsigmoidal"#"ECx4param"  #
+model="ECxLinear" #"NECHormesis"#"ECxWeibull1"#"ECxWeibull1"#"NEC3param"#"NECsigmoidal"#"ECx4param"  #
 
 x.type = NA #"gamma"
 y.type = NA #"gaussian"#"poisson" # #binomial"#"gaussian" #
@@ -13,24 +13,25 @@ burnin = 1000
 n.iter = 2000
 n.iter.update = 5000
 n.tries=1
-over.disp=FALSE
+over.disp=TRUE
 model.set=c("NEC3param", "NEC4param", "NECsigmoidal", "NECHormesis", "ECx4param")
 name=""
+init.value.warning=TRUE
 
 CI=TRUE
 posterior.median=TRUE
 median.model=FALSE
 add.NEC=TRUE
 
-precision=10000
+precision=1000
 ECx.val=10
-type="absolute"
+type="relative"
 prob.vals=c(0.5, 0.025, 0.975)
 xform=NA
 posterior = FALSE
 
 
-X=out.ma
+X=out
 
 legend.loc="topright"
 add.EC10=FALSE
