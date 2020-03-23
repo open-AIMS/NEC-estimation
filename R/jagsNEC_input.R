@@ -170,14 +170,12 @@ jagsNEC_input <- function(data,
   # error catching for 1 for beta by subtracting very small value (beta does not take 1)
   if(max(data[,x.var])==1 & x.type=="beta"){
     tt <- data[,x.var]
-    max.val <- max(tt[which(tt<1)])
-    data[which(tt==1),x.var] <- tt[which(tt==1)]-((max.val)/10)
+    data[which(tt==1),x.var] <- tt[which(tt==1)]-0.001
   }
   
   if(max(data[,y.var])==1 & y.type=="beta"){
     tt <- data[,y.var]
-    max.val <- max(tt[which(tt<1)])
-    data[which(tt==1),y.var] <- tt[which(tt==1)]-(max.val/10)
+    data[which(tt==1),y.var] <- tt[which(tt==1)]-0.001
   }
   
   # create jags model data list
@@ -230,12 +228,16 @@ jagsNEC_input <- function(data,
   
   if(model=="ECxLinear"){
     init.fun <- write.jags.ECxLinear.mod(x=x.type,y=y.type, mod.dat=mod.dat)
-    params <- setdiff(params, "NEC")
+    params <- setdiff(params, c("NEC", "alpha"))
   }
 return(list(params=params,
             response=response,
             mod.dat=mod.dat,
             data=data,
             y.type=y.type,
-            x.type=x.type))  
+            x.type=x.type,
+            x.dat=x.dat,
+            y.dat=y.dat,
+            init.fun=init.fun, 
+            link=attributes(init.fun)$link))  
 }

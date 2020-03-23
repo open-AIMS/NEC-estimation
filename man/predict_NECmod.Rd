@@ -4,8 +4,16 @@
 \alias{predict_NECmod}
 \title{predict_NECmod}
 \usage{
-predict_NECmod(x.vec, NEC = min(x.vec), top, beta, alpha = 0, d = 1,
-  bot = 0, slope = 0)
+predict_NECmod(
+  x.vec,
+  NEC = min(x.vec),
+  top,
+  beta,
+  alpha = 0,
+  d = 1,
+  bot = 0,
+  slope = 0
+)
 }
 \arguments{
 \item{x.vec}{the x vector over which to calculate}
@@ -24,5 +32,5 @@ predict_NECmod(x.vec, NEC = min(x.vec), top, beta, alpha = 0, d = 1,
 A list containing x and fitted y, with up and lw values
 }
 \description{
-Calculates predicted y (response) values for a supplied vector of x (concentration) values for a given set of NEC, top and beta values
+Calculates predicted y (response) values for a supplied vector of x (concentration) values
 }

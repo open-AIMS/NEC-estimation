@@ -41,7 +41,7 @@
 #' @return A vector containing the estimated ECx value, including upper and lower 95 percent Credible Interval bounds
 #' 
 extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type="absolute", xform=NA, 
-                        prob.vals=c(0.5, 0.025, 0.975)){
+                        prob.vals=c(0.5, 0.025, 0.975), link="identity"){
  
  if(class(X)=="jagsNECfit"){
     ECx <- extract_ECx.jagsNECfit(X, ECx.val=ECx.val, precision=precision, 
@@ -96,9 +96,13 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
   if(length(grep("ECx", X$model))>0){mod.class <- "ECx"}else{mod.class <- "NEC"}
   if(is.null(X$bot)){m4param <- 1}else{m4param <- 0}
   
-    if(X$y.type=="gaussian" & m4param!= 1  & type=="absolute"){
+  if(X$y.type=="gaussian" & m4param!= 1  & type=="absolute"){
       stop("Absolute ECx values are not valid for a gaussian response variable unless a 4 parameter model is fit") 
     }
+  if(X$x.type=="gaussian" &  X$model == "ECxLinear"  & type=="absolute"){
+    stop("Absolute ECx values are not valid for a linear model when
+         x-values are gaussian, because 'top' merely indicates the y-intercept. Use type 'relative'.") 
+  }  
     
     label <- paste("EC", ECx.val, sep="_")
     

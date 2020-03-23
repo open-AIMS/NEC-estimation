@@ -12,7 +12,7 @@ predict_NECbugsmod(X, precision = 100)
 \item{precision}{the number of x values over which to predict values}
 }
 \value{
-a list containing x (the x.seq), y (the median predicted y values at each value of x), up.vals (the upper 97.5% percentile of the predicted y values at each value of x), and lw (the lower 2.5% percentile of the predicted y values at each value of x)
+A list containing x and fitted y, with up and lw values
 }
 \description{
 predict_NECbugsmod

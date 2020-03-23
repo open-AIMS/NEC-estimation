@@ -4,9 +4,15 @@
 \alias{extract_ECx.jagsMANECfit}
 \title{extract_ECx.jagsMANEC}
 \usage{
-extract_ECx.jagsMANECfit(X, ECx.val = 10, precision = 10000,
-  posterior = FALSE, type = "absolute", xform = NA,
-  prob.vals = c(0.5, 0.025, 0.975))
+extract_ECx.jagsMANECfit(
+  X,
+  ECx.val = 10,
+  precision = 10000,
+  posterior = FALSE,
+  type = "absolute",
+  xform = NA,
+  prob.vals = c(0.5, 0.025, 0.975)
+)
 }
 \arguments{
 \item{X}{a fitted jagsMANEC model object, containing a list of jag model fit as returned by a call to jags from 

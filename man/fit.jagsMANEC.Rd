@@ -4,10 +4,22 @@
 \alias{fit.jagsMANEC}
 \title{fit.jagsMANEC}
 \usage{
-fit.jagsMANEC(data, x.var, y.var, trials.var = NA, x.type = NA,
-  y.type = NA, burnin = 5000, n.iter = burnin + 500,
-  n.iter.update = 10000, n.tries = 3, params = c("top", "beta",
-  "NEC", "SS", "SSsim"), over.disp = FALSE, model.set = "all", ...)
+fit.jagsMANEC(
+  data,
+  x.var,
+  y.var,
+  trials.var = NA,
+  x.type = NA,
+  y.type = NA,
+  burnin = 5000,
+  n.iter = burnin + 500,
+  n.iter.update = 10000,
+  n.tries = 3,
+  params = c("top", "beta", "NEC", "SS", "SSsim"),
+  over.disp = FALSE,
+  model.set = "all",
+  ...
+)
 }
 \arguments{
 \item{data}{a data.frame containing the data to use for the model}

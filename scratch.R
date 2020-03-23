@@ -1,8 +1,8 @@
 
 
-data=dat #data1#count.data#binom.data##
-x.var="x"#"light.stress" # "log.x" #"concentration" #
-y.var="y"#"range01.col"# "col.intensity" # "scaled.col"#"suc" #"count" #"response" #"suc" #
+data=count.data#dat #data1#binom.data##
+x.var="log.x" #"x"#"light.stress" # "concentration" #
+y.var="count" #"y"#"range01.col"# "col.intensity" # "scaled.col"#"suc" #"count" #"response" #"suc" #
 trials.var=NA#"tot"#
 model="ECxLinear" #"NECHormesis"#"ECxWeibull1"#"ECxWeibull1"#"NEC3param"#"NECsigmoidal"#"ECx4param"  #
 
@@ -13,7 +13,7 @@ burnin = 1000
 n.iter = 2000
 n.iter.update = 5000
 n.tries=1
-over.disp=FALSE
+over.disp=TRUE
 model.set=c("NEC3param", "NEC4param", "NECsigmoidal", "NECHormesis", "ECx4param")
 name=""
 init.value.warning=TRUE
@@ -23,15 +23,15 @@ posterior.median=TRUE
 median.model=FALSE
 add.NEC=TRUE
 
-precision=10000
+precision=1000
 ECx.val=10
-type="absolute"
+type="relative"
 prob.vals=c(0.5, 0.025, 0.975)
 xform=NA
 posterior = FALSE
 
 
-X=out.ma
+X=out
 
 legend.loc="topright"
 add.EC10=FALSE

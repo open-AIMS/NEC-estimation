@@ -17,6 +17,7 @@ source("R/Write_jags_ECx4paramMod.R")
 source("R/Write_jags_NECHormesisMod.R")
 source("R/Write_jags_ECxWeibull1Mod.R")
 source("R/Write_jags_ECxWeibull2Mod.R")
+source("R/Write_jags_ECxLinearMod.R")
 source("R/Predict_fitted_vals.R")
 source("R/Fit_jagsNEC.R")
 source("R/Fit_jagsMANEC.R")
@@ -24,14 +25,24 @@ source("R/plot_jagsNEC.R")
 source("R/plot_jagsNECfit.R")
 source("R/extract_ECx.R")
 source("R/wi.R")
+source("R/jagsNEC_input.R")
+
+#----test_linear model ----
+dat<-read.csv(paste(path,'test_dat1.csv',sep="/")) %>%
+  mutate(x=(light.stress)+10,
+         y=(range01.col))
+out <- fit.jagsNEC(data=dat, x.var="x", y.var="y", model="ECxLinear")
+plot(out)
+
 
 
 #----test_dat1.csv ----
 dat<-read.csv(paste(path,'test_dat1.csv',sep="/"))
 out <- fit.jagsNEC(data=dat,
                    x.var="light.stress", 
-                   y.var="col.intensity",
-                   model="NECHormesis")#"ECxWeibull2") #
+                   y.var="col.intensity",#"range01.col", #  # # 
+                   #init.value.warning = TRUE,
+                   model="ECxLinear")#"ECxWeibull2") #
 
 check.chains(out)
 
@@ -39,7 +50,7 @@ par(mfrow=c(1,1))
 plot(out)
 
 out.ma <- fit.jagsMANEC(data=dat, 
-                          x.var="light.stress", 
+                          x.var="light.stress", init.value.warning = TRUE, 
                           y.var="col.intensity")
 
 check.chains(out.ma)
@@ -53,7 +64,8 @@ out <- fit.jagsNEC(data=dat,
                    x.var="light.stress", 
                    y.var="scaled.col", n.tries=3,
                    #model="NEC3param")
-                   model="NECHormesis")
+                   #model="NECHormesis")
+                    model="ECxLinear")
 check.chains(out)
 
 par(mfrow=c(1,1))
@@ -64,6 +76,7 @@ out.ma <- fit.jagsMANEC(data=dat,
                         x.var="light.stress", 
                         y.var="col.intensity")
 
+plot(out.ma)
 #----test_dat3.csv-----
 
 dat<-read.csv(paste(path,'test_dat3.csv',sep="/"))
@@ -71,8 +84,9 @@ out <- fit.jagsNEC(data=dat,
                    x.var="light.stress", 
                    y.var="range01.col", 
                    n.tries=1,
-                   model="NECHormesis")
+                 #  model="NECHormesis")
                  # model="NEC3param")
+                 model="ECxLinear")
 
 check.chains(out)
 par(mfrow=c(1,1))
@@ -99,6 +113,12 @@ check.chains(out3)
 par(mfrow=c(1,1))
 plot(out3)
 
+out.ma <- fit.jagsMANEC(data=dat,
+                    x.var="light.stress", 
+                    y.var="scaled.col")
+
+plot(out.ma)
+
 #-----test_dat5.csv-----
 dat<-read.csv(paste(path,'test_dat5.csv',sep="/"))
 out <- fit.jagsNEC(data=dat,
@@ -111,6 +131,12 @@ check.chains(out)
 par(mfrow=c(1,1))
 plot(out)
 
+out.ma <- fit.jagsMANEC(data=dat,
+                        x.var="light.stress", 
+                        y.var="scaled.col")
+
+plot(out.ma)
+
 #----test_dat6.csv-----
 dat<-read.csv(paste(path,'test_dat6.csv',sep="/"))
 out <- fit.jagsNEC(data=dat,
@@ -122,6 +148,12 @@ check.chains(out)
 
 par(mfrow=c(1,1))
 plot(out)
+
+out.ma <- fit.jagsMANEC(data=dat,
+                        x.var="light.stress", 
+                        y.var="scaled.col")
+
+plot(out.ma)
 
 ### testing what to do with hormesis ----
 data1 <- read.table("https://pastebin.com/raw/rF2biHYG", header= TRUE,dec=",") %>%
@@ -138,7 +170,7 @@ plot(data1$raw.x, data1$suc/data1$tot, log = 'x')   #pooled by spp and specta (t
 out <- fit.jagsNEC(data=data1,
                    x.var="log.x",  
                    y.var="suc",
-                   model="ECxWeibull1",
+                   model="ECxLinear",
                    #over.disp = TRUE,
                    trials.var = "tot")
 check.chains(out)
@@ -151,6 +183,8 @@ out.ma <- fit.jagsMANEC(data=data1,
                         y.var="suc",
                         trials.var = "tot",
                         over.disp = TRUE)
+
+plot(out.ma)
 
 ### Testing/troubleshooting alternative models ----
 #source("R/Write_jags_NECHormesisMod.R")
@@ -311,10 +345,10 @@ hist(binom.data$raw.x)
 # for x, lowest concentration is 0.1, highest is 400, right skewed and on the continuous scale. Model x as gamma (current default).
 # for y, this is clearly binomial, with totals and successes
 out <- fit.jagsNEC(data=binom.data, 
-                        x.var="raw.x", 
+                        x.var="log.x", 
                         y.var="suc", 
                         trials.var="tot",
-                        model="ECx4param" )
+                        model="ECxLinear" )
 
 check.chains(out)
 
@@ -329,7 +363,7 @@ extract_ECx(out, type="relative")
 out <- fit.jagsNEC(data=binom.data, 
                    x.var="log.x", 
                    y.var="suc", 
-                   model="ECx4param",
+                   model="ECxLinear",
                    trials.var="tot", over.disp=T)
 
 check.chains(out)
@@ -355,7 +389,8 @@ hist(count.data$count)
 out <- fit.jagsNEC(data=count.data, 
                    x.var="log.x", 
                    y.var="count", 
-                   model="ECx4param")
+                   #over.disp = TRUE,
+                   model="ECxLinear")
 check.chains(out)
 mean(out$sims.list$SS > out$sims.list$SSsim)
 

@@ -109,6 +109,10 @@ fit.jagsNEC <- function(data,
   x.type <- data.check$x.type
   response <- data.check$response
   data <- data.check$data
+  x.dat <- data.check$x.dat
+  y.dat <- data.check$y.dat
+  init.fun <- data.check$init.fun
+  link <- attributes(init.fun)$link
   
   all.Js <- list()
   
@@ -191,7 +195,7 @@ fit.jagsNEC <- function(data,
     } 
   }
   J2  <- update(J1, n.iter = n.iter.update, n.thin = floor((n.iter.update*0.01)))  
-  out <- c(J2$BUGSoutput, list(mod.dat=mod.dat, y.type = y.type, x.type = x.type, model = model))
+  out <- c(J2$BUGSoutput, list(mod.dat=mod.dat, y.type = y.type, x.type = x.type, model = model, link = link))
     
   min.x <- min(mod.dat$x)
   max.x <- max(mod.dat$x)
@@ -228,11 +232,20 @@ fit.jagsNEC <- function(data,
   
   if(is.na(EC50[1])){
     if(y.type !="gaussian"){
-      EC50 <- extract_ECx.jagsNECfit(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975))
+      if(model!="ECxLinear"){
+       EC50 <- extract_ECx.jagsNECfit(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975))        
       }
+      if(model=="ECxLinear" & x.type!="gaussian"){
+       EC50 <- extract_ECx.jagsNECfit(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975))     
+      }
+      if(model=="ECxLinear" & x.type=="gaussian"){
+        EC50 <- extract_ECx.jagsNECfit(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975), type="relative")     
+      }      
+      
+    }
     if(y.type =="gaussian"){
       EC50 <- extract_ECx.jagsNECfit(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975), type="relative")
-      }  
+    }
   }
   
   # calculate the predicted values based on the median parameter estimates
@@ -276,8 +289,8 @@ fit.jagsNEC <- function(data,
   }
   
   if(model=="ECxLinear"){
-    y.pred.m <- predict_Linearmod(x.vec=x.seq, top=top["50%"], beta=beta["50%"]) 
-    predicted.y <- predict_Linearmod(x.vec=mod.dat$x, top=top["50%"], beta=beta["50%"])    
+    y.pred.m <- predict_Linearmod(x.vec=x.seq, top=top["50%"], beta=beta["50%"], link=link) 
+    predicted.y <- predict_Linearmod(x.vec=mod.dat$x, top=top["50%"], beta=beta["50%"], link=link)    
   }
   
   # calculate the predicted values using the entire posterior
@@ -314,7 +327,8 @@ fit.jagsNEC <- function(data,
      over.disp = od,
      all.Js = all.Js,
      predicted.y = predicted.y,
-     residuals = residuals))
+     residuals = residuals,
+     link = link))
   
   # assign a class to the output
   class(out) <- "jagsNECfit"
