@@ -1,5 +1,5 @@
 
-devtools::install_github("AIMS/NEC-estimation")
+devtools::install_github("AIMS/NEC-estimation",  ref = "Linear_mod")
 require(jagsNEC)
 
 library(R2jags)
@@ -50,7 +50,8 @@ par(mfrow=c(1,1))
 plot(out)
 
 out.ma <- fit.jagsMANEC(data=dat, 
-                          x.var="light.stress", init.value.warning = TRUE, 
+                          x.var="light.stress", 
+                          init.value.warning = TRUE, 
                           y.var="col.intensity")
 
 check.chains(out.ma)
@@ -197,7 +198,8 @@ out.ma <- fit.jagsMANEC(data=data1,
                     x.var="log.x",
                     y.var="suc",
                     over.disp = TRUE,
-                    trials.var = "tot")
+                    trials.var = "tot",
+                    model.set="all")
 
 out1 <- fit.jagsNEC(data=data1,
                    x.var="log.x",
