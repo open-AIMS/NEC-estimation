@@ -21,11 +21,11 @@
 #' @param ECx.val the desired percentage effect value. This must be a value between 1 and 99 (for type = "relative" 
 #' and "absolute"), defaults to 10.
 #' 
-#' @param type a character vector indicating if relative or absolute values for the ECx should be calculated. Takes values 
-#' of "relative",  "absolute" (the default) or "direct". For the default model type fit by jagsNEC, "relative" is 
-#' calculated as the percentage decrease from the maximum value of the response (top) to the minimum predicted value 
-#' of the response, "absolute" is calculated as the the percentage decrease from the maximum value of the response (top) 
-#' to 0 (or bot for a 4 parameter model fit),  and "direct" provides a direct estimate of the x value for a given y.
+#' @param type a character vector, taking values of "relative",  "absolute" (the default) or "direct". 
+#' Type "relative" is calculated as the percentage decrease from the maximum predicted value of the response (top) to the minimum predicted value 
+#' of the response. Type "absolute" (the default) is calculated as the percentage decrease from the maximum value of the response (top) 
+#' to 0 (or bot for a 4 parameter model fit). Type "direct" provides a direct estimate of the x value for a given y.
+#' Note that for the current version, ECx for an NECHormesis model is estimated at a percent decline from the control
 #' 
 #' @param precision The number of unique x values over which to find ECx - large values will make the ECx estimate more 
 #' precise.
@@ -40,12 +40,14 @@
 #' @export
 #' @return A vector containing the estimated ECx value, including upper and lower 95 percent Credible Interval bounds
 #' 
-extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type="absolute", xform=NA, 
+extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type="absolute", 
+                        hormesis.def = "control", xform=NA, 
                         prob.vals=c(0.5, 0.025, 0.975), link="identity"){
  
  if(class(X)=="jagsNECfit"){
     ECx <- extract_ECx.jagsNECfit(X, ECx.val=ECx.val, precision=precision, 
-                                              posterior = posterior, type=type, xform=xform, 
+                                              posterior = posterior, type=type, hormesis.def=hormesis.def, 
+                                              xform=xform, 
                                               prob.vals=prob.vals)
   }
  if(class(X)== "jagsMANECfit"){
@@ -84,8 +86,9 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
 #' @export
 #' @return A vector containing the estimated ECx value, including upper and lower 95 percent Credible Interval bounds
 
-extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type="absolute", xform=NA, 
-                        prob.vals=c(0.5, 0.025, 0.975)){
+extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type="absolute", 
+                                   hormesis.def = "control",
+                                   xform=NA, prob.vals=c(0.5, 0.025, 0.975)){
 
     if(type!="direct"){
       if(ECx.val<1 | ECx.val>99){
@@ -96,7 +99,7 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
   if(length(grep("ECx", X$model))>0){mod.class <- "ECx"}else{mod.class <- "NEC"}
   if(is.null(X$bot)){m4param <- 1}else{m4param <- 0}
   
-  if(X$y.type=="gaussian" & m4param!= 1  & type=="absolute"){
+  if(X$y.type=="gaussian" & m4param!= 1  &  type=="absolute"){
       stop("Absolute ECx values are not valid for a gaussian response variable unless a 4 parameter model is fit") 
     }
   if(X$x.type=="gaussian" &  X$model == "ECxLinear"  & type=="absolute"){
@@ -110,13 +113,30 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
     posterior.sample <- pred.vals$posterior
     x.vec <- pred.vals$'x' 
     
-    if(X$model=="NECHormesis"){ # remove values prior to the NEC for the hormesis model
-      test=do.call("cbind", lapply(X$sims.list$NEC, FUN=function(x){x<x.vec}))
+    
+    if(X$model=="NECHormesis" & hormesis.def=="max"){ # remove values prior to the NEC for the hormesis model
+      posterior.sample <- do.call("cbind",
+        lapply(1:length(X$sims.list$NEC), FUN=function(x){
+         NEC.x <- X$sims.list$NEC[x]
+         posterior.x <- posterior.sample[,x]
+         posterior.x[which(x.vec<NEC.x)] <- NA
+         return(posterior.x)
+        }))
     }
+    
+    if(X$model=="NECHormesis"& hormesis.def=="control"){ # remove values greater than the control for the hormesis model
+      posterior.sample <- do.call("cbind", 
+          lapply(1:ncol(posterior.sample), FUN=function(x){
+           control.x <- posterior.sample[1,x]                                    
+           posterior.x <- posterior.sample[,x] 
+           posterior.x[which(posterior.x>=control.x)] <- NA
+           return(posterior.x)
+           }))
+    }   
     
     if(type=="relative"){
       ECx.out <- apply(posterior.sample, MARGIN=2, FUN=function(y){
-        range.y <- range(y)
+        range.y <- range(y, na.rm=T)
         ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
         ECx.x <- x.vec[which.min(abs(y-ECx.y))]
         return(ECx.x)
@@ -125,7 +145,7 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
     
     if(type=="absolute" & m4param == 1){
       ECx.out <- apply(posterior.sample, MARGIN=2, FUN=function(y){
-        range.y <- range(y)
+        range.y <- range(y, na.rm=T)
         ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
         ECx.x <- x.vec[which.min(abs(y-ECx.y))]
         return(ECx.x)  
@@ -134,7 +154,7 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
     
     if(type=="absolute" & m4param!= 1){
       ECx.out <- apply(posterior.sample, MARGIN=2, FUN=function(y){
-        range.y <- c(0, max(y))
+        range.y <- c(0, max(y, na.rm=T))
         ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
         ECx.x <- x.vec[which.min(abs(y-ECx.y))]
         return(ECx.x)  
@@ -143,7 +163,6 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
     
     if(type=="direct"){
       ECx.out <- apply(posterior.sample, MARGIN=2, FUN=function(y){
-        range.y <- range(y)
         ECx.y <- ECx.val
         ECx.x <- x.vec[which.min(abs(y-ECx.y))]
         return(ECx.x)
@@ -152,7 +171,7 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
     }
     
     # calculate the quantile values from the posterior?
-    ECx.estimate <- quantile(ECx.out, probs=prob.vals)
+    ECx.estimate <- quantile(unlist(ECx.out), probs=prob.vals)
     names(ECx.estimate) <- c(label, paste(label, "lw", sep="_"), paste(label, "up", sep="_"))
     
     # if a transformation is required
@@ -192,8 +211,9 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
 #' @export
 #' @return A vector containing the estimated ECx value, including upper and lower 95 percent Credible Interval bounds
 
-extract_ECx.jagsMANECfit <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type="absolute", xform=NA, 
-                                   prob.vals=c(0.5, 0.025, 0.975)){
+extract_ECx.jagsMANECfit <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type="absolute", 
+                                     hormesis.def="control", xform=NA, 
+                                     prob.vals=c(0.5, 0.025, 0.975)){
   
   ECx.out <- unlist(sapply(X$success.models, FUN=function(x){
     base::sample(extract_ECx.jagsNECfit(X$mod.fits[[x]], 
