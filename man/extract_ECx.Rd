@@ -10,6 +10,7 @@ extract_ECx(
   precision = 10000,
   posterior = FALSE,
   type = "absolute",
+  hormesis.def = "control",
   xform = NA,
   prob.vals = c(0.5, 0.025, 0.975),
   link = "identity"
@@ -27,11 +28,11 @@ precise.}
 \item{posterior}{A logical value indicating if the full posterior sample of calculated ECx values should be returned 
 instead of just the median and 95 credible intervals.}
 
-\item{type}{a character vector indicating if relative or absolute values for the ECx should be calculated. Takes values 
-of "relative",  "absolute" (the default) or "direct". For the default model type fit by jagsNEC, "relative" is 
-calculated as the percentage decrease from the maximum value of the response (top) to the minimum predicted value 
-of the response, "absolute" is calculated as the the percentage decrease from the maximum value of the response (top) 
-to 0 (or bot for a 4 parameter model fit),  and "direct" provides a direct estimate of the x value for a given y.}
+\item{type}{a character vector, taking values of "relative",  "absolute" (the default) or "direct". 
+Type "relative" is calculated as the percentage decrease from the maximum predicted value of the response (top) to the minimum predicted value 
+of the response. Type "absolute" (the default) is calculated as the percentage decrease from the maximum value of the response (top) 
+to 0 (or bot for a 4 parameter model fit). Type "direct" provides a direct estimate of the x value for a given y.
+Note that for the current version, ECx for an NECHormesis model is estimated at a percent decline from the control}
 
 \item{xform}{A function to apply to the returned estimated concentration values}
 

@@ -10,6 +10,7 @@ extract_ECx.jagsMANECfit(
   precision = 10000,
   posterior = FALSE,
   type = "absolute",
+  hormesis.def = "control",
   xform = NA,
   prob.vals = c(0.5, 0.025, 0.975)
 )
