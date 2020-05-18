@@ -66,10 +66,11 @@ fit.jagsMANEC <- function(data,
                         ...){
   
   if(model.set=="NEC"){model.set=c("NEC3param", "NEC4param", "NECHormesis", "NECsigmoidal")}
-  if(model.set=="ECx"){model.set=c("ECx4param", "ECxWeibull1", "ECxWeibull2", "ECxLinear")}
+  if(model.set=="ECx"){model.set=c("ECx4param", "ECxWeibull1", "ECxWeibull2")}#, "ECxLinear"
   if(model.set=="all"){model.set=c("NEC3param", "NEC4param", "NECHormesis", "NECsigmoidal", 
-                                   "ECx4param", "ECxWeibull1", "ECxWeibull2",
-                                   "ECxLinear")}
+                                   #"ECxLinear",
+                                   "ECx4param", "ECxWeibull1", "ECxWeibull2"
+                                   )}
   
  # Fit each of the models
  mod.fits <- vector(mode = 'list', length = length(model.set))
