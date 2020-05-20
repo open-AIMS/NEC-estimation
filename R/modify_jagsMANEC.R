@@ -17,16 +17,37 @@
 #' Modifys an existing jagsMANECfit, for example, but adding or removing fitted models.
 #'
 #' @param  jagsMANECfit a jagsMANECfit output list, as returned by fit.jagsMANEC
-
+#'
 #' @param model.set A character vector containing the of names of model types to be included in the modified fit.
+#' 
+#' @param drop.models A character vector containing the names of model types you which to drop for the modified fit.
+#' 
+#' @param add.models A character vector containing the names of model types to add to the modified fit.
 #'
 #' @export
 #' @return All successully fitted jagsMANECfit model fit. 
-modify.jagsMANEC <- function(jagsMANECfit, model.set=NA){
+modify.jagsMANEC <- function(jagsMANECfit, model.set=NA, drop.models=NA, add.models=NA){
   
   # if the model set is NA 
   if(is.na(model.set)){
    model.set <- names(jagsMANECfit$mod.fits)
+  }
+  
+  if(model.set=="NEC"){model.set=c("NEC3param", "NEC4param", "NECHormesis", "NECsigmoidal")}
+  if(model.set=="ECx"){model.set=c("ECx4param", "ECxWeibull1", "ECxWeibull2")}#, "ECxLinear"
+  if(model.set=="all"){model.set=c("NEC3param", "NEC4param", "NECHormesis", "NECsigmoidal", 
+                                   #"ECxLinear",
+                                   "ECx4param", "ECxWeibull1", "ECxWeibull2"
+  )}
+  
+  # if drop.models is not NA 
+  if(is.na(drop.models)==F){
+    model.set <- model.set[is.na(match(model.set, drop.models))]
+  }
+  
+  # if add.models is not NA 
+  if(is.na(add.models)==F){
+    model.set <- unique(c(model.set,add.models))
   }
   
   # Fit each of the models
@@ -45,10 +66,9 @@ modify.jagsMANEC <- function(jagsMANECfit, model.set=NA){
                   trials.var = jagsMANECfit$trials.var,
                   x.type = jagsMANECfit$x.type, 
                   y.type = jagsMANECfit$y.type,
-                  burnin = jagsMANECfit$n.burnin,
-                  n.iter = jagsMANECfit$n.iter,
-                  over.disp=jagsMANECfit$mod.fits[[1]]$over.disp,
-                  model=model), 
+                  over.disp=jagsMANECfit$over.disp,
+                  model=model,
+                  added.model=TRUE), 
       silent = TRUE)
     if (!inherits(fit.m, 'try-error')) {
       mod.fits[[model]] <- fit.m  
