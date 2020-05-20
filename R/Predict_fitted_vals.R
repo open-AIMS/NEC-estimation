@@ -138,9 +138,7 @@ predict_WB2mod <- function(x.vec, EC50, top, beta, bot=0){
 #' 
 #' @param top the upper plateau
 #' 
-#' @param beta the exponential decay rate (hillslope)
-#' 
-#' @param bot the lower plateau
+#' @param beta the linear decay rate
 #'
 #' @export
 #' @return A list containing x and fitted y, with up and lw values
@@ -149,6 +147,48 @@ predict_Linearmod <- function(x.vec, top, beta, link){
   
   x.seq <- x.vec 
   y.pred <- xform_link(top - beta*x.seq, use.link = link)   
+  
+  return(y.pred)
+}
+
+#' predict_EcxExpmod
+#'
+#' Calculates predicted y (response) values for a supplied vector of x (concentration) values
+#'
+#' @param  x.vec the x vector over which to calculate
+#' 
+#' @param top the upper plateau
+#' 
+#' @param beta the exponential decay rate (hillslope)
+#'
+#' @export
+#' @return A list containing x and fitted y, with up and lw values
+
+predict_ECxExpmod <- function(x.vec, top, beta){
+  
+  x.seq <- x.vec 
+  y.pred <- top*exp(-beta*(x.seq))
+  
+  return(y.pred)
+}
+
+#' predict_Ecxsigmoidalmod
+#'
+#' Calculates predicted y (response) values for a supplied vector of x (concentration) values
+#'
+#' @param  x.vec the x vector over which to calculate
+#' 
+#' @param top the upper plateau
+#' 
+#' @param beta the exponential decay rate (hillslope)
+#'
+#' @export
+#' @return A list containing x and fitted y, with up and lw values
+
+predict_ECxsigmoidalmod <- function(x.vec, top, beta, d){
+  
+  x.seq <- x.vec 
+  y.pred <- top*exp(-beta*(x.seq)^d)
   
   return(y.pred)
 }
@@ -298,6 +338,21 @@ predict_NECbugsmod <- function(X, precision=100){
                      top=X$sims.list$top[x],
                      beta=X$sims.list$beta[x],
                      link=X$link)}))
+  }
+  
+  if(X$model == "ECxExp"){
+    pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
+      predict_ECxExpmod(x.vec=x.seq,
+                        top=X$sims.list$top[x],
+                        beta=X$sims.list$beta[x])}))
+  }
+
+  if(X$model == "ECxsigmoidal"){
+    pred.vals.out <- do.call("cbind",lapply(1:X$n.sims,FUN=function(x){
+      predict_ECxsigmoidalmod(x.vec=x.seq,
+                        top=X$sims.list$top[x],
+                        beta=X$sims.list$beta[x],
+                        d=X$sims.list$d[x])}))
   }
   
   m.vals <- apply(pred.vals.out, MARGIN=1, FUN=quantile, probs=0.5)
