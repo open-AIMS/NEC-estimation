@@ -43,7 +43,7 @@ write.jags.NECHormesis.mod <- function(x="gamma", y, mod.dat){
         # specify model priors
         top ~  dunif(0.0001,0.999) 
         beta ~ dgamma(0.0001,0.0001)
-        NEC ~ dgamma(0.0001,0.0001) #d norm(3, 0.0001) T(0,)
+        NEC ~ dnorm(3, 0.0001) T(0,)
         slope ~ dnorm(0, 0.01) T(0,)#dunif(0,0.2)  
          
         # pearson residuals
@@ -710,7 +710,7 @@ write.jags.NECHormesis.mod <- function(x="gamma", y, mod.dat){
         # specify model priors
         top ~  dunif(0.001,0.999)
         beta ~ dgamma(0.0001,0.0001)
-        NEC ~ dgamma(0.0001,0.0001) 
+        NEC ~ dnorm(0, 2) T(0,)
         t0 ~ dnorm(0, 0.010)
         phi <- exp(t0)
         slope ~ dnorm(0, 1) T(0,)#dunif(0,0.2)
