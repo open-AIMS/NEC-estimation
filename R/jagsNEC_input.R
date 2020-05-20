@@ -59,6 +59,11 @@ jagsNEC_input <- function(data,
             over.disp,
             model){
   
+  if(is.na(y.type)==F){
+    if(over.disp==TRUE & y.type=="beta"){y.type=NA}
+  }
+
+  
   # check the specified columns exist in data
   use.vars <- na.omit(c(y.var=y.var, x.var=x.var, trials.var))
   var.colms <- match(use.vars, colnames(data))
@@ -125,7 +130,7 @@ jagsNEC_input <- function(data,
   
   # check there is a valid model type
   if(is.na(match(model, c("NEC3param", "NECsigmoidal", "NEC4param", "NECHormesis",
-                          "ECx4param", "ECxWeibull1", "ECxWeibull2", "ECxLinear")
+                          "ECx4param", "ECxWeibull1", "ECxWeibull2", "ECxLinear", "ECxExp", "ECxsigmoidal")
   ))){
     stop("The model type you have specified does not extist.")
   }
@@ -193,44 +198,11 @@ jagsNEC_input <- function(data,
     response = data[, y.var]/data[,trials.var]
   }
   
-  # set the type of model to fit
-  if(model=="NEC3param"){
-    init.fun <- write.jags.NEC3param.mod(x=x.type,y=y.type, mod.dat=mod.dat)
-  }
-  if(model=="NECsigmoidal"){
-    init.fun <- write.jags.NECsigmoidal.mod(x=x.type,y=y.type, mod.dat=mod.dat)
-    params <- c(params, "d")
-  }
-  if(model=="NEC4param"){
-    init.fun <- write.jags.NEC4param.mod(x=x.type,y=y.type, mod.dat=mod.dat)
-    params <- setdiff(c(params, "bot"), c("alpha"))
-  }
-  
-  if(model=="NECHormesis"){
-    init.fun <- write.jags.NECHormesis.mod(x=x.type,y=y.type, mod.dat=mod.dat)
-    params <- c(params, "slope")
-  }
-  
-  if(model=="ECx4param"){
-    init.fun <- write.jags.ECx4param.mod(x=x.type,y=y.type, mod.dat=mod.dat)
-    params <- setdiff(c(params, "bot", "EC50"), c("NEC", "alpha"))
-  }
-  
-  if(model=="ECxWeibull1"){
-    init.fun <- write.jags.ECxWeibull1.mod(x=x.type,y=y.type, mod.dat=mod.dat)
-    params <- setdiff(c(params, "bot", "EC50"), c("NEC", "alpha"))
-  }
-  
-  if(model=="ECxWeibull2"){
-    init.fun <- write.jags.ECxWeibull2.mod(x=x.type,y=y.type, mod.dat=mod.dat)
-    params <- setdiff(c(params, "bot", "EC50"), c("NEC", "alpha"))
-  }
-  
-  if(model=="ECxLinear"){
-    init.fun <- write.jags.ECxLinear.mod(x=x.type,y=y.type, mod.dat=mod.dat)
-    params <- setdiff(params, c("NEC", "alpha"))
-  }
-return(list(params=params,
+ mod.file <- Write.jagsModFile(x.type, y.type, mod.dat, params, model)
+ init.fun <- mod.file$init.fun
+ params <- mod.file$params
+    
+ return(list(params=params,
             response=response,
             mod.dat=mod.dat,
             data=data,
@@ -238,6 +210,5 @@ return(list(params=params,
             x.type=x.type,
             x.dat=x.dat,
             y.dat=y.dat,
-            init.fun=init.fun, 
-            link=attributes(init.fun)$link))  
+            init.fun=init.fun))  
 }

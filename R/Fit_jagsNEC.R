@@ -42,7 +42,7 @@
 #'
 #' @param n.iter.burnin the number of interations to run overall. This should be large. Defaults to 10000.
 #'
-#' @param n.tries. The number of tries to attempt to fit the model and attain good chain mixing. See details below.
+#' @param n.tries The number of tries to attempt to fit the model and attain good chain mixing. See details below.
 #'
 #' @param over.disp. If an overdispersed model should be used. Only changes the model fit for poisson and binomial y.type 
 #' data. For poisson, a negative binomial model will be fit. For binomial a beta model will be fit.
@@ -92,9 +92,10 @@ fit.jagsNEC <- function(data,
                         over.disp=FALSE,
                         model="NEC3param",
                         init.value.warning=FALSE,
+                        added.model=FALSE,
                         ...){
-  
-  data.check <- jagsNEC_input(data=data,
+  if(added.model==FALSE){
+     data.check <- jagsNEC_input(data=data,
                               x.var=x.var,
                               y.var=y.var,
                               trials.var = trials.var,
@@ -103,78 +104,41 @@ fit.jagsNEC <- function(data,
                               params=params,
                               over.disp=over.disp,
                               model=model)
-  mod.dat <- data.check$mod.dat
-  params <- data.check$params
-  y.type <- data.check$y.type
-  x.type <- data.check$x.type
-  response <- data.check$response
-  data <- data.check$data
-  x.dat <- data.check$x.dat
-  y.dat <- data.check$y.dat
-  init.fun <- data.check$init.fun
-  link <- attributes(init.fun)$link
-  
-  all.Js <- list()
-  
-  warn = getOption("warn")
-  options(warn=-1)
-  J1 <- try(jags(data   = mod.dat,
-                 inits      = init.fun,
-                 parameters = params,
-                 model      = "NECmod.txt",
-                 n.thin     = 10,
-                 n.chains   = 5,
-                 n.burnin   = burnin,
-                 n.iter     = n.iter,
-                 progress.bar = "none"), silent = T)
-  options(warn=warn)
-  
-  if(class(J1)!="try-error"){ # make sure the fitted model had good mixing
-    all.Js <- c(all.Js, list(J1))   
-    if(max(unlist(check.mixing(J1)$cv.test))==1){class(J1)="try-error"}
-  }
-  if(init.value.warning==TRUE){
-  warning("The generated init.fun failed to yield a valid model. Model based on default jags initial values")
-  }
-  #if the attempt fails try 10 more times
-  warn = getOption("warn")
-  options(warn=-1)
-  w <- 1
-    while(class(J1)=="try-error" & w <= n.tries){
-    w <- w+1      
-    J1 <- try(R2jags::jags(data       = mod.dat,
-                           inits      = init.fun,
-                           parameters = params,
-                           model      = "NECmod.txt",
-                           n.thin     = 10,
-                           n.chains   = 5,
-                           n.burnin   = burnin,
-                           n.iter     = n.iter,
-                           progress.bar = "none"), silent = T)  
-    if(class(J1)!="try-error"){ # make sure the fitted model had good mixing
-      all.Js <- c(all.Js, list(J1))   
-      if(max(unlist(check.mixing(J1)$cv.test))==1){class(J1)="try-error"}
+     mod.dat <- data.check$mod.dat
+
+     y.type <- data.check$y.type
+     x.type <- data.check$x.type
+     response <- data.check$response
+     data <- data.check$data
+     x.dat <- data.check$x.dat
+     y.dat <- data.check$y.dat 
+     params <- data.check$params 
+     init.fun <- data.check$init.fun
+ 
+     
+  }else{
+    
+    response = data[,y.var]
+    
+    if(y.type=="binomial"){
+      mod.dat$trials = data[, trials.var] # number of "trials"
+      response = data[, y.var]/data[,trials.var]
     }
+    
+    y.dat <- data[, y.var]
+    x.dat <- data[, x.var]
+    
+    mod.file <- Write.jagsModFile(x.type, y.type, mod.dat, params, model)
+    init.fun <- mod.file$init.fun
+    params <- mod.file$params
   }
+
   
-  # if the attempt fails try without initial values
-  w <- 1
-  while(class(J1)=="try-error" & w <= n.tries){
-    w <- w+1 
-    J1 <- try(R2jags::jags(data = mod.dat,
-                           parameters = params,
-                           model      = "NECmod.txt",
-                           n.thin     = 10,
-                           n.chains   = 5,
-                           n.burnin   = burnin,
-                           n.iter     = n.iter,
-                           progress.bar = "none"), silent = T) 
-    if(class(J1)!="try-error"){ # make sure the fitted model had good mixing
-      all.Js <- c(all.Js, list(J1))   
-      if(max(unlist(check.mixing(J1)$cv.test))==1){class(J1)="try-error"}
-    }    
-  }
-  #options(warn=warn)
+  link <- attributes(init.fun)$link    
+  
+  fit <- fit.jagsMod(mod.dat, init.fun, params, burnin, n.iter, init.value.warning, n.tries)
+  J1 <- fit$J1
+  all.Js <- fit$all.Js
   
   if(class(J1)=="try-error"){
     if(length(all.Js)>0){
@@ -293,6 +257,16 @@ fit.jagsNEC <- function(data,
     predicted.y <- predict_Linearmod(x.vec=mod.dat$x, top=top["50%"], beta=beta["50%"], link=link)    
   }
   
+  if(model=="ECxExp"){
+    y.pred.m <- predict_ECxExpmod(x.vec=x.seq, top=top["50%"], beta=beta["50%"]) 
+    predicted.y <- predict_ECxExpmod(x.vec=mod.dat$x, top=top["50%"], beta=beta["50%"])    
+  }
+
+  if(model=="ECxsigmoidal"){
+    y.pred.m <- predict_ECxsigmoidalmod(x.vec=x.seq, top=top["50%"], beta=beta["50%"], d=d["50%"]) 
+    predicted.y <- predict_ECxsigmoidalmod(x.vec=mod.dat$x, top=top["50%"], beta=beta["50%"], d=d["50%"])    
+  }
+  
   # calculate the predicted values using the entire posterior
   pred.vals <- c(predict_NECbugsmod(X=out, precision = 1000), list(y.m=y.pred.m))  
   
@@ -324,7 +298,7 @@ fit.jagsNEC <- function(data,
      d = d,
      EC50 = EC50,
      params = params,
-     over.disp = od,
+     over.disp=od,
      all.Js = all.Js,
      predicted.y = predicted.y,
      residuals = residuals,

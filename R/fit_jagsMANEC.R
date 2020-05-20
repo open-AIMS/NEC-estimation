@@ -104,7 +104,7 @@ fit.jagsMANEC <- function(data,
    
 
   # collate all the elements
-  export.list <- c(extract.modStats(mod.fits), list(data=data, x.var=x.var, y.var=y.var, trials.var=trials.var))
+  export.list <- c(extract.modStats(mod.fits), list(data=data, x.var=x.var, y.var=y.var, trials.var=trials.var, over.disp=over.disp))
   # assign a class to the output
   class(export.list) <- "jagsMANECfit"
   
