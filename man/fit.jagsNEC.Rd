@@ -19,6 +19,7 @@ fit.jagsNEC(
   over.disp = FALSE,
   model = "NEC3param",
   init.value.warning = FALSE,
+  added.model = FALSE,
   ...
 )
 }
@@ -43,6 +44,8 @@ If not supplied, the appropriate distribution will be guessed based on the distr
 
 \item{n.iter}{the number of interations to run following burnin for the initial jags fit. Defaults to 500 + burnin,}
 
+\item{n.tries}{The number of tries to attempt to fit the model and attain good chain mixing. See details below.}
+
 \item{params}{A vector of names indicating the parameters that to trace during the jags fit. For the NEC jags model 
 this is typically 'NEC','top' and 'beta'. If left out, fit.jagsNEC will supply this based on the selected y.type and 
 x.type.}
@@ -53,8 +56,6 @@ x.type.}
 \item{init.value.warning}{Indicates if a warning should be given if the init.fun generated fails.}
 
 \item{n.iter.burnin}{the number of interations to run overall. This should be large. Defaults to 10000.}
-
-\item{n.tries.}{The number of tries to attempt to fit the model and attain good chain mixing. See details below.}
 
 \item{over.disp.}{If an overdispersed model should be used. Only changes the model fit for poisson and binomial y.type 
 data. For poisson, a negative binomial model will be fit. For binomial a beta model will be fit.}
