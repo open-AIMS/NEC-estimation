@@ -15,7 +15,7 @@ fit.jagsNEC(
   n.iter = burnin + 500,
   n.iter.update = 10000,
   n.tries = 3,
-  params = c("top", "beta", "NEC", "SS", "SSsim"),
+  params = c("top", "beta", "NEC", "SS", "SSsim", "loglik"),
   over.disp = FALSE,
   model = "NEC3param",
   init.value.warning = FALSE,
