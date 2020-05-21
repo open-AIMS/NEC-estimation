@@ -20,7 +20,8 @@
 #'
 #' @export
 #' @return A list of model statistical output derived from the input model list 
-extract.modStats <- function(mod.fits){
+
+extract_modStats <- function(mod.fits){
   model.set <- names(mod.fits)
   # extract model parameters that do not vary across models
   success.models <- model.set[sapply(mod.fits, FUN=class)=="jagsNECfit"]
@@ -34,6 +35,12 @@ extract.modStats <- function(mod.fits){
     # extract the model statistics for each fit
   mod.stats <- data.frame(DIC = sapply(mod.fits, FUN=function(x){x$DIC}))
   mod.stats$DIC.delta <- mod.stats$DIC-min(mod.stats$DIC, na.rm = TRUE)
+  
+  #sapply(mod.fits, FUN=function(x){loo::waic(x$BUGSoutput$sims.list$loglik)})
+  
+  
+  #mod.stats$WAIC <- 
+  #mod.stats$WAIC.delta <- mod.stats$WAIC-min(mod.stats$WAIC, na.rm = TRUE)
   mod.stats$wi <- wi(mod.stats$DIC)
   mod.stats$pD <- unlist(lapply(mod.fits, FUN=function(x){x$pD}))
   mod.stats$over.disp <- unlist(lapply(mod.fits, FUN=function(x){x$over.disp}))

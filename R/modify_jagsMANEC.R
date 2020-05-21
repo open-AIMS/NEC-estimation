@@ -25,8 +25,9 @@
 #' @param add.models A character vector containing the names of model types to add to the modified fit.
 #'
 #' @export
-#' @return All successully fitted jagsMANECfit model fit. 
-modify.jagsMANEC <- function(jagsMANECfit, model.set=NA, drop.models=NA, add.models=NA){
+#' @return All successully fitted jagsMANECfit model fit.
+ 
+modify_jagsMANEC <- function(jagsMANECfit, model.set=NA, drop.models=NA, add.models=NA){
   
   # if the model set is NA 
   if(is.na(model.set)){
@@ -88,7 +89,7 @@ modify.jagsMANEC <- function(jagsMANECfit, model.set=NA, drop.models=NA, add.mod
   
   
   # collate all the elements
-  export.list <- extract.modStats(mod.fits)
+  export.list <- extract_modStats(mod.fits)
   # assign a class to the output
   class(export.list) <- "jagsMANECfit"
   
