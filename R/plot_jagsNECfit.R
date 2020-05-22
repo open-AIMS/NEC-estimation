@@ -199,7 +199,9 @@ plot.jagsMANECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model
                             jitter.x=FALSE, jitter.y=FALSE, 
                             ylab="response", 
                             xlab="concentration", 
-                            xlim = NA, xticks = NA,  ...){
+                            xlim = NA, 
+                            ylim = NA,
+                            xticks = NA,  ...){
   
 
   # check if y.type is binomial
@@ -244,10 +246,14 @@ plot.jagsMANECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model
     x.ticks <- xticks
   }
   
+  if(is.na(xlim)==TRUE){xlim=range(x.dat)}
+  if(is.na(ylim)==TRUE){ylim=range(y.dat)}
+  
   plot(x.dat, y.dat, 
        ylab=ylab, 
        xlab=xlab,        
-       pch=16, xaxt="n", xlim = x.lim,
+       pch=16, xaxt="n", 
+       xlim = xlim, ylim=ylim,
        col=adjustcolor(1, alpha=0.25), 
        cex=1.5) 
   
