@@ -18,6 +18,7 @@ fit.jagsMANEC(
   params = c("top", "beta", "NEC", "SS", "SSsim"),
   over.disp = FALSE,
   model.set = "all",
+  sig.val = 0.025,
   ...
 )
 }
@@ -42,9 +43,10 @@ fit.jagsMANEC(
 
 \item{model.set}{A vector of the names of model types to be fit. Currently defaults to 
 all available model types. If "NEC" is supplied, only the NEC models will be fit. If "ECx" is supplied,
- only continuous curve models will be fit. 
- This method is under development 
-and testing and should not yet be used for NEC reporting.}
+ only continuous curve models will be fit.}
+
+\item{sig.val}{Probability value to use as the lower quantile to test significance of the predictor posterior values
+against the control, to estimate NEC as an interpolated NOEC value from smooth ECx curves.}
 
 \item{n.iter.burnin}{the number of interations to run overall. This should be large. Defaults to 10000.}
 

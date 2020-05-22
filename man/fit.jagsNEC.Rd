@@ -15,11 +15,12 @@ fit.jagsNEC(
   n.iter = burnin + 500,
   n.iter.update = 10000,
   n.tries = 3,
-  params = c("top", "beta", "NEC", "SS", "SSsim", "loglik"),
+  params = c("top", "beta", "NEC", "SS", "SSsim"),
   over.disp = FALSE,
   model = "NEC3param",
   init.value.warning = FALSE,
   added.model = FALSE,
+  sig.val = 0.025,
   ...
 )
 }
@@ -54,6 +55,9 @@ x.type.}
 "NEC4param", "NECsigmoidal", "NECHormesis", "ECx4param", "ECxWeibull1", or "ECxWeibull2".}
 
 \item{init.value.warning}{Indicates if a warning should be given if the init.fun generated fails.}
+
+\item{sig.val}{Probability value to use as the lower quantile to test significance of the predictor posterior values
+against the control, to estimate NEC as an interpolated NOEC value from smooth ECx curves.}
 
 \item{n.iter.burnin}{the number of interations to run overall. This should be large. Defaults to 10000.}
 

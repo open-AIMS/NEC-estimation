@@ -51,6 +51,9 @@
 #' "NEC4param", "NECsigmoidal", "NECHormesis", "ECx4param", "ECxWeibull1", or "ECxWeibull2".
 #' 
 #' @param init.value.warning Indicates if a warning should be given if the init.fun generated fails.
+#' 
+#' @param sig.val Probability value to use as the lower quantile to test significance of the predictor posterior values
+#' against the control, to estimate NEC as an interpolated NOEC value from smooth ECx curves.
 #'
 #' @details   
 #' 
@@ -93,6 +96,7 @@ fit.jagsNEC <- function(data,
                         model="NEC3param",
                         init.value.warning=FALSE,
                         added.model=FALSE,
+                        sig.val=0.025,
                         ...){
   if(added.model==FALSE){
      data.check <- jagsNEC_input(data=data,
@@ -278,7 +282,7 @@ fit.jagsNEC <- function(data,
   
   # calculate the NEC from the predicted values for the ECx model
   if(mod.class=="ECx"){
-    reference <-  quantile(pred.vals$posterior[1, ], 0.01)
+    reference <-  quantile(pred.vals$posterior[1, ], sig.val)
     out$sims.list$NEC  <-  sapply(1:out$n.sims, function (x, pred.vals, reference) {
       pred.vals$x[which.min(abs(pred.vals$posterior[, x] - reference))]}, 
       pred.vals = pred.vals, reference = reference)
