@@ -97,7 +97,7 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
     }
     
   if(length(grep("ECx", X$model))>0){mod.class <- "ECx"}else{mod.class <- "NEC"}
-  if(is.null(X$bot)){m4param <- 1}else{m4param <- 0}
+  if(is.null(X$bot)==FALSE){m4param <- 1}else{m4param <- 0}
   
   if(X$y.type=="gaussian" & m4param!= 1  &  type=="absolute"){
       stop("Absolute ECx values are not valid for a gaussian response variable unless a 4 parameter model is fit") 
