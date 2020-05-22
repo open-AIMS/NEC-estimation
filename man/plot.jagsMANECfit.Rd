@@ -19,6 +19,7 @@
   ylab = "response",
   xlab = "concentration",
   xlim = NA,
+  ylim = NA,
   xticks = NA,
   ...
 )
