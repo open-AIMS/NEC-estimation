@@ -99,7 +99,7 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
   if(length(grep("ECx", X$model))>0){mod.class <- "ECx"}else{mod.class <- "NEC"}
   if(is.null(X$bot)==FALSE){m4param <- 1}else{m4param <- 0}
   
-  if(X$y.type=="gaussian" & m4param!= 1  &  type=="absolute"){
+  if(X$y.type=="gaussian"  &  type=="absolute"){
       stop("Absolute ECx values are not valid for a gaussian response variable unless a 4 parameter model is fit") 
     }
   if(X$x.type=="gaussian" &  X$model == "ECxLinear"  & type=="absolute"){
@@ -143,16 +143,8 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
       })    
     }
     
-    if(type=="absolute" & m4param == 1){
-      ECx.out <- apply(posterior.sample, MARGIN=2, FUN=function(y){
-        range.y <- range(y, na.rm=T)
-        ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
-        ECx.x <- x.vec[which.min(abs(y-ECx.y))]
-        return(ECx.x)  
-      })     
-    }
-    
-    if(type=="absolute" & m4param!= 1){
+
+    if(type=="absolute"){
       ECx.out <- apply(posterior.sample, MARGIN=2, FUN=function(y){
         range.y <- c(0, max(y, na.rm=T))
         ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
