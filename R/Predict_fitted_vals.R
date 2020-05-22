@@ -227,15 +227,22 @@ xform_link <- function(pred.vec, use.link){
 #' @param X the jags NEC model fit (as returned by fit.jagsNEC)
 #' 
 #' @param precision the number of x values over which to predict values
+#' 
+#' @param x.range The range of x values over which to make predictions
 #'
 #' @export
 #' @return A list containing x and fitted y, with up and lw values
 
-predict_NECbugsmod <- function(X, precision=100){
+predict_NECbugsmod <- function(X, precision=100, x.range=NA){
   mod.dat <- X$mod.dat
   min.x <- min(mod.dat$x)
   max.x <- max(mod.dat$x)
-  x.seq <- seq(min.x, max.x, length=precision)
+  
+  if(is.na(x.range)){
+      x.seq <- seq(min.x, max.x, length=precision)
+  }else{
+      x.seq <- seq(min(x.range), max(x.range), length=precision)}
+
   
   # for the original model
   if(X$y.type != "gaussian" & X$model == "NEC3param"){

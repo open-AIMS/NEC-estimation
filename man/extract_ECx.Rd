@@ -12,6 +12,7 @@ extract_ECx(
   type = "absolute",
   hormesis.def = "control",
   xform = NA,
+  x.range = NA,
   prob.vals = c(0.5, 0.025, 0.975),
   link = "identity"
 )
@@ -35,6 +36,8 @@ to 0 (or bot for a 4 parameter model fit). Type "direct" provides a direct estim
 Note that for the current version, ECx for an NECHormesis model is estimated at a percent decline from the control}
 
 \item{xform}{A function to apply to the returned estimated concentration values}
+
+\item{x.range}{A range of x values over which to consider extracting ECx}
 
 \item{prob.vals}{A vector indicating the probability values over which to return the estimated ECx value. Defaults to 0.5 (median) and 0.025 and 0.975 (95 percent credible intervals).}
 }

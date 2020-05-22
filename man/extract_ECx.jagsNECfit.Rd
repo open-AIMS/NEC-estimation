@@ -11,6 +11,7 @@ extract_ECx.jagsNECfit(
   posterior = FALSE,
   type = "absolute",
   hormesis.def = "control",
+  x.range = NA,
   xform = NA,
   prob.vals = c(0.5, 0.025, 0.975)
 )

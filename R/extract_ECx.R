@@ -35,13 +35,15 @@
 #' 
 #' @param xform A function to apply to the returned estimated concentration values
 #' 
+#' @param x.range A range of x values over which to consider extracting ECx
+#' 
 #' @param prob.vals A vector indicating the probability values over which to return the estimated ECx value. Defaults to 0.5 (median) and 0.025 and 0.975 (95 percent credible intervals). 
 #' 
 #' @export
 #' @return A vector containing the estimated ECx value, including upper and lower 95 percent Credible Interval bounds
 #' 
 extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type="absolute", 
-                        hormesis.def = "control", xform=NA, 
+                        hormesis.def = "control", xform=NA, x.range=NA,
                         prob.vals=c(0.5, 0.025, 0.975), link="identity"){
  
  if(class(X)=="jagsNECfit"){
@@ -52,7 +54,7 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
   }
  if(class(X)== "jagsMANECfit"){
    ECx <- extract_ECx.jagsMANECfit(X, ECx.val=ECx.val, precision=precision, 
-                                   posterior = posterior, type=type, xform=xform, 
+                                   posterior = posterior, type=type, xform=xform, x.range=x.range,
                                    prob.vals=prob.vals) 
   }
   
@@ -87,7 +89,7 @@ extract_ECx <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type=
 #' @return A vector containing the estimated ECx value, including upper and lower 95 percent Credible Interval bounds
 
 extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type="absolute", 
-                                   hormesis.def = "control",
+                                   hormesis.def = "control", x.range=NA,
                                    xform=NA, prob.vals=c(0.5, 0.025, 0.975)){
 
     if(type!="direct"){
@@ -109,7 +111,7 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
     
     label <- paste("EC", ECx.val, sep="_")
     
-    pred.vals <- predict_NECbugsmod(X, precision=precision)
+    pred.vals <- predict_NECbugsmod(X, precision=precision, x.range=x.range)
     posterior.sample <- pred.vals$posterior
     x.vec <- pred.vals$'x' 
     
@@ -204,7 +206,7 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
 #' @return A vector containing the estimated ECx value, including upper and lower 95 percent Credible Interval bounds
 
 extract_ECx.jagsMANECfit <- function(X, ECx.val=10, precision=10000, posterior = FALSE, type="absolute", 
-                                     hormesis.def="control", xform=NA, 
+                                     hormesis.def="control", xform=NA, x.range=NA,
                                      prob.vals=c(0.5, 0.025, 0.975)){
   
   ECx.out <- unlist(sapply(X$success.models, FUN=function(x){
@@ -212,6 +214,7 @@ extract_ECx.jagsMANECfit <- function(X, ECx.val=10, precision=10000, posterior =
                                         ECx.val=ECx.val, 
                                         precision=100,#precision, 
                                         posterior = TRUE, 
+                                        x.range = x.range,
                                         type=type), round(X$n.sims*X$mod.stats[x, "wi"]))
   }))
   
