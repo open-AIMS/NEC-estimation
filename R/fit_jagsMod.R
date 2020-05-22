@@ -41,7 +41,7 @@ fit.jagsMod <- function(mod.dat, init.fun, params, burnin, n.iter, init.value.wa
   
   warn = getOption("warn")
   options(warn=-1)
-  J1 <- try(jags(data   = mod.dat,
+  J1 <- try(R2jags::jags(data   = mod.dat,
                  inits      = init.fun,
                  parameters = params,
                  model      = "NECmod.txt",
