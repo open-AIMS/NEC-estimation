@@ -96,7 +96,7 @@ fit.jagsNEC <- function(data,
                         model="NEC3param",
                         init.value.warning=FALSE,
                         added.model=FALSE,
-                        sig.val=0.025,
+                        sig.val=0.01,
                         ...){
   if(added.model==FALSE){
      data.check <- jagsNEC_input(data=data,
