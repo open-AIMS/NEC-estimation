@@ -67,12 +67,12 @@ fit.jagsMANEC <- function(data,
                         sig.val=0.01,
                         ...){
   
-  if(model.set=="NEC"){model.set=c("NEC3param", "NEC4param", "NECHormesis", "NECsigmoidal")}
-  if(model.set=="ECx"){model.set=c("ECx4param", "ECxWeibull1", "ECxWeibull2","ECxLinear")}
-  if(model.set=="all"){model.set=c("NEC3param", "NEC4param", "NECHormesis", "NECsigmoidal", 
+  if(model.set[1]=="NEC"){model.set=c("NEC3param", "NEC4param", "NECHormesis", "NECsigmoidal")}
+  if(model.set[1]=="ECx"){model.set=c("ECx4param", "ECxWeibull1", "ECxWeibull2","ECxLinear")}
+  if(model.set[1]=="all"){model.set=c("NEC3param", "NEC4param", "NECHormesis", "NECsigmoidal", 
                                    "ECxLinear", "ECxExp", "ECxsigmoidal",
                                    "ECx4param", "ECxWeibull1", "ECxWeibull2")}
-  if(model.set=="bot_free"){model.set=c("NEC3param", "NECHormesis", "NECsigmoidal", 
+  if(model.set[1]=="bot_free"){model.set=c("NEC3param", "NECHormesis", "NECsigmoidal", 
                                    "ECxLinear", "ECxExp", "ECxsigmoidal")}
   
  # Fit each of the models
