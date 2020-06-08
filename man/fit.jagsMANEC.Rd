@@ -18,7 +18,7 @@ fit.jagsMANEC(
   params = c("top", "beta", "NEC", "SS", "SSsim"),
   over.disp = FALSE,
   model.set = "all",
-  sig.val = 0.025,
+  sig.val = 0.01,
   ...
 )
 }
