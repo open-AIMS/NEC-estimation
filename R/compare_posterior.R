@@ -33,7 +33,8 @@
 #' to 0 (or bot for a 4 parameter model fit). Type "direct" provides a direct estimate of the x value for a given y.
 #' Note that for the current version, ECx for an NECHormesis model is estimated at a percent decline from the control
 #' 
-#' @import ggplot2
+#' @import ggplot2 
+#' @import tidybayes
 #' 
 #' @export
 #' @return a list containing:
