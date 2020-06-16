@@ -196,6 +196,9 @@ jagsNEC_input <- function(data,
   if(y.type=="binomial"){
     mod.dat$trials = data[, trials.var] # number of "trials"
     response = data[, y.var]/data[,trials.var]
+    if(max(response)>1){
+      stop(paste("Your successes as indicated in ", y.var, " exceed the number of trials contained in ", trials.var, ".", sep=""))
+    }
   }
   
  mod.file <- Write.jagsModFile(x.type, y.type, mod.dat, params, model)
