@@ -201,7 +201,28 @@ plot.jagsMANECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model
                             xlab="concentration", 
                             xlim = NA, 
                             ylim = NA,
-                            xticks = NA,  ...){
+                            xticks = NA, all_models = FALSE,  ...){
+  
+    
+    if(all_models){
+      mod_fits <- X$mod.fits 
+      par(mfrow=c(ceiling(length(mod_fits)/2), 2), mar=c(1.5, 1.5, 1.5, 1.5), oma=c(3, 3, 0, 0)) 
+      for(m in 1:length(mod_fits)){
+        plot(X = mod_fits[[m]],
+             CI = CI, add.NEC = add.NEC, 
+             legend.loc = legend.loc,  
+             add.EC10 = add.EC10,
+             xform = xform, lxform = lxform,
+             jitter.x = jitter.x, jitter.y = jitter.y, 
+             ylab = "", xlab = "", 
+             xlim = xlim, 
+             xticks = xticks,  ...)   
+        mtext(xlab, side=1, outer=T, line=2)
+        mtext(ylab, side=2, outer=T, line=2)      
+      }
+      
+      
+    }else{
   
 
   # check if y.type is binomial
@@ -304,4 +325,5 @@ plot.jagsMANECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model
            legend=c(NEC.legend, EC10.legend), 
            lty=1, col=c("red", "orange"))
   }
+}
 }
