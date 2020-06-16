@@ -218,7 +218,8 @@ plot.jagsMANECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model
              xlim = xlim, 
              xticks = xticks,  ...)   
         mtext(xlab, side=1, outer=T, line=2)
-        mtext(ylab, side=2, outer=T, line=2)      
+        mtext(ylab, side=2, outer=T, line=2)
+        mtext(names(mod_fits)[m], side=3, outer=FALSE, cex=0.8)
       }
       
       

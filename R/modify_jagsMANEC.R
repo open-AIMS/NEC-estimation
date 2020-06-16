@@ -43,12 +43,12 @@ modify_jagsMANEC <- function(jagsMANECfit, model.set=NA, drop.models=NA, add.mod
                                         "ECxLinear", "ECxExp", "ECxsigmoidal")}
   
   # if drop.models is not NA 
-  if(is.na(drop.models)==F){
+  if(is.na(drop.models[1])==F){
     model.set <- model.set[is.na(match(model.set, drop.models))]
   }
   
   # if add.models is not NA 
-  if(is.na(add.models)==F){
+  if(is.na(add.models[1])==F){
     model.set <- unique(c(model.set,add.models))
   }
   
