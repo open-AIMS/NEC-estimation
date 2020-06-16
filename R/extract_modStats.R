@@ -89,7 +89,7 @@ extract_modStats <- function(mod.fits){
            mcmc.stats=mcmc.stats,
            sims.list=list(NEC=NEC.posterior),
            predicted.y=predicted.y,
-           residuals=mod.dat$y-predicted.y,
+           residuals=mod.fits[[1]]$mod.dat$y-predicted.y,
            pred.vals=list(x=x, y=y, up=up, lw=lw, posterior=posterior.predicted, y.m=y.m),
            NEC=quantile(NEC.posterior, probs=c(0.025, 0.5, 0.975)))
     )
