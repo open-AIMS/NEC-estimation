@@ -35,7 +35,7 @@ modify_jagsMANEC <- function(jagsMANECfit, model.set=NA, drop.models=NA, add.mod
   }
   
   if(model.set[1]=="NEC"){model.set=c("NEC3param", "NEC4param", "NECHormesis", "NECsigmoidal")}
-  if(model.set[1]=="ECx"){model.set=c("ECx4param", "ECxWeibull1", "ECxWeibull2","ECxLinear")}
+  if(model.set[1]=="ECx"){model.set=c("ECx4param", "ECxWeibull1", "ECxWeibull2","ECxLinear", "ECxExp", "ECxsigmoidal")}
   if(model.set[1]=="all"){model.set=c("NEC3param", "NEC4param", "NECHormesis", "NECsigmoidal", 
                                    "ECxLinear", "ECxExp", "ECxsigmoidal",
                                    "ECx4param", "ECxWeibull1", "ECxWeibull2")}
