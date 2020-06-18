@@ -21,6 +21,7 @@
   xlim = NA,
   ylim = NA,
   xticks = NA,
+  all_models = FALSE,
   ...
 )
 }
