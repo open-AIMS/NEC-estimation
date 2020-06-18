@@ -67,6 +67,8 @@ fit.jagsMANEC <- function(data,
                         sig.val=0.01,
                         ...){
   
+  check_inputs(data=data, x.var=x.var, y.var=y.var, trials.var=trials.var)
+  
   if(model.set[1]=="NEC"){model.set=c("NEC3param", "NEC4param", "NECHormesis", "NECsigmoidal")}
   if(model.set[1]=="ECx"){model.set=c("ECx4param", "ECxWeibull1", "ECxWeibull2","ECxLinear")}
   if(model.set[1]=="all"){model.set=c("NEC3param", "NEC4param", "NECHormesis", "NECsigmoidal", 

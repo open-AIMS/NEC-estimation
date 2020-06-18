@@ -63,46 +63,8 @@ jagsNEC_input <- function(data,
     if(over.disp==TRUE & y.type=="beta"){y.type=NA}
   }
 
-  
-  # check the specified columns exist in data
-  use.vars <- na.omit(c(y.var=y.var, x.var=x.var, trials.var))
-  var.colms <- match(use.vars, colnames(data))
-  missing.colms <- data.frame(val=use.vars[which(is.na(var.colms))], stringsAsFactors = FALSE)
-  missing.colms$element <- rownames(missing.colms)
-  if(length(na.omit(var.colms))<length(use.vars)){
-    stop(paste("Your indicated ", paste(paste(missing.colms$element, " '", missing.colms$val,"'", sep=""),
-                                        collapse = ", "),
-               " is not present in your input data. Has this been mispecified?", sep=""))
-  }
-  
-  # extract the data
-  y.dat <- data[, y.var]
-  x.dat <- data[, x.var]
-  
-  # check the x data are numeric
-  if(class(x.dat)!="numeric"){
-    stop(paste("Your indicated x.var column ", x.var," contains data that is class ", class(x.dat),".
-                 The function jagsNEC requires the concentration data (argument x.var) to be numeric.",sep=""))
-  }
-  
-  # check data contains only finite values
-  test.x <- mean(x.dat)
-  test.y <- mean(y.dat)
-  if(is.finite(test.x)!=TRUE){
-    stop("Your x.var column contains values that are not finite.")
-  }
-  if(is.finite(test.y)!=TRUE){
-    stop("Your y.var column contains values that are not finite.")
-  }
-  
-  # check the data are lower at high x compared to low x (ie the response variable declines within increase in the x)
-  if(mean(y.dat[which(x.dat<mean(x.dat))])< mean(y.dat[which(x.dat>mean(x.dat))]) & model != "NECHormesis"){
-    stop("The mean value of the response for the lower half of the
-           concentration data are lower than that of the upper half of the concentration data.
-           jagsNEC only fits concentration response data where the
-           response declines with increasing values of concentration.")
-  }
-  
+  check_inputs(data=data, x.var=x.var, y.var=y.var, trials.var=trials.var)
+
   # check variable type x.var
   if(is.na(x.type)==TRUE){ # if the x.var is not specified, then guess
     if(class(x.dat)=="integer"){
