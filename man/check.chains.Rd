@@ -4,7 +4,7 @@
 \alias{check.chains}
 \title{check.chains}
 \usage{
-check.chains(X, name = "")
+check.chains(X, name = "", pdf.file = "")
 }
 \arguments{
 \item{X}{a jag model fit as returned by a call to jags from fit.jagsNEC}

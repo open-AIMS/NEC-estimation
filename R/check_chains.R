@@ -23,7 +23,7 @@
 #' @export
 #' @return A plot of MCMC chains and ACF diagrams for each element in params.
 
-check.chains <- function(X, name=""){
+check.chains <- function(X, name="", pdf.file=""){
   
   if(class(X)=="jagsNECfit"){
       params <- X$params
@@ -55,12 +55,15 @@ check.chains <- function(X, name=""){
      mtext(name,side=3,outer=T)   
   }
   if(class(X)=="jagsMANECfit"){
+    
+   if(nchar(pdf.file)>0){pdf(file=paste(pdf.file, ".pdf", sep=""), onefile = TRUE)} 
+    
    for(m in 1:length(X$mod.fits)){
      X.m <- X$mod.fits[[m]]
      params <- X.m$params
      x <- X.m$sims.array
      num.chains <- ncol(x[,,params[1]])
-     x11()
+     if(nchar(pdf.file)==0){x11()}
      par(mfrow=c(length(params),2),mar=c(0,5,0.5,0.5),oma=c(4,0,2,0))
      for (i in 1:length(params)){
        x1          <- as.vector(x[,,params[i]])
@@ -85,6 +88,7 @@ check.chains <- function(X, name=""){
      }
      mtext(names(X$mod.fits)[m],side=3,outer=T)        
    } 
+    if(nchar(pdf.file)>0){dev.off()} 
   }
 }
 
