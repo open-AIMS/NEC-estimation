@@ -59,13 +59,6 @@ check_inputs <- function(data,
   if(is.finite(test.y)!=TRUE){
     stop("Your y.var column contains values that are not finite.")
   }
-  
-  # check the data are lower at high x compared to low x (ie the response variable declines within increase in the x)
-  if(mean(y.dat[which(x.dat<mean(x.dat))])< mean(y.dat[which(x.dat>mean(x.dat))]) & model != "NECHormesis"){
-    stop("The mean value of the response for the lower half of the
-             concentration data are lower than that of the upper half of the concentration data.
-             jagsNEC only fits concentration response data where the
-             response declines with increasing values of concentration.")
- }
+
 }
 
