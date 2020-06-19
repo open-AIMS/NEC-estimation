@@ -104,10 +104,10 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
   if(X$y.type=="gaussian"  &  type=="absolute"){
       stop("Absolute ECx values are not valid for a gaussian response variable unless a 4 parameter model is fit") 
     }
-  if(X$x.type=="gaussian" &  X$model == "ECxLinear"  & type=="absolute"){
-    stop("Absolute ECx values are not valid for a linear model when
-         x-values are gaussian, because 'top' merely indicates the y-intercept. Use type 'relative'.") 
-  }  
+# if(X$x.type=="gaussian" &  X$model == "ECxLinear"  & type=="absolute"){
+#    stop("Absolute ECx values are not valid for a linear model when
+#         x-values are gaussian, because 'top' merely indicates the y-intercept. Use type 'relative'.") 
+#  }  
     
     label <- paste("EC", ECx.val, sep="_")
     
