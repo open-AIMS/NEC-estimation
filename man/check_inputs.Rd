@@ -13,7 +13,7 @@ check_inputs(data, x.var, y.var, trials.var)
 
 \item{y.var}{the column heading indicating the response (y) variable}
 
-\item{trials.var}{the column heading indicating the column for the number of "trials" for binomial response data. 
+\item{trials.var}{the column heading indicating the column for the number of "trials" for binomial response data.
 If not supplied, the model may run but will not be the model you intended!}
 }
 \description{

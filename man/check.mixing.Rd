@@ -9,12 +9,12 @@ check.mixing(J, prob.val = 0.8)
 \arguments{
 \item{J}{a jag model fit as returned by a call to jags}
 
-\item{prob.val}{the probability value to pass to quantile to assess the between 
-chain coefficient of variation against the within chain coefficient of variation. 
+\item{prob.val}{the probability value to pass to quantile to assess the between
+chain coefficient of variation against the within chain coefficient of variation.
 Please inspect the model code for more details.}
 }
 \value{
-A list of within and between coefficient of variations for parameter, 
+A list of within and between coefficient of variations for parameter,
 the outcome of the test if between is greater than within, and the ratio.
 }
 \description{

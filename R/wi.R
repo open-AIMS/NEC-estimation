@@ -21,13 +21,14 @@
 #' @export
 #' @return A vector of weights
 #'
-wi<-function(vec){
- vals.adj <- vec-min(na.omit(vec))
- wi.den <- rep(NA,length(vals.adj))
- 
- for(i in 1:length(vals.adj)){
-   wi.den[i] <- exp(-1/2*vals.adj[i])}
-   wi.den.sum <- sum(na.omit(wi.den))
-   wi <- wi.den/wi.den.sum
-return(wi)
+wi <- function(vec) {
+  vals.adj <- vec - min(na.omit(vec))
+  wi.den <- rep(NA, length(vals.adj))
+
+  for (i in 1:length(vals.adj)) {
+    wi.den[i] <- exp(-1 / 2 * vals.adj[i])
+  }
+  wi.den.sum <- sum(na.omit(wi.den))
+  wi <- wi.den / wi.den.sum
+  return(wi)
 }

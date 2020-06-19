@@ -23,10 +23,10 @@ extract_NSEC(
 \item{sig.val}{the Probability value to use as the lower quantile to test significance of the predictor posterior values
 against the control, to estimate NSEC as an interpolated NOEC value from smooth ECx curves.}
 
-\item{precision}{The number of unique x values over which to find NSEC - large values will make the NSEC estimate more 
+\item{precision}{The number of unique x values over which to find NSEC - large values will make the NSEC estimate more
 precise.}
 
-\item{posterior}{A logical value indicating if the full posterior sample of calculated NSEC values should be returned 
+\item{posterior}{A logical value indicating if the full posterior sample of calculated NSEC values should be returned
 instead of just the median and 95 credible intervals.}
 
 \item{xform}{A function to apply to the returned estimated concentration values}

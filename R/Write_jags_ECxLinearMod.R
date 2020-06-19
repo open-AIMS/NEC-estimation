@@ -15,18 +15,18 @@
 #' write.jags.ECxLinear.mod
 #'
 #' Writes an EC50 model (log logistic) file and generates a function for initial values to pass to jags
-#' 
+#'
 #' @param x the statistical distribution to use for the x (concentration) data. This may currently be one of  'beta', 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer.
-#' 
+#'
 #' @param y the statistical distribution to use for the y (response) data. This may currently be one of  'binomial', 'beta', 'poisson', 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer.
 #'
 #' @export
 #' @return an init function to pass to jags
 
-write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){  
+write.jags.ECxLinear.mod <- function(x = "gamma", y, mod.dat) {
 
   # binomial y ----
-   if(y=="binomial"){
+  if (y == "binomial") {
     sink("NECmod.txt")
     cat("
         model
@@ -63,18 +63,21 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         SSsim <- sum(Dsim[1:N])
 
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      beta = rlnorm(1, 0,1), #
-      top =rnorm(1, 0, 1))}#rgamma(1,0.2,0.001))}  
-    attributes(init.fun) <- list(link="logit")
+        ", fill = TRUE)
+    sink() # Make model in working directory
+
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        beta = rlnorm(1, 0, 1), #
+        top = rnorm(1, 0, 1)
+      )
+    } # rgamma(1,0.2,0.001))}
+    attributes(init.fun) <- list(link = "logit")
     return(init.fun)
-   }
+  }
 
   # poisson y ----
-  if(y=="poisson"){
+  if (y == "poisson") {
     sink("NECmod.txt")
     cat("
         model
@@ -111,18 +114,21 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
          SSsim <- sum(Dsim[1:N])
 
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      beta = rlnorm(1,0,1),
-      top = rnorm(1, 0, 1))} 
-    attributes(init.fun) <- list(link="log")
+        ", fill = TRUE)
+    sink() # Make model in working directory
+
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        beta = rlnorm(1, 0, 1),
+        top = rnorm(1, 0, 1)
+      )
+    }
+    attributes(init.fun) <- list(link = "log")
     return(init.fun)
   }
-  
+
   # gamma y  -----
-  if(y=="gamma"){
+  if (y == "gamma") {
     sink("NECmod.txt")
     cat("
         model
@@ -159,21 +165,24 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         SS    <- sum(D[1:N])
         SSsim <- sum(Dsim[1:N])
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      beta = rlnorm(1, 0, 1),
-      shape = runif(1, 0, 10),
-      top =rnorm(1, 0, 1))} 
-    attributes(init.fun) <- list(link="log")
+        ", fill = TRUE)
+    sink() # Make model in working directory
+
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        beta = rlnorm(1, 0, 1),
+        shape = runif(1, 0, 10),
+        top = rnorm(1, 0, 1)
+      )
+    }
+    attributes(init.fun) <- list(link = "log")
     return(init.fun)
   }
-    
+
   # gaussian  ----
- if(y=="gaussian"){
-  sink("NECmod.txt")
-  cat("
+  if (y == "gaussian") {
+    sink("NECmod.txt")
+    cat("
       model
       {
       
@@ -210,20 +219,22 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
        SS    <- sum(D[1:N])
        SSsim <- sum(Dsim[1:N])
       }
-      ", fill=TRUE)
-  sink()  #Make model in working directory
-  
-  init.fun <- function(mod.data=mod.data){list(
-    beta = rlnorm(1,0,1),
-    sigma = runif(1, 0, 5),
-    top =rnorm(1, 0, 1))}
-  attributes(init.fun) <- list(link="identity")
-  return(init.fun)
+      ", fill = TRUE)
+    sink() # Make model in working directory
 
- }
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        beta = rlnorm(1, 0, 1),
+        sigma = runif(1, 0, 5),
+        top = rnorm(1, 0, 1)
+      )
+    }
+    attributes(init.fun) <- list(link = "identity")
+    return(init.fun)
+  }
 
   # beta y ------
-  if(y=="beta"){
+  if (y == "beta") {
     sink("NECmod.txt")
     cat("
         model
@@ -264,19 +275,22 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         SS    <- sum(D[1:N])
         SSsim <- sum(Dsim[1:N])
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      beta = rlnorm(1, 0, 1),
-      t0 = rnorm(1, 0, 1),
-      top =rnorm(1, 0, 1))} 
-    attributes(init.fun) <- list(link="logit")
+        ", fill = TRUE)
+    sink() # Make model in working directory
+
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        beta = rlnorm(1, 0, 1),
+        t0 = rnorm(1, 0, 1),
+        top = rnorm(1, 0, 1)
+      )
+    }
+    attributes(init.fun) <- list(link = "logit")
     return(init.fun)
   }
-  
+
   # negbin y ----
-  if(y=="negbin"){
+  if (y == "negbin") {
     sink("NECmod.txt")
     cat("
         model
@@ -314,15 +328,17 @@ write.jags.ECxLinear.mod <- function(x="gamma", y, mod.dat){
         SSsim <- sum(Dsim[1:N])
         
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      beta = rgamma(1,0.2,0.001),
-      size=runif(1, 0.1, 40),
-      top = rlnorm(1, 0, 1))} 
-    attributes(init.fun) <- list(link="identity")
-    return(init.fun)
-  } 
+        ", fill = TRUE)
+    sink() # Make model in working directory
 
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        beta = rgamma(1, 0.2, 0.001),
+        size = runif(1, 0.1, 40),
+        top = rlnorm(1, 0, 1)
+      )
+    }
+    attributes(init.fun) <- list(link = "identity")
+    return(init.fun)
+  }
 }

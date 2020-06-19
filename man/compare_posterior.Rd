@@ -19,12 +19,12 @@ compare_posterior(
 
 \item{comparison}{a character vector indicating the type of comparison to make. Takes values of NEC, ECx or custom.}
 
-\item{ECx.val}{the desired percentage effect value. This must be a value between 1 and 99 (for type = "relative" 
+\item{ECx.val}{the desired percentage effect value. This must be a value between 1 and 99 (for type = "relative"
 and "absolute"), defaults to 10.}
 
-\item{type}{a character vector indicating the type of ECx.val to calculate, taking values of "relative",  "absolute" (the default) or "direct". 
-Type "relative" is calculated as the percentage decrease from the maximum predicted value of the response (top) to the minimum predicted value 
-of the response. Type "absolute" (the default) is calculated as the percentage decrease from the maximum value of the response (top) 
+\item{type}{a character vector indicating the type of ECx.val to calculate, taking values of "relative",  "absolute" (the default) or "direct".
+Type "relative" is calculated as the percentage decrease from the maximum predicted value of the response (top) to the minimum predicted value
+of the response. Type "absolute" (the default) is calculated as the percentage decrease from the maximum value of the response (top)
 to 0 (or bot for a 4 parameter model fit). Type "direct" provides a direct estimate of the x value for a given y.
 Note that for the current version, ECx for an NECHormesis model is estimated at a percent decline from the control}
 }
@@ -42,7 +42,7 @@ a list containing:
 Probability (%) Posterior 1 is greater than posterior 2
 }
 \description{
-Compares two posterior samples through differencing. 
-Can be used to compare two NEC values from jagsNEC or jagsMANEC model fits, 
+Compares two posterior samples through differencing.
+Can be used to compare two NEC values from jagsNEC or jagsMANEC model fits,
 two ECx values also from jagsNEC or jagsMANEC model fits, or simply any two posteriors passed as numeric vectors.
 }

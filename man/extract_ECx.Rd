@@ -20,18 +20,18 @@ extract_ECx(
 \arguments{
 \item{X}{a jag model fit as returned by a call to jags from fit.jagsNEC}
 
-\item{ECx.val}{the desired percentage effect value. This must be a value between 1 and 99 (for type = "relative" 
+\item{ECx.val}{the desired percentage effect value. This must be a value between 1 and 99 (for type = "relative"
 and "absolute"), defaults to 10.}
 
-\item{precision}{The number of unique x values over which to find ECx - large values will make the ECx estimate more 
+\item{precision}{The number of unique x values over which to find ECx - large values will make the ECx estimate more
 precise.}
 
-\item{posterior}{A logical value indicating if the full posterior sample of calculated ECx values should be returned 
+\item{posterior}{A logical value indicating if the full posterior sample of calculated ECx values should be returned
 instead of just the median and 95 credible intervals.}
 
-\item{type}{a character vector, taking values of "relative",  "absolute" (the default) or "direct". 
-Type "relative" is calculated as the percentage decrease from the maximum predicted value of the response (top) to the minimum predicted value 
-of the response. Type "absolute" (the default) is calculated as the percentage decrease from the maximum value of the response (top) 
+\item{type}{a character vector, taking values of "relative",  "absolute" (the default) or "direct".
+Type "relative" is calculated as the percentage decrease from the maximum predicted value of the response (top) to the minimum predicted value
+of the response. Type "absolute" (the default) is calculated as the percentage decrease from the maximum value of the response (top)
 to 0 (or bot for a 4 parameter model fit). Type "direct" provides a direct estimate of the x value for a given y.
 Note that for the current version, ECx for an NECHormesis model is estimated at a percent decline from the control}
 

@@ -15,18 +15,18 @@
 #' write.jags.NECsigmoidal.mod
 #'
 #' Writes an NEC model file and generates a function for initial values to pass to jags
-#' 
+#'
 #' @param x the statistical distribution to use for the x (concentration) data. This may currently be one of  'beta', 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer.
-#' 
+#'
 #' @param y the statistical distribution to use for the y (response) data. This may currently be one of  'binomial', 'beta', 'poisson', 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer.
 #'
 #' @export
 #' @return an init function to pass to jags
 
-write.jags.NECsigmoidal.mod <- function(x="gamma", y, mod.dat){  
-  
+write.jags.NECsigmoidal.mod <- function(x = "gamma", y, mod.dat) {
+
   # binomial y; gamma x ----
-   if(x=="gamma" & y=="binomial"){
+  if (x == "gamma" & y == "binomial") {
     sink("NECmod.txt")
     cat("
         model
@@ -64,19 +64,22 @@ write.jags.NECsigmoidal.mod <- function(x="gamma", y, mod.dat){
         SSsim <- sum(Dsim[1:N])
 
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      top = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.75))/
-      round(mean(mod.dat$trials)), 
-      beta = runif(1,0.0001,0.999),#rlnorm(1,0,1), #
-      NEC = rlnorm(1,log(mean(mod.dat$x)),1),
-      d =1)}#ceiling(runif(1, 0.1, 2.5)))}#rgamma(1,0.2,0.001))}  
-   }
+        ", fill = TRUE)
+    sink() # Make model in working directory
+
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        top = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y / mod.dat$trials, probs = 0.75)) /
+          round(mean(mod.dat$trials)),
+        beta = runif(1, 0.0001, 0.999), # rlnorm(1,0,1), #
+        NEC = rlnorm(1, log(mean(mod.dat$x)), 1),
+        d = 1
+      )
+    } # ceiling(runif(1, 0.1, 2.5)))}#rgamma(1,0.2,0.001))}
+  }
 
   # binomial y; gaussian x ----
-  if(x=="gaussian" & y=="binomial"){
+  if (x == "gaussian" & y == "binomial") {
     sink("NECmod.txt")
     cat("
         model
@@ -114,19 +117,22 @@ write.jags.NECsigmoidal.mod <- function(x="gamma", y, mod.dat){
         SSsim <- sum(Dsim[1:N])
         
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      top = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.75))/
-        round(mean(mod.dat$trials)), 
-      beta = runif(1, 0.0001, 0.999),
-      NEC = rnorm(1, mean(mod.dat$x), 2),
-      d = 1)} #runif(1, 1, 3))} 
+        ", fill = TRUE)
+    sink() # Make model in working directory
+
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        top = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y / mod.dat$trials, probs = 0.75)) /
+          round(mean(mod.dat$trials)),
+        beta = runif(1, 0.0001, 0.999),
+        NEC = rnorm(1, mean(mod.dat$x), 2),
+        d = 1
+      )
+    } # runif(1, 1, 3))}
   }
-  
+
   # binomial y; beta x ----
-  if(x=="beta" & y=="binomial"){
+  if (x == "beta" & y == "binomial") {
     sink("NECmod.txt")
     cat("
         model
@@ -163,19 +169,22 @@ write.jags.NECsigmoidal.mod <- function(x="gamma", y, mod.dat){
         SS    <- sum(D[1:N])
         SSsim <- sum(Dsim[1:N])        
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      top = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y/mod.dat$trials, probs=0.75))/
-        round(mean(mod.dat$trials)), 
-      beta = runif(1,0.0001,0.999),
-      NEC = runif(1, 0.01, 0.9),
-      d = 1)} #runif(1, 1, 1))}
+        ", fill = TRUE)
+    sink() # Make model in working directory
+
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        top = rbinom(1, round(mean(mod.dat$trials)), quantile(mod.dat$y / mod.dat$trials, probs = 0.75)) /
+          round(mean(mod.dat$trials)),
+        beta = runif(1, 0.0001, 0.999),
+        NEC = runif(1, 0.01, 0.9),
+        d = 1
+      )
+    } # runif(1, 1, 1))}
   }
-  
+
   # poisson y; gamma x ----
-  if(x=="gamma" & y=="poisson"){
+  if (x == "gamma" & y == "poisson") {
     sink("NECmod.txt")
     cat("
         model
@@ -213,18 +222,21 @@ write.jags.NECsigmoidal.mod <- function(x="gamma", y, mod.dat){
          SSsim <- sum(Dsim[1:N])
 
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      top = rpois(1,max(mod.dat$y)), 
-      beta = runif(1,0.0001,0.999), #rlnorm(1,0,1), #rgamma(1,0.2,0.001),
-      NEC =  rlnorm(1,log(mean(mod.dat$x)),1),
-      d = 1)} #runif(1, 1, 1))}#rnorm(1,30,10))} #rgamma(1,0.2,0.001))} #
+        ", fill = TRUE)
+    sink() # Make model in working directory
+
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        top = rpois(1, max(mod.dat$y)),
+        beta = runif(1, 0.0001, 0.999), # rlnorm(1,0,1), #rgamma(1,0.2,0.001),
+        NEC = rlnorm(1, log(mean(mod.dat$x)), 1),
+        d = 1
+      )
+    } # runif(1, 1, 1))}#rnorm(1,30,10))} #rgamma(1,0.2,0.001))} #
   }
-  
+
   # poisson y; gaussian x----
-  if(x=="gaussian" & y=="poisson"){
+  if (x == "gaussian" & y == "poisson") {
     sink("NECmod.txt")
     cat("
         model
@@ -261,18 +273,21 @@ write.jags.NECsigmoidal.mod <- function(x="gamma", y, mod.dat){
          SS    <- sum(D[1:N])
          SSsim <- sum(Dsim[1:N])
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      top = rpois(1,max(mod.dat$y)), 
-      beta = rgamma(1,0.2,0.001),
-      NEC = rnorm(1, mean(mod.dat$x), 2),
-      d = 1)} #runif(1, 1, 1))}
+        ", fill = TRUE)
+    sink() # Make model in working directory
+
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        top = rpois(1, max(mod.dat$y)),
+        beta = rgamma(1, 0.2, 0.001),
+        NEC = rnorm(1, mean(mod.dat$x), 2),
+        d = 1
+      )
+    } # runif(1, 1, 1))}
   }
-    
+
   # poisson y; beta x----
-  if(x=="beta" & y=="poisson"){
+  if (x == "beta" & y == "poisson") {
     sink("NECmod.txt")
     cat("
         model
@@ -309,18 +324,21 @@ write.jags.NECsigmoidal.mod <- function(x="gamma", y, mod.dat){
          SS    <- sum(D[1:N])
          SSsim <- sum(Dsim[1:N])
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      top = rpois(1,max(mod.dat$y)), #rnorm(1,0,1),#
-      beta = rgamma(1,0.2,0.001),
-      NEC = runif(1, 0.01, 0.9),
-      d = 1)} #runif(1, 1, 1))}
+        ", fill = TRUE)
+    sink() # Make model in working directory
+
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        top = rpois(1, max(mod.dat$y)), # rnorm(1,0,1),#
+        beta = rgamma(1, 0.2, 0.001),
+        NEC = runif(1, 0.01, 0.9),
+        d = 1
+      )
+    } # runif(1, 1, 1))}
   }
-    
+
   # gamma y; beta x -----
-  if(x=="beta" & y=="gamma"){
+  if (x == "beta" & y == "gamma") {
     sink("NECmod.txt")
     cat("
         model
@@ -358,19 +376,22 @@ write.jags.NECsigmoidal.mod <- function(x="gamma", y, mod.dat){
         SS    <- sum(D[1:N])
         SSsim <- sum(Dsim[1:N])
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      top = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.1),
-      beta = rgamma(1,0.2,0.001),
-      shape = runif(1,0,10),
-      NEC = runif(1, 0.3, 0.6),
-      d = 1)} #runif(1, 1, 1))}
+        ", fill = TRUE)
+    sink() # Make model in working directory
+
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        top = rlnorm(1, log(quantile(mod.dat$y, probs = 0.75)), 0.1),
+        beta = rgamma(1, 0.2, 0.001),
+        shape = runif(1, 0, 10),
+        NEC = runif(1, 0.3, 0.6),
+        d = 1
+      )
+    } # runif(1, 1, 1))}
   }
-    
+
   # gamma y; gaussian x -----
-  if(x=="gaussian" & y=="gamma"){
+  if (x == "gaussian" & y == "gamma") {
     sink("NECmod.txt")
     cat("
         model
@@ -408,19 +429,22 @@ write.jags.NECsigmoidal.mod <- function(x="gamma", y, mod.dat){
         SS    <- sum(D[1:N])
         SSsim <- sum(Dsim[1:N])
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      top = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.1),
-      beta = rgamma(1,0.2,0.001),
-      shape = dlnorm(1,1/mean(mod.dat$y),1),
-      NEC = rnorm(1, mean(mod.dat$x), 1),
-      d = 1)} #runif(1, 1, 1))}
+        ", fill = TRUE)
+    sink() # Make model in working directory
+
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        top = rlnorm(1, log(quantile(mod.dat$y, probs = 0.75)), 0.1),
+        beta = rgamma(1, 0.2, 0.001),
+        shape = dlnorm(1, 1 / mean(mod.dat$y), 1),
+        NEC = rnorm(1, mean(mod.dat$x), 1),
+        d = 1
+      )
+    } # runif(1, 1, 1))}
   }
-  
+
   # gamma y; gamma x -----
-  if(x=="gamma" & y=="gamma"){
+  if (x == "gamma" & y == "gamma") {
     sink("NECmod.txt")
     cat("
         model
@@ -459,21 +483,24 @@ write.jags.NECsigmoidal.mod <- function(x="gamma", y, mod.dat){
         SSsim <- sum(Dsim[1:N])
 
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      top = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.1),
-      beta = rgamma(1,0.2,0.001),
-      shape = runif(1,0,10),
-      NEC = rlnorm(1,log(mean(mod.dat$x)),1),
-      d = 1)} #runif(1, 1, 1))}#rnorm(1,30,10))} #rgamma(1,0.2,0.001))} #
+        ", fill = TRUE)
+    sink() # Make model in working directory
+
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        top = rlnorm(1, log(quantile(mod.dat$y, probs = 0.75)), 0.1),
+        beta = rgamma(1, 0.2, 0.001),
+        shape = runif(1, 0, 10),
+        NEC = rlnorm(1, log(mean(mod.dat$x)), 1),
+        d = 1
+      )
+    } # runif(1, 1, 1))}#rnorm(1,30,10))} #rgamma(1,0.2,0.001))} #
   }
-  
+
   # gaussian y; gamma x ----
- if(x=="gamma" & y=="gaussian"){
-  sink("NECmod.txt")
-  cat("
+  if (x == "gamma" & y == "gaussian") {
+    sink("NECmod.txt")
+    cat("
       model
       {
       
@@ -512,21 +539,23 @@ write.jags.NECsigmoidal.mod <- function(x="gamma", y, mod.dat){
        SS    <- sum(D[1:N])
        SSsim <- sum(Dsim[1:N])
       }
-      ", fill=TRUE)
-  sink()  #Make model in working directory
-  
-  init.fun <- function(mod.data=mod.data){list(
-    top = rnorm(1,max(mod.dat$y),1), 
-    beta = rgamma(1,0.2,0.001),
-    alpha = rnorm(1,min(mod.dat$y),1),
-    NEC = rlnorm(1,log(mean(mod.dat$x)),1),#rgamma(1,0.2,0.001),
-    sigma = runif(1, 0, 5),
-    d = 1)} #runif(1, 1, 1))}
+      ", fill = TRUE)
+    sink() # Make model in working directory
 
- }
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        top = rnorm(1, max(mod.dat$y), 1),
+        beta = rgamma(1, 0.2, 0.001),
+        alpha = rnorm(1, min(mod.dat$y), 1),
+        NEC = rlnorm(1, log(mean(mod.dat$x)), 1), # rgamma(1,0.2,0.001),
+        sigma = runif(1, 0, 5),
+        d = 1
+      )
+    } # runif(1, 1, 1))}
+  }
 
   # gaussian y; beta x ----
-  if(x=="beta" & y=="gaussian"){
+  if (x == "beta" & y == "gaussian") {
     sink("NECmod.txt")
     cat("
         model
@@ -567,21 +596,23 @@ write.jags.NECsigmoidal.mod <- function(x="gamma", y, mod.dat){
         SS    <- sum(D[1:N])
         SSsim <- sum(Dsim[1:N])
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      top = rnorm(1,max(mod.dat$y),1), 
-      beta = rgamma(1,0.2,0.001),
-      alpha = rnorm(1,min(mod.dat$y),1),
-      NEC =  runif(1, 0.3, 0.6),#rgamma(1,0.2,0.001),
-      sigma = runif(1, 0, 5),
-      d = 1)} #runif(1, 1, 1))}
-    
+        ", fill = TRUE)
+    sink() # Make model in working directory
+
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        top = rnorm(1, max(mod.dat$y), 1),
+        beta = rgamma(1, 0.2, 0.001),
+        alpha = rnorm(1, min(mod.dat$y), 1),
+        NEC = runif(1, 0.3, 0.6), # rgamma(1,0.2,0.001),
+        sigma = runif(1, 0, 5),
+        d = 1
+      )
+    } # runif(1, 1, 1))}
   }
-  
+
   # gaussian y; gaussian x ----
-  if(x=="gaussian" & y=="gaussian"){
+  if (x == "gaussian" & y == "gaussian") {
     sink("NECmod.txt")
     cat("
         model
@@ -622,21 +653,23 @@ write.jags.NECsigmoidal.mod <- function(x="gamma", y, mod.dat){
         SS    <- sum(D[1:N])
         SSsim <- sum(Dsim[1:N])
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      top = rnorm(1,max(mod.dat$y),1), 
-      beta = rgamma(1,0.2,0.001),
-      alpha = rnorm(1,min(mod.dat$y),1),
-      NEC =  rnorm(1,mean(mod.dat$x),1),
-      sigma = runif(1, 0, 5),
-      d = 1)} #runif(1, 1, 1))}
-    
+        ", fill = TRUE)
+    sink() # Make model in working directory
+
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        top = rnorm(1, max(mod.dat$y), 1),
+        beta = rgamma(1, 0.2, 0.001),
+        alpha = rnorm(1, min(mod.dat$y), 1),
+        NEC = rnorm(1, mean(mod.dat$x), 1),
+        sigma = runif(1, 0, 5),
+        d = 1
+      )
+    } # runif(1, 1, 1))}
   }
-  
+
   # beta y; beta x ----
-  if(x=="beta" & y=="beta"){
+  if (x == "beta" & y == "beta") {
     sink("NECmod.txt")
     cat("
         model
@@ -678,19 +711,22 @@ write.jags.NECsigmoidal.mod <- function(x="gamma", y, mod.dat){
         SS    <- sum(D[1:N])
         SSsim <- sum(Dsim[1:N])
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      top = rlnorm(1,log(quantile(mod.dat$y,probs = 0.75)),0.1),
-      beta = rgamma(1,0.2,0.001),
-      t0 = rnorm(0,100),
-      NEC = runif(1, 0.3, 0.6),
-      d = 1)} #runif(1, 1, 1))}
+        ", fill = TRUE)
+    sink() # Make model in working directory
+
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        top = rlnorm(1, log(quantile(mod.dat$y, probs = 0.75)), 0.1),
+        beta = rgamma(1, 0.2, 0.001),
+        t0 = rnorm(0, 100),
+        NEC = runif(1, 0.3, 0.6),
+        d = 1
+      )
+    } # runif(1, 1, 1))}
   }
-  
+
   # beta y; gamma x ----
-  if(x=="gamma" & y=="beta"){
+  if (x == "gamma" & y == "beta") {
     sink("NECmod.txt")
     cat("
         model
@@ -732,19 +768,22 @@ write.jags.NECsigmoidal.mod <- function(x="gamma", y, mod.dat){
         SS    <- sum(D[1:N])
         SSsim <- sum(Dsim[1:N])
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      top = dunif(0.001,0.999),
-      beta = rgamma(1,0.2,0.001),
-      t0 = rnorm(0,100),
-      NEC = rlnorm(1,log(mean(mod.dat$x)),1),
-      d = 1)} #runif(1, 1, 1))}
+        ", fill = TRUE)
+    sink() # Make model in working directory
+
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        top = dunif(0.001, 0.999),
+        beta = rgamma(1, 0.2, 0.001),
+        t0 = rnorm(0, 100),
+        NEC = rlnorm(1, log(mean(mod.dat$x)), 1),
+        d = 1
+      )
+    } # runif(1, 1, 1))}
   }
 
   # beta y; gaussian x ----
-  if(x=="gaussian" & y=="beta"){
+  if (x == "gaussian" & y == "beta") {
     sink("NECmod.txt")
     cat("
         model
@@ -786,19 +825,22 @@ write.jags.NECsigmoidal.mod <- function(x="gamma", y, mod.dat){
         SS    <- sum(D[1:N])
         SSsim <- sum(Dsim[1:N])
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      top = dunif(0.001,0.999),
-      beta = rgamma(1,0.2,0.001),
-      t0 = rnorm(0,100),
-      NEC = rnorm(1, 0, 2),
-      d = 1)} #runif(1, 1, 1))}
+        ", fill = TRUE)
+    sink() # Make model in working directory
+
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        top = dunif(0.001, 0.999),
+        beta = rgamma(1, 0.2, 0.001),
+        t0 = rnorm(0, 100),
+        NEC = rnorm(1, 0, 2),
+        d = 1
+      )
+    } # runif(1, 1, 1))}
   }
-  
+
   # negbin y; gaussian x ----
-  if(x=="gaussian" & y=="negbin"){
+  if (x == "gaussian" & y == "negbin") {
     sink("NECmod.txt")
     cat("
         model
@@ -837,19 +879,22 @@ write.jags.NECsigmoidal.mod <- function(x="gamma", y, mod.dat){
         SSsim <- sum(Dsim[1:N])
         
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      top = rpois(1,max(mod.dat$y)), 
-      beta = runif(1,0.0001,0.999), #rlnorm(1,0,1), #rgamma(1,0.2,0.001),
-      NEC =  rnorm(1,mean(mod.dat$x),1),#rnorm(1,30,10))} #rgamma(1,0.2,0.001)),
-      size=runif(1, 0.1, 40),
-      d = 1)} #runif(1, 1, 1))} #
-  } 
+        ", fill = TRUE)
+    sink() # Make model in working directory
 
-    # negbin y; gamma x ----
-  if(x=="gamma" & y=="negbin"){
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        top = rpois(1, max(mod.dat$y)),
+        beta = runif(1, 0.0001, 0.999), # rlnorm(1,0,1), #rgamma(1,0.2,0.001),
+        NEC = rnorm(1, mean(mod.dat$x), 1), # rnorm(1,30,10))} #rgamma(1,0.2,0.001)),
+        size = runif(1, 0.1, 40),
+        d = 1
+      )
+    } # runif(1, 1, 1))} #
+  }
+
+  # negbin y; gamma x ----
+  if (x == "gamma" & y == "negbin") {
     sink("NECmod.txt")
     cat("
         model
@@ -888,19 +933,22 @@ write.jags.NECsigmoidal.mod <- function(x="gamma", y, mod.dat){
         SSsim <- sum(Dsim[1:N])
         
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      top = rpois(1,max(mod.dat$y)), 
-      beta = runif(1,0.0001,0.999), #rlnorm(1,0,1), #rgamma(1,0.2,0.001),
-      NEC = rlnorm(1,log(mean(mod.dat$x)),1),#rnorm(1,30,10))} #rgamma(1,0.2,0.001)),
-      size=runif(1, 0.1, 40),
-      d = 1)} #runif(1, 1, 1))} #
-  }  
- 
+        ", fill = TRUE)
+    sink() # Make model in working directory
+
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        top = rpois(1, max(mod.dat$y)),
+        beta = runif(1, 0.0001, 0.999), # rlnorm(1,0,1), #rgamma(1,0.2,0.001),
+        NEC = rlnorm(1, log(mean(mod.dat$x)), 1), # rnorm(1,30,10))} #rgamma(1,0.2,0.001)),
+        size = runif(1, 0.1, 40),
+        d = 1
+      )
+    } # runif(1, 1, 1))} #
+  }
+
   # negbin y; beta x ----
-  if(x=="beta" & y=="negbin"){
+  if (x == "beta" & y == "negbin") {
     sink("NECmod.txt")
     cat("
         model
@@ -939,24 +987,29 @@ write.jags.NECsigmoidal.mod <- function(x="gamma", y, mod.dat){
         SSsim <- sum(Dsim[1:N])
         
         }
-        ", fill=TRUE)
-    sink()  #Make model in working directory
-    
-    init.fun <- function(mod.data=mod.data){list(
-      top = rpois(1,max(mod.dat$y)), 
-      beta = runif(1,0.0001,0.999),
-      NEC = runif(1, 0.3, 0.6),
-      size=runif(1, 0.1, 40),
-      d = 1)} #runif(1, 1, 1))} 
-  }  
-  
-  # return the initial function
-  if(exists("init.fun")){
-      return(init.fun) 
+        ", fill = TRUE)
+    sink() # Make model in working directory
+
+    init.fun <- function(mod.data = mod.data) {
+      list(
+        top = rpois(1, max(mod.dat$y)),
+        beta = runif(1, 0.0001, 0.999),
+        NEC = runif(1, 0.3, 0.6),
+        size = runif(1, 0.1, 40),
+        d = 1
+      )
+    } # runif(1, 1, 1))}
   }
-  else{
-    stop(paste("jagsNEC does not currently support ", x, " distributed concentration data with ", y, 
-                 " distributed response data. Please check this is the correct distribution to use, and if so
-          feel free to contact the developers to request to add this distribution", sep=""))
+
+  # return the initial function
+  if (exists("init.fun")) {
+    return(init.fun)
+  }
+  else {
+    stop(paste("jagsNEC does not currently support ", x, " distributed concentration data with ", y,
+      " distributed response data. Please check this is the correct distribution to use, and if so
+          feel free to contact the developers to request to add this distribution",
+      sep = ""
+    ))
   }
 }

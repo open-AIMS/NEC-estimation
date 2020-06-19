@@ -31,14 +31,14 @@ fit.jagsNEC(
 
 \item{y.var}{the column heading indicating the response (y) variable}
 
-\item{trials.var}{the column heading indicating the column for the number of "trials" for binomial response data. 
+\item{trials.var}{the column heading indicating the column for the number of "trials" for binomial response data.
 If not supplied, the model may run but will not be the model you intended!}
 
-\item{x.type}{the statistical distribution to use for the x (concentration) data. This will be guess based on the 
+\item{x.type}{the statistical distribution to use for the x (concentration) data. This will be guess based on the
 characteristic of the input data if not supplied.}
 
-\item{y.type}{the statistical distribution to use for the y (response) data. This may currently be one of  'binomial', 
-'poisson',' 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer. 
+\item{y.type}{the statistical distribution to use for the y (response) data. This may currently be one of  'binomial',
+'poisson',' 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer.
 If not supplied, the appropriate distribution will be guessed based on the distribution of the input data.}
 
 \item{burnin}{the number of iterations to use as burnin.}
@@ -47,8 +47,8 @@ If not supplied, the appropriate distribution will be guessed based on the distr
 
 \item{n.tries}{The number of tries to attempt to fit the model and attain good chain mixing. See details below.}
 
-\item{params}{A vector of names indicating the parameters that to trace during the jags fit. For the NEC jags model 
-this is typically 'NEC','top' and 'beta'. If left out, fit.jagsNEC will supply this based on the selected y.type and 
+\item{params}{A vector of names indicating the parameters that to trace during the jags fit. For the NEC jags model
+this is typically 'NEC','top' and 'beta'. If left out, fit.jagsNEC will supply this based on the selected y.type and
 x.type.}
 
 \item{model}{The type of model to be fit. Currently takes values of "NEC3param",
@@ -61,33 +61,33 @@ against the control, to estimate NEC as an interpolated NOEC value from smooth E
 
 \item{n.iter.burnin}{the number of interations to run overall. This should be large. Defaults to 10000.}
 
-\item{over.disp.}{If an overdispersed model should be used. Only changes the model fit for poisson and binomial y.type 
+\item{over.disp.}{If an overdispersed model should be used. Only changes the model fit for poisson and binomial y.type
 data. For poisson, a negative binomial model will be fit. For binomial a beta model will be fit.}
 }
 \value{
-The $BUGSoutput element of fitted jags model, including an estimate of the NEC value. 
+The $BUGSoutput element of fitted jags model, including an estimate of the NEC value.
 A posterior sample of the NEC is also available under $sims.list.
 }
 \description{
 Fits an NEC model as per Fox 2010, using jags and R2jags
 }
 \details{
-As some concentration-response data will use zero concentration, 
-and there is no distribution on the continuous scale from 0 to in (ie tweedie) available in jags, a small offset 
+As some concentration-response data will use zero concentration,
+and there is no distribution on the continuous scale from 0 to in (ie tweedie) available in jags, a small offset
 is added (1/10^3 of the next lowest value) to zero values of concentration where x.var are gamma distributed.
 
-If the initial model fit fails because it cannot be fit by jags (miss-specified priors, invalid 
-initial values), or because there is poor chain mixing fit.jagsNEC will try n.tries many times using the init.fun 
-defined by the write model function. If all those attempts fail, fit.jagsNEC will then try using default values 
+If the initial model fit fails because it cannot be fit by jags (miss-specified priors, invalid
+initial values), or because there is poor chain mixing fit.jagsNEC will try n.tries many times using the init.fun
+defined by the write model function. If all those attempts fail, fit.jagsNEC will then try using default values
 provided by jags. The function will only return an error if all n.tries fail.
 
-All models other than "NEC3param" (which is that defined by Fox 2010) are currently undergoing beta testing and are 
-experimental. These should not yet be used for NEC reporting for official purposes. Comments and feedback are welcome, 
+All models other than "NEC3param" (which is that defined by Fox 2010) are currently undergoing beta testing and are
+experimental. These should not yet be used for NEC reporting for official purposes. Comments and feedback are welcome,
 especially reproducible examples of issues, as well as example test cases.
 
-All models provide an estimate for NEC. For model types with "NEC" as a prefix, NEC is directly estimated as a paremeter 
-in the model. Models with "ECx" as a prefix are continuos curve models, tyipically used for extracting ECx values 
-from concentration response data. In this instance the NEC value is defined as the concentration at which there is 
+All models provide an estimate for NEC. For model types with "NEC" as a prefix, NEC is directly estimated as a paremeter
+in the model. Models with "ECx" as a prefix are continuos curve models, tyipically used for extracting ECx values
+from concentration response data. In this instance the NEC value is defined as the concentration at which there is
 90 percent certainty (based on the Bayesian posterior estimate) that the response falls below the estimated value of
 the upper assymptote (top) of the response (i.e the response value is significantly lower than that expected in the case of
 no exposure).

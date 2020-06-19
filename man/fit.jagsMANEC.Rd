@@ -41,7 +41,7 @@ fit.jagsMANEC(
 
 \item{params}{A vector of names indicating the parameters that to trace during the jags fit. For the NEC jags model this is typically 'NEC','top' and 'beta'. If left out, fit.jagsNEC will supply this based on the selected y.type and x.type.}
 
-\item{model.set}{A vector of the names of model types to be fit. Currently defaults to 
+\item{model.set}{A vector of the names of model types to be fit. Currently defaults to
 all available model types. If "NEC" is supplied, only the NEC models will be fit. If "ECx" is supplied,
  only continuous curve models will be fit.}
 

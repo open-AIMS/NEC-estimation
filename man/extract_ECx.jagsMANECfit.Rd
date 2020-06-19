@@ -17,14 +17,14 @@ extract_ECx.jagsMANECfit(
 )
 }
 \arguments{
-\item{X}{a fitted jagsMANEC model object, containing a list of jag model fit as returned by a call to jags from 
+\item{X}{a fitted jagsMANEC model object, containing a list of jag model fit as returned by a call to jags from
 fit.jagsNEC}
 
 \item{ECx.val}{the desired percentage effect value.}
 
 \item{precision}{The number of unique x values over which to find ECx.}
 
-\item{posterior}{A logical value indicating if the full posterior sample of calculated ECx values 
+\item{posterior}{A logical value indicating if the full posterior sample of calculated ECx values
 should be returned instead of just the median and 95 credible intervals.}
 
 \item{type}{a character vector indicating if relative or absolute values for the ECx should be calculated.}

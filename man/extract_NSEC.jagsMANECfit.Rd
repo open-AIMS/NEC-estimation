@@ -16,7 +16,7 @@ extract_NSEC.jagsMANECfit(
 )
 }
 \arguments{
-\item{X}{a fitted jagsMANSEC model object, containing a list of jag model fit as returned by a call to jags from 
+\item{X}{a fitted jagsMANSEC model object, containing a list of jag model fit as returned by a call to jags from
 fit.jagsNSEC}
 
 \item{sig.val}{the Probability value to use as the lower quantile to test significance of the predictor posterior values
@@ -24,7 +24,7 @@ against the control, to estimate NSEC as an interpolated NOEC value from smooth 
 
 \item{precision}{The number of unique x values over which to find NSEC.}
 
-\item{posterior}{A logical value indicating if the full posterior sample of calculated NSEC values 
+\item{posterior}{A logical value indicating if the full posterior sample of calculated NSEC values
 should be returned instead of just the median and 95 credible intervals.}
 
 \item{xform}{A function to apply to the returned estimated concentration values}

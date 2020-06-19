@@ -23,7 +23,7 @@ against the control, to estimate NSEC as an interpolated NOEC value from smooth 
 
 \item{precision}{The number of unique x values over which to find NSEC.}
 
-\item{posterior}{A logical value indicating if the full posterior sample of calculated NSEC values should be returned 
+\item{posterior}{A logical value indicating if the full posterior sample of calculated NSEC values should be returned
 instead of just the median and 95 credible intervals.}
 
 \item{xform}{A function to apply to the returned estimated concentration values}
