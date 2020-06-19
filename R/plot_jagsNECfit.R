@@ -268,8 +268,8 @@ plot.jagsMANECfit <- function(X,  CI=TRUE,  posterior.median=TRUE,  median.model
     x.ticks <- xticks
   }
   
-  if(is.na(xlim)==TRUE){xlim=range(x.dat)}
-  if(is.na(ylim)==TRUE){ylim=range(y.dat)}
+  if(is.na(xlim[1])==TRUE){xlim=range(x.dat)}
+  if(is.na(ylim[1])==TRUE){ylim=range(y.dat)}
   
   plot(x.dat, y.dat, 
        ylab=ylab, 
