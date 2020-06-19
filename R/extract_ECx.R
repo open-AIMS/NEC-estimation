@@ -136,35 +136,6 @@ extract_ECx.jagsNECfit <- function(X, ECx.val=10, precision=10000, posterior = F
            }))
     }   
     
-    # if(type=="relative"){
-    #   ECx.out <- apply(posterior.sample, MARGIN=2, FUN=function(y){
-    #     range.y <- range(y, na.rm=T)
-    #     ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
-    #     ECx.x <- x.vec[which.min(abs(y-ECx.y))]
-    #     return(ECx.x)
-    #   })    
-    # }
-    # 
-    # 
-    # if(type=="absolute"){
-    #   ECx.out <- apply(posterior.sample, MARGIN=2, FUN=function(y){
-    #     range.y <- c(0, max(y, na.rm=T))
-    #     ECx.y <- max(range.y)-diff(range.y)*(ECx.val/100)
-    #     ECx.x <- x.vec[which.min(abs(y-ECx.y))]
-    #     return(ECx.x)  
-    #   })     
-    # }
-    # 
-    # if(type=="direct"){
-    #   ECx.out <- apply(posterior.sample, MARGIN=2, FUN=function(y){
-    #     ECx.y <- ECx.val
-    #     ECx.x <- x.vec[which.min(abs(y-ECx.y))]
-    #     return(ECx.x)
-    #     
-    #   }) 
-    # }
-    
-    
     ECx.out <- apply(posterior.sample, MARGIN=2, FUN=function(y){
       if(type=="relative"){range.y <- range(y, na.rm=T)}
       if(type=="absolute"){range.y <- c(0, max(y, na.rm=T))}
