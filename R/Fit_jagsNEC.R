@@ -199,21 +199,9 @@ fit.jagsNEC <- function(data,
     slope <- rep(0,3); names(slope) <- c("2.5%",  "50%", "97.5%")}
   
   if(is.na(EC50[1])){
-    if(y.type !="gaussian"){
-      if(model!="ECxLinear"){
-       EC50 <- extract_ECx.jagsNECfit(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975))        
-      }
-      if(model=="ECxLinear" & x.type!="gaussian"){
-       EC50 <- extract_ECx.jagsNECfit(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975))     
-      }
-      if(model=="ECxLinear" & x.type=="gaussian"){
-        EC50 <- extract_ECx.jagsNECfit(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975), type="relative")     
-      }      
-      
-    }
     if(y.type =="gaussian"){
       EC50 <- extract_ECx.jagsNECfit(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975), type="relative")
-    }
+    }else{EC50 <- extract_ECx.jagsNECfit(out, ECx.val = 50, prob.vals = c(0.025, 0.5, 0.975))}
   }
   
   # calculate the predicted values based on the median parameter estimates
