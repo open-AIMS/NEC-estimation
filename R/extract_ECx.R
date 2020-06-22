@@ -211,12 +211,12 @@ extract_ECx.jagsMANECfit <- function(X, ECx.val = 10, precision = 10000, posteri
                                      prob.vals = c(0.5, 0.025, 0.975)) {
   ECx.out <- unlist(sapply(X$success.models, FUN = function(x) {
     base::sample(extract_ECx.jagsNECfit(X$mod.fits[[x]],
-      ECx.val = ECx.val,
-      precision = 100, # precision,
-      posterior = TRUE,
-      x.range = x.range,
-      type = type
-    ), round(X$n.sims * X$mod.stats[x, "wi"]))
+                 ECx.val = ECx.val,
+                 precision = precision, # precision,
+                 posterior = TRUE,
+                 x.range = x.range,
+                 type = type), 
+                 round(X$n.sims * X$mod.stats[x, "wi"]))
   }))
 
   label <- paste("EC", ECx.val, sep = "_")

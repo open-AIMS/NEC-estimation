@@ -56,10 +56,6 @@ plot.jagsNECfit <- function(X, CI = TRUE, posterior.median = TRUE, median.model 
                             ylab = "response",
                             xlab = "concentration",
                             xlim = NA, xticks = NA, ...) {
-  if (X$model == "ECx4param" & add.NEC == TRUE) {
-    add.NEC <- FALSE
-    add.EC10 <- TRUE
-  }
 
   # check if y.type is binomial
   y.type <- X$y.type
