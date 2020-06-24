@@ -18,3 +18,13 @@ temp.R
 MS
 *.csv
 testing.R
+
+
+*.Rproj
+*.Rapp
+*.Ruserdata
+*.DS_Store
+
+*tmp*
+docs/
+ignore/
