@@ -230,7 +230,7 @@ predict_NECbugsmod <- function(X, precision = 100, x.range = NA) {
   min.x <- min(mod.dat$x)
   max.x <- max(mod.dat$x)
 
-  if (is.na(x.range)) {
+  if (is.na(x.range[1])) {
     x.seq <- seq(min.x, max.x, length = precision)
   } else {
     x.seq <- seq(min(x.range), max(x.range), length = precision)
