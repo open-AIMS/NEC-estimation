@@ -30,7 +30,7 @@
 modify_jagsMANEC <- function(jagsMANECfit, model.set = NA, drop.models = NA, add.models = NA) {
 
   # if the model set is NA
-  if (is.na(model.set)) {
+  if (is.na(model.set[1])) {
     model.set <- names(jagsMANECfit$mod.fits)
   }
 
