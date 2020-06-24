@@ -43,7 +43,7 @@ extract_NSEC <- function(X, sig.val = 0.01, precision = 10000, posterior = FALSE
     NSEC <- extract_NSEC.jagsNECfit(X,
       sig.val = sig.val, precision = precision,
       posterior = posterior, hormesis.def = hormesis.def,
-      xform = xform,
+      xform = xform, x.range = x.range,
       prob.vals = prob.vals
     )
   }
@@ -56,7 +56,7 @@ extract_NSEC <- function(X, sig.val = 0.01, precision = 10000, posterior = FALSE
   }
 
   if (exists("NSEC") == FALSE) {
-    stop("Failed to estimate NSEC value for the supplied object class. Only jagsNECfit and jagsMANECfit classes are suported.")
+    stop("Failed to estimate NSEC value for the supplied object class. Only jagsNECfit and jagsMANECfit classes are supported.")
   }
 
   return(NSEC)
