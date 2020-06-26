@@ -223,7 +223,8 @@ plot.jagsMANECfit <- function(X, CI = TRUE, posterior.median = TRUE, median.mode
                               xlab = "concentration",
                               xlim = NA,
                               ylim = NA,
-                              xticks = NA, all_models = FALSE, ...) {
+                              xticks = NA, xtick.rounding = 5,
+                              all_models = FALSE, ...) {
   if (all_models) {
     mod_fits <- X$mod.fits
     par(mfrow = c(ceiling(length(mod_fits) / 2), 2), mar = c(1.5, 1.5, 1.5, 1.5), oma = c(3, 3, 0, 0))
@@ -328,7 +329,7 @@ plot.jagsMANECfit <- function(X, CI = TRUE, posterior.median = TRUE, median.mode
         sep = ""
       )
     } else {
-      x.labs <- signif(lxform(x.ticks), 2)
+      x.labs <- signif(round(lxform(x.ticks), xtick.rounding), 2)
       axis(side = 1, at = x.ticks, labels = x.labs)
       NEC.legend <- paste("NEC: ", signif(lxform(NEC[2]), 2),
         " (", signif(lxform(NEC[1]), 2), "-",
