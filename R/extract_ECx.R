@@ -46,7 +46,8 @@ extract_ECx <- function(X, ECx.val = 10, precision = 10000, posterior = FALSE, t
                         hormesis.def = "control", xform = NA, x.range = NA,
                         prob.vals = c(0.5, 0.025, 0.975), link = "identity") {
   if (class(X) == "jagsNECfit") {
-    ECx <- extract_ECx.jagsNECfit(X, x.range = x.range,
+    ECx <- extract_ECx.jagsNECfit(X,
+      x.range = x.range,
       ECx.val = ECx.val, precision = precision,
       posterior = posterior, type = type, hormesis.def = hormesis.def,
       xform = xform,
@@ -210,13 +211,16 @@ extract_ECx.jagsMANECfit <- function(X, ECx.val = 10, precision = 10000, posteri
                                      hormesis.def = "control", xform = NA, x.range = NA,
                                      prob.vals = c(0.5, 0.025, 0.975)) {
   ECx.out <- unlist(sapply(X$success.models, FUN = function(x) {
-    base::sample(extract_ECx.jagsNECfit(X$mod.fits[[x]],
-                 ECx.val = ECx.val,
-                 precision = precision, # precision,
-                 posterior = TRUE,
-                 x.range = x.range,
-                 type = type), 
-                 round(X$n.sims * X$mod.stats[x, "wi"]))
+    base::sample(
+      extract_ECx.jagsNECfit(X$mod.fits[[x]],
+        ECx.val = ECx.val,
+        precision = precision, # precision,
+        posterior = TRUE,
+        x.range = x.range,
+        type = type
+      ),
+      round(X$n.sims * X$mod.stats[x, "wi"])
+    )
   }))
 
   label <- paste("EC", ECx.val, sep = "_")

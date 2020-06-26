@@ -21,6 +21,7 @@
   xlim = NA,
   ylim = NA,
   xticks = NA,
+  xtick.rounding = 5,
   all_models = FALSE,
   ...
 )
