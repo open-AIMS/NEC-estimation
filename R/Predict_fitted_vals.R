@@ -406,3 +406,148 @@ predict_NECbugsmod <- function(X, precision = 100, x.range = NA) {
     posterior = pred.vals.out
   ))
 }
+
+#' predict
+#'
+#' Calculated predicted values for a jagsNEC or a jagsMANEC model fit.
+#'
+#' @param  X a jags model fit as returned by a call to jags from fit.jagsNEC
+#'
+#' @param precision The number of unique x values over which to find fitted - large values will make the fitted estimate more
+#' precise.
+#'
+#' @param posterior A logical value indicating if the full posterior sample of calculated fitted values should be returned
+#' instead of just the median and 95 credible intervals.
+#'
+#' @param x.range A range of x values over which to consider extracting fitted
+#'
+#' @param prob.vals A vector indicating the probability values over which to return the estimated fitted value. Defaults to 0.5 (median) and 0.025 and 0.975 (95 percent credible intervals).
+#'
+#' @export
+#' @return A vector containing the estimated fitted value, including upper and lower 95 percent Credible Interval bounds
+#'
+predict <- function(X, precision = 100, posterior = FALSE, x.range = NA,
+                    prob.vals = c(0.5, 0.025, 0.975), link = "identity") {
+  if (class(X) == "jagsNECfit") {
+    pred.vals <- predict.jagsNECfit(
+      X,
+      x.range = x.range,
+      precision = precision,
+      posterior = posterior,
+      prob.vals = prob.vals
+    )
+  }
+  if (class(X) == "jagsMANECfit") {
+    pred.vals <- predict.jagsMANECfit(
+      X,
+      precision = precision,
+      posterior = posterior,
+      x.range = x.range,
+      prob.vals = prob.vals
+    )
+  }
+
+  if (exists("pred.vals") == FALSE) {
+    stop("Failed to estimate predicted values for the supplied object class. Only jagsNECfit and jagsMANECfit classes are suported.")
+  }
+
+  return(pred.vals)
+}
+
+#' predict.jagsNEC
+#'
+#' Extracts the predicted fitted value as desired from a jagsNEC model fit obeject
+#'
+#' @param  X a jag model fit as returned by a call to jags from fit.jagsNEC
+#'
+#' @param precision The number of unique x values over which to find fitted.
+#'
+#' @param x.range A range of x values over which to consider extracting fitted
+#'
+#' @param posterior A logical value indicating if the full posterior sample of calculated fitted values should be returned
+#' instead of just the median and 95 credible intervals.
+#'
+#' @param prob.vals A vector indicating the probability values over which to return the estimated fitted value.
+#'
+#' @export
+#' @return A vector containing the estimated fitted value, including upper and lower 95 percent Credible Interval bounds
+
+predict.jagsNECfit <- function(X, precision = 100, posterior = FALSE, x.range = NA, prob.vals = c(0.5, 0.025, 0.975)) {
+  fitted.out <- predict_NECbugsmod(X, precision = precision, x.range = x.range)
+  posterior.predicted <- fitted.out$posterior
+
+  x.vec <- fitted.out$"x"
+
+  # calculate the quantile values from the posterior
+  fitted.summary <- data.frame(t(apply(posterior.predicted, MARGIN = 1, FUN = quantile, probs = prob.vals)))
+  colnames(fitted.summary) <- c("fit", "lw", "up")
+  fitted.summary$x <- x.vec
+
+  if (posterior == FALSE) {
+    return(fitted.summary)
+  } else {
+    return(fitted.out)
+  }
+}
+
+#' predict.jagsMANEC
+#'
+#' Extracts the predicted fitted value as desired from a jagsNEC model fit obeject
+#'
+#' @param  X a fitted jagsMANEC model object, containing a list of jag model fit as returned by a call to jags from
+#' fit.jagsNEC
+#'
+#' @param precision The number of unique x values over which to calculated fitted values.
+#'
+#' @param x.range A range of x values over which to consider extracting fitted
+#'
+#' @param posterior A logical value indicating if the full posterior sample of calculated fitted values
+#' should be returned instead of just the median and 95 credible intervals.
+#'
+#' @param prob.vals A vector indicating the probability values over which to return the estimated fitted value.
+#'
+#' @export
+#' @return A vector containing the estimated fitted value, including upper and lower 95 percent Credible Interval bounds
+
+predict.jagsMANECfit <- function(X, precision = 10, posterior = FALSE, x.range = NA, prob.vals = c(0.5, 0.025, 0.975)) {
+  mod.dat <- X$mod.dat
+  min.x <- min(mod.dat$x)
+  max.x <- max(mod.dat$x)
+
+  if (is.na(x.range[1])) {
+    x.seq <- seq(min.x, max.x, length = precision)
+  } else {
+    x.seq <- seq(min(x.range), max(x.range), length = precision)
+  }
+
+  posterior.predicted <- data.frame(
+    lapply(X$success.models, FUN = function(x) {
+      posterior.predicted.m <- predict.jagsNECfit(X$mod.fits[[x]],
+        precision = precision,
+        posterior = TRUE,
+        x.range = x.range
+      )$posterior
+      return(posterior.predicted.m[, base::sample(
+        1:X$n.sims,
+        round(X$n.sims * X$mod.stats[x, "wi"])
+      )])
+    })
+  )
+
+
+
+  # calculate the quantile values from the posterior
+  fitted.summary <- data.frame(t(apply(posterior.predicted, MARGIN = 1, FUN = quantile, probs = prob.vals)))
+  colnames(fitted.summary) <- c("fit", "lw", "up")
+  fitted.summary$x <- x.seq
+
+  # construct the fitted out to match that contained in predict.jagsNEC
+  fitted.out <- list(x = x.seq, y = fitted.summary$fit, up = fitted.summary$up, lw = fitted.summary$lw, posterior = posterior.predicted)
+
+
+  if (posterior == FALSE) {
+    return(fitted.summary)
+  } else {
+    return(fitted.out)
+  }
+}
