@@ -509,7 +509,7 @@ predict.jagsNECfit <- function(X, precision = 100, posterior = FALSE, x.range = 
 #' @export
 #' @return A vector containing the estimated fitted value, including upper and lower 95 percent Credible Interval bounds
 
-predict.jagsMANECfit <- function(X, precision = 10, posterior = FALSE, x.range = NA, prob.vals = c(0.5, 0.025, 0.975)) {
+predict.jagsMANECfit <- function(X, precision = 100, posterior = FALSE, x.range = NA, prob.vals = c(0.5, 0.025, 0.975)) {
   mod.dat <- X$mod.dat
   min.x <- min(mod.dat$x)
   max.x <- max(mod.dat$x)
