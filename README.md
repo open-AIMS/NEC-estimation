@@ -30,14 +30,14 @@ use, based on the characteristics of the provided data. See
 ?write.jags.NECmod for the currently available x and y data types.
 
 This project started with an implementation of the NEC model based on
-that described in \[@Fox2010\]. That package has been further
-generalised to allow a large range of response variables to be modelled
-using the appropriate statistical distribution, and the current
-implementation supports gaussian, poisson, binomial, gamma, negbin and
-beta response data. We have further added a range of alternative NEC
-model types, as well as a range of typically used concentration-response
-models (such as 4-parameter logistic and weibull models) that have no
-NEC ‘step’ function but simply model response as a smooth function of
+that described in (Fox 2010). That package has been further generalised
+to allow a large range of response variables to be modelled using the
+appropriate statistical distribution, and the current implementation
+supports gaussian, poisson, binomial, gamma, negbin and beta response
+data. We have further added a range of alternative NEC model types, as
+well as a range of typically used concentration-response models (such as
+4-parameter logistic and weibull models) that have no NEC ‘step’
+function but simply model response as a smooth function of
 concentration.
 
 Models can be fit directly using fit.jagsNEC, or alternatively using the
@@ -75,3 +75,7 @@ To install the latest version from github
 
     install.packages("remotes")
     remotes::install_github("AIMS/NEC-estimation")
+
+Fox, David R. 2010. “A Bayesian approach for determining the no effect
+concentration and hazardous concentration in ecotoxicology.”
+*Ecotoxicology and Environmental Safety* 73 (2): 123–31.
