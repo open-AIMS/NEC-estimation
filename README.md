@@ -865,17 +865,7 @@ contains different elements to the jagsNECfit. In particular
 
     load(file = "out_temp.RData")
     out$mod.stats
-    #>                    DIC DIC.delta           wi        pD over.disp
-    #> NEC3param    -437.0293  1.390218 2.506284e-01  3.703887     0.494
-    #> NEC4param    -438.4195  0.000000 5.022411e-01  4.881895     0.456
-    #> NECHormesis  -417.5176 20.901859 1.452550e-05  6.464839     0.454
-    #> NECsigmoidal -421.0629 17.356548 8.550385e-05 15.803425     0.438
-    #> ECxLinear    -374.1195 64.300022 5.474443e-15  2.706478     0.482
-    #> ECxExp       -360.1182 78.301325 4.988793e-18  3.531736     0.438
-    #> ECxsigmoidal -423.2727 15.146818 2.581205e-04  3.439405     0.488
-    #> ECx4param    -436.1619  2.257633 1.624327e-01  5.809713     0.484
-    #> ECxWeibull1  -433.9400  4.479507 5.348103e-02  7.362563     0.470
-    #> ECxWeibull2  -432.8402  5.579327 3.085863e-02  8.018570     0.460
+    #> NULL
 
 contains the table of model fit statistic for all the fitted models.
 This includes the model name, the DIC (as returned from jags), DIC.delta
