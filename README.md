@@ -851,6 +851,7 @@ extract values, and modify the model set as required.
 We have created some plotting method functions for our jagsNEC model
 types, so we can plot a jagsMANECfit model object simply with ‘plot’.
 
+    load(file = "out_temp.RData")
     plot(out)
 
 ![](man/figures/README-plot-beta-MANEC1-1.png)
@@ -862,6 +863,7 @@ as well as the NSEC estimates that are used as an approximation to NEC
 for all the ‘ECx’ models in the set. The fitted jagsMANECfit object
 contains different elements to the jagsNECfit. In particular
 
+    load(file = "out_temp.RData")
     out$mod.stats
     #>                    DIC DIC.delta           wi        pD over.disp
     #> NEC3param    -437.0293  1.390218 2.506284e-01  3.703887     0.494
@@ -886,6 +888,7 @@ being overall the highest.
 The jagsMANECfit object also contains all of the original fits, which
 can be extracted using
 
+    load(file = "out_temp.RData")
     out.NEC3param <- out$mod.fits$NEC3param
 
 Which would extract the NEC3param model from the jagsMANECfit and create
@@ -893,6 +896,7 @@ a new object that contains just this fit. This would be identical to
 fitting the ‘NEC3param’ model using ‘fit.jagsNEC’ as we did above. All
 of the models can be simultaneously plotted using
 
+    load(file = "out_temp.RData")
     plot(out, all_models = TRUE)
 
 ![](man/figures/README-plot_mod-beta-MANEC-1.png)
@@ -920,10 +924,12 @@ obtained with ‘model.set = NEC’, and there is a helper function
 ‘modify\_jagsMANEC’ that can be used to alter the model set as required.
 We can use this to obtain first a set of ‘NEC’ only models
 
+    load(file = "out_temp.RData")
     out.NEC <- modify_jagsMANEC(out, model.set = "NEC")
 
 and then drop the ‘NECsigmoidal’ model as invalid (see above)
 
+    load(file = "out_temp.RData")
     out.NEC <- modify_jagsMANEC(out.NEC, drop.models = "NECsigmoidal")
     out <- modify_jagsMANEC(out, drop.models = "NECsigmoidal")
 
@@ -936,11 +942,13 @@ write the chain plots out to a pdf file, which can be more convenient,
 as you can see here ‘check.chains’ generates a lot of plots on a
 ‘jagsMANECfit’.
 
+    load(file = "out_temp.RData")
     check.chains(out)
 
 Chains for the ‘NECHormesis’ model in this case are very badly mixed, so
 we should drop this as well from our model sets
 
+    load(file = "out_temp.RData")
     out.NEC <- modify_jagsMANEC(out.NEC, drop.models = "NECHormesis")
     out <- modify_jagsMANEC(out, drop.models = "NECHormesis")
 
@@ -948,7 +956,7 @@ Now we can use the extract\_ECx function to get EC10 and EC50 values. We
 can do this using our all model set, because it is valud to use NEC
 models for estimating ECx.
 
-
+    load(file = "out_temp.RData")
     ECx10 <- extract_ECx(out, ECx.val = 10)
     ECx50 <- extract_ECx(out, ECx.val = 50)
 
@@ -968,7 +976,7 @@ the y-intercept) and 0. We could use type = ‘relative’ in our call to
 depends on your specific context and question. Let’s try extending the
 x.range.
 
-
+    load(file = "out_temp.RData")
     ECx50 <- extract_ECx(out, ECx.val = 50, x.range = c(0.01, 8))
     ECx50
     #>    EC_50 EC_50_lw EC_50_up 
@@ -986,7 +994,7 @@ decline in the response relative to the range of the fitted data across
 the observed range of concentration (x.val). We will do this for both
 out EC10 and our EC50 to be consistent.
 
-
+    load(file = "out_temp.RData")
     ECx10 <- extract_ECx(out, ECx.val = 10, type = "relative")
     ECx50 <- extract_ECx(out, ECx.val = 50, type = "relative")
 
@@ -1000,7 +1008,7 @@ out EC10 and our EC50 to be consistent.
 The NEC values can be extracted directly from the NEC model set object,
 as they are an explicit parameter in these models.
 
-
+    load(file = "out_temp.RData")
     NECvals <- out.NEC$NEC
     NECvals
     #>     2.5%      50%    97.5% 
@@ -1010,7 +1018,7 @@ Now we can make a combined plot of our output, showing the model
 averaged “NEC” model and the “all averaged model”, along with the
 relevant thresholds.
 
-
+    load(file = "out_temp.RData")
     plot(out, add.NEC = FALSE)
 
     abline(v = ECx10, col = "orange", lty = c(1, 3, 3))
