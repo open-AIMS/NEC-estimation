@@ -385,7 +385,8 @@ You can see that the 'NECHormesis' model and the 'NECsigmoidal' models are highl
 The models prefixed with 'ECx' are all models that do not have the NEC as a parameter in the model. That is the are smooth curves as a function of concentration nad have no breakpoint. The NEC on the plot above for these models are an approximation based on 'NSEC' (see above) and should not be used without careful consideration of the validity of this endpoint value. A formal model averaged estimate of NEC should be obtained with 'model.set = NEC', and there is a helper function 'modify_jagsMANEC' that can be used to alter the model set as required. We can use this to obtain first a set of 'NEC' only models
 
 
-```{r extract_NECmod-beta-MANEC}
+```{r extract_NECmod-beta-MANEC, cache=TRUE}
+load(file = "out_temp.RData")
 out.NEC <- modify_jagsMANEC(out, model.set = "NEC")
 ```
  and then drop the 'NECsigmoidal' model as invalid (see above)
