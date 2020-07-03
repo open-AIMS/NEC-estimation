@@ -109,7 +109,7 @@ data, in this case raw.x.
     hist(binom.data$raw.x)
     hist(binom.data$suc / binom.data$tot)
 
-![](README_files/figure-markdown_strict/get-binomial-data-1.png)
+![](man/figures/README-get-binomial-data-1.png)
 
 In this case for x, lowest concentration is 0.1 and the highest is 400.
 The data are right skewed and on the continuous scale. This type of
@@ -140,6 +140,8 @@ fit.jagsNEC sill guess the data types for use, although we could specify
 *y.type* as “binomial” and *x.type* as “gamma”. This example fits
 without specifying either, but trials.var must be supplied.
 
+    library(jagsNEC)
+
     set.seed(333)
     out <- fit.jagsNEC(
       data = binom.data,
@@ -147,6 +149,7 @@ without specifying either, but trials.var must be supplied.
       y.var = "suc",
       trials.var = "tot"
     )
+    #> module glm loaded
     #> Compiling model graph
     #>    Resolving undeclared variables
     #>    Allocating nodes
@@ -182,7 +185,7 @@ plot.
 
     check.chains(out)
 
-![](README_files/figure-markdown_strict/check-binomial-NEC-1.png)
+![](man/figures/README-check-binomial-NEC-1.png)
 
 In our example, the chains are well mixed and our ACF plot looks good,
 so we can go ahead and interpret this model.
@@ -195,7 +198,7 @@ using *out$pred.vals*
     par(mfrow = c(1, 1))
     plot(out)
 
-![](README_files/figure-markdown_strict/plot-binomial-NEC-1.png)
+![](man/figures/README-plot-binomial-NEC-1.png)
 
 ### Beta data
 
@@ -209,17 +212,6 @@ theoretical ‘trials’ and the data must be modelled using a beta
 distribution.
 
     require(tidyverse)
-    #> Loading required package: tidyverse
-    #> -- Attaching packages --------------------------------------- tidyverse 1.3.0 --
-    #> v ggplot2 3.3.1     v purrr   0.3.4
-    #> v tibble  3.0.1     v dplyr   1.0.0
-    #> v tidyr   1.1.0     v stringr 1.4.0
-    #> v readr   1.3.1     v forcats 0.5.0
-    #> -- Conflicts ------------------------------------------ tidyverse_conflicts() --
-    #> x dplyr::filter()  masks stats::filter()
-    #> x purrr::flatten() masks R.rsp::flatten()
-    #> x dplyr::lag()     masks stats::lag()
-    #> x tibble::view()   masks R.rsp::view()
     prop.data <- read.table("https://pastebin.com/raw/123jq46d", header = TRUE, dec = ",") %>%
       mutate(
         raw.x = log(as.numeric(as.character(raw.x)) + 1),
@@ -269,12 +261,12 @@ distribution.
 
     check.chains(out)
 
-![](README_files/figure-markdown_strict/check-beta-NEC-1.png)
+![](man/figures/README-check-beta-NEC-1.png)
 
     par(mfrow = c(1, 1))
     plot(out)
 
-![](README_files/figure-markdown_strict/plot-beta-NEC-1.png)
+![](man/figures/README-plot-beta-NEC-1.png)
 
 ### Poisson data
 
@@ -298,7 +290,7 @@ our binomial example above.
     hist(count.data$raw.x)
     hist(count.data$count)
 
-![](README_files/figure-markdown_strict/get-poisson-data-1.png)
+![](man/figures/README-get-poisson-data-1.png)
 
 First we supply *fit.jagsNEC* with *data* (count.data), and specify
 *x.var* and *y.var*. As we have concentration data, our *x.type* would
@@ -326,17 +318,12 @@ behaviour to guess the variable types works for this example.
 
     check.chains(out)
 
-![](README_files/figure-markdown_strict/check-poisson-NEC-1.png)
-
-In our example, not all the chains are well mixed and our ACF plot looks
-problematic. We should probably not interpret this model. Later we can
-explore options for fitting this data better (see Fitted model and model
-validation and selection).
+![](man/figures/README-check-poisson-NEC-1.png)
 
     par(mfrow = c(1, 1))
     plot(out)
 
-![](README_files/figure-markdown_strict/plot-poisson-NEC-1.png)
+![](man/figures/README-plot-poisson-NEC-1.png)
 
 ### Measure data
 
@@ -425,7 +412,7 @@ our binomial example above.
 
     check.chains(out)
 
-![](README_files/figure-markdown_strict/check-measure-NEC-1.png)
+![](man/figures/README-check-measure-NEC-1.png)
 
 The function *plot* can be used to plot the fitted model. The estimated
 NEC value can be obtained directly from the fitted model object, using
@@ -438,7 +425,7 @@ non-linear regression and will often fall more sharply than a smooth
     par(mfrow = c(1, 1))
     plot(out)
 
-![](README_files/figure-markdown_strict/plot-measure-NEC-1.png)
+![](man/figures/README-plot-measure-NEC-1.png)
 
     extract_ECx(out)
     #>    EC_10 EC_10_lw EC_10_up 
@@ -477,13 +464,13 @@ poisson models, which are single parameter distributions.
     #> Response variable suc modelled using a binomial distribution.
     check.chains(out)
 
-![](README_files/figure-markdown_strict/fit-binomial-NEC2-1.png)
+![](man/figures/README-fit-binomial-NEC2-1.png)
 
     par(mfrow = c(1, 2))
     plot(out)
     plot(binom.data$raw.x, out$residuals)
 
-![](README_files/figure-markdown_strict/fit-binomial-NEC2-2.png)
+![](man/figures/README-fit-binomial-NEC2-2.png)
 
 A test for over or under-dispersion is performed by jagsNEC, and this
 can be extracted using *$over.disp*. Values &gt;0.5 indicate
@@ -525,13 +512,13 @@ the x-data, given these appear to have been set on a log scaling anyway
     #> Response variable suc modelled using a binomial distribution.
     check.chains(out)
 
-![](README_files/figure-markdown_strict/fit-binomial-logx-NEC-1.png)
+![](man/figures/README-fit-binomial-logx-NEC-1.png)
 
     par(mfrow = c(1, 2))
     plot(out)
     plot(binom.data$log.x, out$residuals)
 
-![](README_files/figure-markdown_strict/fit-binomial-logx-NEC-2.png)
+![](man/figures/README-fit-binomial-logx-NEC-2.png)
 
     out$over.disp
     #> [1] 1
@@ -553,7 +540,11 @@ estimate of the curve), *beta* (the rate of exponential decay of the
 response), and *bot* (the bottom plateau). The ECx model can be used
 when evidence for an NEC model is weak (ie there is a consistent decline
 with increasing concentration and no evidence of a *step*). For model =
-ECx4param, no NEC value can be derived.
+ECx4param, no NEC value can be formally derived, although an
+approximation based on the ‘NSEC’ concept described under ‘background’
+is currently used as an approximation by default on all ‘ECx’ model
+output. At this time the concept has not be formally tested and
+published and should be used with caution.
 
 Let’s now try fitting the same data using the 4-parameter NEC model.
 
@@ -579,13 +570,13 @@ Let’s now try fitting the same data using the 4-parameter NEC model.
     #> Response variable suc modelled using a binomial distribution.
     check.chains(out)
 
-![](README_files/figure-markdown_strict/fit-binomial-4param-NEC-1.png)
+![](man/figures/README-fit-binomial-4param-NEC-1.png)
 
     par(mfrow = c(1, 2))
     plot(out)
     plot(binom.data$log.x, out$residuals)
 
-![](README_files/figure-markdown_strict/fit-binomial-4param-NEC-2.png)
+![](man/figures/README-fit-binomial-4param-NEC-2.png)
 
     out$over.disp
     #> [1] 1
@@ -658,13 +649,13 @@ model will fit better. Let’s try fitting that now.
     #> Response variable suc modelled using a binomial distribution.
     check.chains(out)
 
-![](README_files/figure-markdown_strict/fit-binomial-ECx-1.png)
+![](man/figures/README-fit-binomial-ECx-1.png)
 
     par(mfrow = c(1, 2))
     plot(out)
     plot(binom.data$log.x, out$residuals)
 
-![](README_files/figure-markdown_strict/fit-binomial-ECx-2.png)
+![](man/figures/README-fit-binomial-ECx-2.png)
 
     out$over.disp
     #> [1] 1
@@ -731,13 +722,13 @@ could also be achieved through using *y.type=“beta”*).
     #> Response variable suc modelled using a beta distribution.
     check.chains(out)
 
-![](README_files/figure-markdown_strict/fit-binomial-beta-ECx-1.png)
+![](man/figures/README-fit-binomial-beta-ECx-1.png)
 
     par(mfrow = c(1, 2))
     plot(out)
     plot(binom.data$log.x, out$residuals)
 
-![](README_files/figure-markdown_strict/fit-binomial-beta-ECx-2.png)
+![](man/figures/README-fit-binomial-beta-ECx-2.png)
 
     out$over.disp
     #> [1] 0.608
@@ -813,19 +804,230 @@ distribution would also have improved our original NEC model fit.
     #> Response variable suc modelled using a beta distribution.
     check.chains(out)
 
-![](README_files/figure-markdown_strict/fit-binomial-beta-NEC-1.png)
+![](man/figures/README-fit-binomial-beta-NEC-1.png)
 
     par(mfrow = c(1, 2))
     plot(out)
     plot(binom.data$log.x, out$residuals)
 
-![](README_files/figure-markdown_strict/fit-binomial-beta-NEC-2.png)
+![](man/figures/README-fit-binomial-beta-NEC-2.png)
 
     out$over.disp
     #> [1] 0.554
 
+Fitting multiple models and model averaging using the fit.jagsMANEC function
+----------------------------------------------------------------------------
+
+### Fitting a fit.jagsMANEC model
+
+So far we have explored how to fit individual models via the function
+‘fit.jagsNEC’. The jagsNEC package also has a function ‘fit.jagsMANEC’
+that can be used to fit a selection of models, or even all the available
+models in the package. Note that as these are Bayesian methods requiring
+multiple MCMC chains using ‘fit.jagsMANEC’ can be very slow.
+
+    # set.seed(333)
+    # out <- fit.jagsMANEC(
+    #  data = prop.data,
+    #  x.var = "raw.x",
+    #  y.var = "resp",
+    #  n.tries = 1,
+    #  model.set = "all"
+    # )
+    # save(out, file="out_temp.RData")
+    load(file = "out_temp.RData")
+
+Here we run ‘fit.jagsMANEC’ using model.set = ‘all’ using the
+proportional data example for a beta response variable from above, and
+save the output as an .RData file so that the rmarkdown will not include
+all of the console output that is generated when these models run.
+Saving and .RData file of the ‘all’ model.set fit.jagsMANEC output can
+be a useful way of fitting all the models at a convenient time (this can
+be very slow), that means you can reload them to explore and plot,
+extract values, and modify the model set as required.
+
+### Exploring a fit.jagsMANEC model
+
+We have created some plotting method functions for our jagsNEC model
+types, so we can plot a jagsMANECfit model object simply with ‘plot’.
+
+    plot(out)
+
+![](man/figures/README-plot-beta-MANEC1-1.png)
+
+The default plot looks exactly the same out our regular jagsNECfit plot,
+but the output is based in a weighted average of all the models fits.
+The NEC estimate on this plot is based on a mix of actual NEC estimates,
+as well as the NSEC estimates that are used as an approximation to NEC
+for all the ‘ECx’ models in the set. The fitted jagsMANECfit object
+contains different elements to the jagsNECfit. In particular
+
+    out$mod.stats
+    #>                    DIC DIC.delta           wi        pD over.disp
+    #> NEC3param    -437.0293  1.390218 2.506284e-01  3.703887     0.494
+    #> NEC4param    -438.4195  0.000000 5.022411e-01  4.881895     0.456
+    #> NECHormesis  -417.5176 20.901859 1.452550e-05  6.464839     0.454
+    #> NECsigmoidal -421.0629 17.356548 8.550385e-05 15.803425     0.438
+    #> ECxLinear    -374.1195 64.300022 5.474443e-15  2.706478     0.482
+    #> ECxExp       -360.1182 78.301325 4.988793e-18  3.531736     0.438
+    #> ECxsigmoidal -423.2727 15.146818 2.581205e-04  3.439405     0.488
+    #> ECx4param    -436.1619  2.257633 1.624327e-01  5.809713     0.484
+    #> ECxWeibull1  -433.9400  4.479507 5.348103e-02  7.362563     0.470
+    #> ECxWeibull2  -432.8402  5.579327 3.085863e-02  8.018570     0.460
+
+contains the table of model fit statistic for all the fitted models.
+This includes the model name, the DIC (as returned from jags), DIC.delta
+(DIC - the lowest DIC), wi (the model weight), pD, and the
+overdispersion estimate. For this example, three models have relatively
+similar weights and contribute to the model averaged outcome, including
+the NEC3param, NEC4param and the ECx4param models, with the NEC4param
+being overall the highest.
+
+The jagsMANECfit object also contains all of the original fits, which
+can be extracted using
+
+    out.NEC3param <- out$mod.fits$NEC3param
+
+Which would extract the NEC3param model from the jagsMANECfit and create
+a new object that contains just this fit. This would be identical to
+fitting the ‘NEC3param’ model using ‘fit.jagsNEC’ as we did above. All
+of the models can be simultaneously plotted using
+
+    plot(out, all_models = TRUE)
+
+![](man/figures/README-plot_mod-beta-MANEC-1.png)
+
+You can see that the ‘NECHormesis’ model and the ‘NECsigmoidal’ models
+are highly unresolved. The ‘NECsigmoidal’ model in particular poses a
+theoretical problem as it is a model that has a natural upper plateau.
+Thus it becomes difficult to resolve where the flat no-effect part of
+the data ends, and the sigmoidal decline begins. It should not be used,
+and we may remove it from the model set in future versions. We it is
+currently retained out of interest and to explore it’s behaviour under
+different scenarios. The ‘NECHormesis’ model allows an initial linear
+increase with concentration, prior to the exponential decline of the
+‘NEC3param’ model once the NEC concentration has been reached. This does
+not work well for this data, but neither does it have substantial
+weight, so it can be left in the model set for completeness.
+
+The models prefixed with ‘ECx’ are all models that do not have the NEC
+as a parameter in the model. That is the are smooth curves as a function
+of concentration nad have no breakpoint. The NEC on the plot above for
+these models are an approximation based on ‘NSEC’ (see above) and should
+not be used without careful consideration of the validity of this
+endpoint value. A formal model averaged estimate of NEC should be
+obtained with ‘model.set = NEC’, and there is a helper function
+‘modify\_jagsMANEC’ that can be used to alter the model set as required.
+We can use this to obtain first a set of ‘NEC’ only models
+
+    out.NEC <- modify_jagsMANEC(out, model.set = "NEC")
+
+and then drop the ‘NECsigmoidal’ model as invalid (see above)
+
+    out.NEC <- modify_jagsMANEC(out.NEC, drop.models = "NECsigmoidal")
+    out <- modify_jagsMANEC(out, drop.models = "NECsigmoidal")
+
+Now we have two model sets, an NEC set and a mixed NEC and ECx set,
+neither of which have the ‘NECsigmoidal’ model. Of course before we use
+this model set for any inference, we would need to check the chains
+mixing and acf. We can use check.chains on the ‘jagsMANECfit’. Note that
+adding the argument ‘pdf.file = “Cl\_chains”’ to ‘check.chains’ would
+write the chain plots out to a pdf file, which can be more convenient,
+as you can see here ‘check.chains’ generates a lot of plots on a
+‘jagsMANECfit’.
+
+    check.chains(out)
+
+Chains for the ‘NECHormesis’ model in this case are very badly mixed, so
+we should drop this as well from our model sets
+
+    out.NEC <- modify_jagsMANEC(out.NEC, drop.models = "NECHormesis")
+    out <- modify_jagsMANEC(out, drop.models = "NECHormesis")
+
+Now we can use the extract\_ECx function to get EC10 and EC50 values. We
+can do this using our all model set, because it is valud to use NEC
+models for estimating ECx.
+
+
+    ECx10 <- extract_ECx(out, ECx.val = 10)
+    ECx50 <- extract_ECx(out, ECx.val = 50)
+
+    ECx10
+    #>    EC_10 EC_10_lw EC_10_up 
+    #> 3.442832 3.189625 3.764327
+    ECx50
+    #>    EC_50 EC_50_lw EC_50_up 
+    #>  5.70711  5.62851  5.70711
+
+Note that the median estimate is the same as the upper bound. This
+indicates that the ‘absolute’ EC50 may lie beyond the observed data,
+because the lowest values here are just below 0.2, and the ‘absolute’
+ECx type scales between the higher predicted values (usually ‘top’ or
+the y-intercept) and 0. We could use type = ‘relative’ in our call to
+‘extract\_ECx’ or we can try extending the ‘x.range’. Which you use
+depends on your specific context and question. Let’s try extending the
+x.range.
+
+
+    ECx50 <- extract_ECx(out, ECx.val = 50, x.range = c(0.01, 8))
+    ECx50
+    #>    EC_50 EC_50_lw EC_50_up 
+    #> 6.279581 5.683308 8.000000
+
+This still yields an upper bound that is identical to our upper range,
+which is again an indication that the upper bound at a concentration of
+8 still does not reach our EC50. To extend further it would be better to
+refit our data using ‘model.set = “bot.free”’ - as if we want to
+extrapolate for an absolute ECx value, it may be more valid to only use
+models that do not have a lower asymptote, but actually will asymptote
+at zero. Here we will consider our ECx values in relative terms instead
+for simplicity, which means the ECx values represent a percentage
+decline in the response relative to the range of the fitted data across
+the observed range of concentration (x.val). We will do this for both
+out EC10 and our EC50 to be consistent.
+
+
+    ECx10 <- extract_ECx(out, ECx.val = 10, type = "relative")
+    ECx50 <- extract_ECx(out, ECx.val = 50, type = "relative")
+
+    ECx10
+    #>    EC_10 EC_10_lw EC_10_up 
+    #> 3.224040 2.830127 3.449214
+    ECx50
+    #>    EC_50 EC_50_lw EC_50_up 
+    #> 4.017164 3.715042 4.266639
+
+The NEC values can be extracted directly from the NEC model set object,
+as they are an explicit parameter in these models.
+
+
+    NECvals <- out.NEC$NEC
+    NECvals
+    #>     2.5%      50%    97.5% 
+    #> 2.619696 3.075013 3.324965
+
+Now we can make a combined plot of our output, showing the model
+averaged “NEC” model and the “all averaged model”, along with the
+relevant thresholds.
+
+
+    plot(out, add.NEC = FALSE)
+
+    abline(v = ECx10, col = "orange", lty = c(1, 3, 3))
+    abline(v = ECx50, col = "blue", lty = c(1, 3, 3))
+    abline(v = NECvals, col = "darkgrey", lty = c(3, 1, 3))
+    lines(out.NEC$pred.vals$x, out.NEC$pred.vals$y, col = "darkgrey")
+    lines(out.NEC$pred.vals$x, out.NEC$pred.vals$up, col = "darkgrey", lty = 3)
+    lines(out.NEC$pred.vals$x, out.NEC$pred.vals$lw, col = "darkgrey", lty = 3)
+    legend("bottomleft",
+      legend = c("Complete averaged model", "EC10", "EC50", "NEC"),
+      col = c("black", "orange", "blue", "darkgrey"), lty = 1, bty = "n"
+    )
+
+![](man/figures/README-plot_final-beta-MANEC-1.png)
+
 License
--------
+=======
 
 The code is released under the Apache License 2.0
 
