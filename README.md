@@ -931,7 +931,10 @@ and then drop the ‘NECsigmoidal’ model as invalid (see above)
 
     load(file = "out_temp.RData")
     out.NEC <- modify_jagsMANEC(out.NEC, drop.models = "NECsigmoidal")
+    #> Warning in extract_modStats(mod.fits): successfully fitted the models: NEC3param NEC4param NECHormesis
     out <- modify_jagsMANEC(out, drop.models = "NECsigmoidal")
+    #> Warning in extract_modStats(mod.fits): successfully fitted the models: NEC3param NEC4param NECHormesis ECxLinear ECxExp ECxsigmoidal
+    #> ECx4param ECxWeibull1 ECxWeibull2
 
 Now we have two model sets, an NEC set and a mixed NEC and ECx set,
 neither of which have the ‘NECsigmoidal’ model. Of course before we use
@@ -950,7 +953,10 @@ we should drop this as well from our model sets
 
     load(file = "out_temp.RData")
     out.NEC <- modify_jagsMANEC(out.NEC, drop.models = "NECHormesis")
+    #> Warning in extract_modStats(mod.fits): successfully fitted the models: NEC3param NEC4param
     out <- modify_jagsMANEC(out, drop.models = "NECHormesis")
+    #> Warning in extract_modStats(mod.fits): successfully fitted the models: NEC3param NEC4param NECsigmoidal ECxLinear ECxExp ECxsigmoidal
+    #> ECx4param ECxWeibull1 ECxWeibull2
 
 Now we can use the extract\_ECx function to get EC10 and EC50 values. We
 can do this using our all model set, because it is valud to use NEC
