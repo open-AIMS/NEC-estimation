@@ -113,7 +113,7 @@ compare_posterior <- function(x, y, comparison = "NEC", ECx.val = 10, ECx.type =
 
   p1 <- ggplot2::ggplot(df3.s, aes(x = PS)) +
     geom_density(aes(group = curve, color = curve, fill = curve), alpha = 0.3)
-  p1 <- p1 + tidybayes::stat_pointintervalh(aes(y = 0.00, x = PS, group = curve), .width = c(.66, .95)) + #+facet_wrap(~contrast+time, nrow = 3, ncol = 2)+
+  p1 <- p1 + tidybayes::stat_pointinterval(aes(y = 0.00, x = PS, group = curve), .width = c(.66, .95)) + #+facet_wrap(~contrast+time, nrow = 3, ncol = 2)+
     theme_light()
   p1 <- p1 + scale_fill_manual(values = c("steelblue4", "orange")) +
     scale_color_manual(values = c("steelblue4", "grey", "steelblue1", "steelblue4", "grey", "grey", "grey", "grey")) + theme(legend.position = "none") # nice
@@ -134,7 +134,7 @@ compare_posterior <- function(x, y, comparison = "NEC", ECx.val = 10, ECx.type =
   # density(df4.s$diff)
   p2 <- ggplot2::ggplot(df4.s, aes(x = df4.s$diff)) +
     geom_density(aes(x = df4.s$diff, fill = "steelblue4"), alpha = 0.3) +
-    tidybayes::stat_pointintervalh(aes(y = 0.00, x = diff), .width = c(.66, .95)) + #+facet_wrap(~contrast+time, nrow = 3, ncol = 2)+
+    tidybayes::stat_pointinterval(aes(y = 0.00, x = diff), .width = c(.66, .95)) + #+facet_wrap(~contrast+time, nrow = 3, ncol = 2)+
     geom_vline(xintercept = 0, color = "red", lty = 2) +
     theme_light()
   p2 <- p2 + scale_fill_manual(values = c("steelblue4", "orange")) +
