@@ -149,25 +149,25 @@ jagsNEC_input <- function(data,
   if (min(data[, x.var]) == 0 & x.type == "gamma") {
     tt <- data[, x.var]
     min.val <- min(tt[which(tt > 0)])
-    data[which(tt == 0), x.var] <- tt[which(tt == 0)] + (min.val / 10)
+    data[which(tt == 0), x.var] <- tt[which(tt == 0)] + (min.val / 100)
   }
 
   if (min(data[, y.var]) == 0 & y.type == "gamma") {
     tt <- data[, y.var]
     min.val <- min(tt[which(tt > 0)])
-    data[which(tt == 0), y.var] <- tt[which(tt == 0)] + (min.val / 10)
+    data[which(tt == 0), y.var] <- tt[which(tt == 0)] + (min.val / 100)
   }
   # error catching for 0 for beta by adding very small value (beta does not take zero)
   if (min(data[, x.var]) == 0 & x.type == "beta") {
     tt <- data[, x.var]
     min.val <- min(tt[which(tt > 0)])
-    data[which(tt == 0), x.var] <- tt[which(tt == 0)] + (min.val / 10)
+    data[which(tt == 0), x.var] <- tt[which(tt == 0)] + (min.val / 100)
   }
 
   if (min(data[, y.var]) == 0 & y.type == "beta") {
     tt <- data[, y.var]
     min.val <- min(tt[which(tt > 0)])
-    data[which(tt == 0), y.var] <- tt[which(tt == 0)] + (min.val / 10)
+    data[which(tt == 0), y.var] <- tt[which(tt == 0)] + (min.val / 100)
   }
 
   # error catching for 1 for beta by subtracting very small value (beta does not take 1)
