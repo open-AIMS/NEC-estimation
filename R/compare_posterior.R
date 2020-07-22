@@ -151,7 +151,8 @@ compare_posterior <- function(x, y, comparison = "NEC", ECx.val = 10, ECx.type =
     diff_posterior = unlist(df4.s),
     Difference = diff.df,
     Prob_diff = prob.out1.greater,
-    plot1 = p1, plot2 = p2
+    plot1 = p1, plot2 = p2,
+    df3.s = df3.s, df4.s = df4.s
   )
   return(list.data)
 }
