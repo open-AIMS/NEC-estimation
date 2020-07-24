@@ -19,7 +19,7 @@ MS
 *.csv
 testing.R
 
-
+*.RData
 *.Rproj
 *.Rapp
 *.Ruserdata
@@ -28,3 +28,4 @@ testing.R
 *tmp*
 docs/
 ignore/
+README_cache/
