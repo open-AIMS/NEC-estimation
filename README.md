@@ -15,7 +15,7 @@ Background
 Bayesian model fitting can be difficult to automate across a broad range
 of usage cases, particularly with respect to specifying valid initial
 values and appropriate priors. This is one reason the use of Bayesian
-statistics for NEC estimation (or even ECx estimmation) is not currently
+statistics for NEC estimation (or even ECx estimation) is not currently
 widely adopted across the broader ecotoxicological community, who rarely
 have access to specialist statistical expertise. The jagsNEC package
 attempts to provide an accessible interface to the R2jags package
@@ -23,29 +23,33 @@ specifically for fitting NEC models and other concentration-response
 models, with a range of models specified based on the known distribution
 of the “concentration” or “dose” variable (the predictor, x) as well as
 the “response” (y) variable. The model formula, including priors and the
-required init function required to call a jags model are automatically
-generated based on information contained in the supplied data. While the
+init function required to call a jags model are automatically generated
+based on information contained in the supplied data. While the
 distribution of the x and y variables can be specified directly, jagsNEC
-will automatically ‘guess’ the correct distribution to use, based on the
+will automatically ‘guess’ the correct distribution to use based on the
 characteristics of the provided data.
 
 This project started with an implementation of the NEC model based on
-that described in (Fox 2010). The package has been further generalised
-to allow a large range of response variables to be modelled using the
-appropriate statistical distribution, and the current implementation
-supports gaussian, poisson, binomial, gamma, negbin and beta response
-data. We have since also further added a range of alternative NEC model
-types, as well as a range of typically used concentration-response
-models (such as 4-parameter logistic and weibull models) that have no
-NEC ‘step’ function but simply model response as a smooth function of
-concentration.
+that described in (Fox 2010) using R2jags. The package has been further
+generalised to allow a large range of response variables to be modelled
+using the appropriate statistical distribution, and the current
+implementation supports gaussian, poisson, binomial, gamma, negbin and
+beta response data. We have since also further added a range of
+alternative NEC model types, as well as a range of typically used
+concentration-response models (such as 4-parameter logistic and weibull
+models) that have no NEC ‘step’ function but simply model response as a
+smooth function of concentration, as can be fit using other commonly
+used frequentist packages such as drc (Ritz et al. 2016).
 
-Models can be fit directly using fit.jagsNEC, or alternatively using the
-function fit.jagsMANEC it is possible to fit a specific set or all of
-the available models. The fit.jagsMANEC function returns a model
+Specific models can be fit directly using fit.jagsNEC. Alternatively it
+is possible to fit a specific set or all of the available models using
+the function fit.jagsMANEC. The fit.jagsMANEC function returns a model
 weighted estimate of predicted posterior values, based on DIC model
 weights. It is also possible to obtain all individual model fits from
-the fitted jagsMANECfit model object if required.
+the fitted jagsMANECfit model object if required. Multi-model inference
+can be useful where there are a range of plausible models that could be
+used (Burnham and Anderson 2002) and had recently adopted in
+ecotoxicology for SSD model inference (Thorley and Schwarz 2018).
 
 An additional endpoint has also been derived using Bayesian posterior
 predicted values to estimate the “No-Statistical-Effect-Concentration”
@@ -1062,6 +1066,18 @@ The code is released under the Apache License 2.0
 References
 ==========
 
+Burnham, K P, and D R Anderson. 2002. *Model Selection and Multimodel
+Inference; A Practical Information-Theoretic Approach*. 2nd ed. New
+York: Springer.
+
 Fox, David R. 2010. “A Bayesian approach for determining the no effect
 concentration and hazardous concentration in ecotoxicology.”
 *Ecotoxicology and Environmental Safety* 73 (2): 123–31.
+
+Ritz, Christian, Florent Baty, Jens C Streibig, and Daniel Gerhard.
+2016. “Dose-Response Analysis Using R.” *PLoS ONE* 10 (12): e0146021.
+<https://doi.org/10.1371/journal.pone.0146021>.
+
+Thorley, Joe, and Carl Schwarz. 2018. “ssdtools: Species Sensitivity
+Distributions. R package version 0.0.3.
+https://CRAN.R-project.org/package=ssdtools.”
