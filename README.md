@@ -1,13 +1,13 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-jagsNEC
-=======
+*jagsNEC*
+=========
 
-‘jagsNEC’ is an R package to fit concentration(dose) - response curves
-to toxicity data, and derive No-Effect-Concentration (NEC),
+The *jagsNEC* is an R package to fit concentration(dose) - response
+curves to toxicity data, and derive No-Effect-Concentration (NEC),
 No-Significant-Effect-Concentration (NSEC), and Effect-Concentration (of
 specified percentage ‘x’, ECx) thresholds from non-linear models fitted
-using Bayesian MCMC fitting methods via the R2jags package and jags.
+using Bayesian MCMC fitting methods via the *R2jags* package and *jags*.
 
 Background
 ==========
@@ -17,7 +17,7 @@ of usage cases, particularly with respect to specifying valid initial
 values and appropriate priors. This is one reason the use of Bayesian
 statistics for NEC estimation (or even ECx estimation) is not currently
 widely adopted across the broader ecotoxicological community, who rarely
-have access to specialist statistical expertise. The jagsNEC package
+have access to specialist statistical expertise. The *jagsNEC* package
 attempts to provide an accessible interface to the R2jags package
 specifically for fitting NEC models and other concentration-response
 models, with a range of models specified based on the known distribution
@@ -25,9 +25,9 @@ of the “concentration” or “dose” variable (the predictor, x) as well as
 the “response” (y) variable. The model formula, including priors and the
 init function required to call a jags model are automatically generated
 based on information contained in the supplied data. While the
-distribution of the x and y variables can be specified directly, jagsNEC
-will automatically ‘guess’ the correct distribution to use based on the
-characteristics of the provided data.
+distribution of the x and y variables can be specified directly,
+*jagsNEC* will automatically ‘guess’ the correct distribution to use
+based on the characteristics of the provided data.
 
 This project started with an implementation of the NEC model based on
 that described in (Fox 2010) using R2jags. The package has been further
@@ -41,15 +41,15 @@ models) that have no NEC ‘step’ function but simply model response as a
 smooth function of concentration, as can be fit using other commonly
 used frequentist packages such as drc (Ritz et al. 2016).
 
-Specific models can be fit directly using fit.jagsNEC. Alternatively it
-is possible to fit a specific set or all of the available models using
-the function fit.jagsMANEC. The fit.jagsMANEC function returns a model
-weighted estimate of predicted posterior values, based on DIC model
-weights. It is also possible to obtain all individual model fits from
-the fitted jagsMANECfit model object if required. Multi-model inference
-can be useful where there are a range of plausible models that could be
-used (Burnham and Anderson 2002) and had recently adopted in
-ecotoxicology for SSD model inference (Thorley and Schwarz 2018).
+Specific models can be fit directly using *fit.jagsNEC*. Alternatively
+it is possible to fit a specific set or all of the available models
+using the function *fit.jagsMANEC*. The *fit.jagsMANEC* function returns
+a model weighted estimate of predicted posterior values, based on DIC
+model weights. It is also possible to obtain all individual model fits
+from the fitted jagsMANECfit model object if required. Multi-model
+inference can be useful where there are a range of plausible models that
+could be used (Burnham and Anderson 2002) and has been recently adopted
+in ecotoxicology for SSD model inference (Thorley and Schwarz 2018).
 
 An additional endpoint has also been derived using Bayesian posterior
 predicted values to estimate the “No-Statistical-Effect-Concentration”
@@ -57,16 +57,16 @@ as the concentration at which predicted values for each MCMC chain fall
 below a lower percentile bound (defined as sig.val) of the control,
 which is assumed to be the lowest treatment (x.var) concentration in the
 data. NSEC estimates are currently used to approximate NEC for models
-without a specific NEC step parameter (in jagsNEC these have the prefix
-ECx in their model name).
+without a specific NEC step parameter (in *jagsNEC* these have the
+prefix ECx in their model name).
 
-Important information on the current package is contained in the jagsNEC
-and jagsMANEC helpfiles (see ?jagsNEC).
+Important information on the current package is contained in the
+*jagsNEC* and jagsMANEC helpfiles (see *?jagsNEC* and *?jagsMANEC*).
 
 This package is currently under development. We are keen on any feedback
 regarding usage, and especially bug reporting that includes an easy self
-contained reproducible example of either unexpected behaviour or example
-model fits that fail to converge (have poor chain mixing) or yield other
+contained reproducible example of unexpected behaviour or example model
+fits that fail to converge (have poor chain mixing) or yield other
 errors. Such information will hopefully help us towards building a more
 robust package. We cannot help troublshoot issues if an easy to run
 reproducible example is not supplied.
@@ -84,14 +84,15 @@ use:
 Examples
 ========
 
-Fitting the NEC3param model using fit.jagsNEC
----------------------------------------------
+Fitting the NEC3param model using *fit.jagsNEC*
+-----------------------------------------------
 
 Here we include some examples showing how to use the package to fit an
 NEC model to binomial, proportional, count and continuous response (y)
 data. The examples are those used by Gerard Ricardo at:
 <a href="https://github.com/gerard-ricardo/NECs/blob/master/NECs" class="uri">https://github.com/gerard-ricardo/NECs/blob/master/NECs</a>.
-Here we show how to run the same jags models using the jagsNEC package.
+Here we show how to run the same jags models using the *jagsNEC*
+package.
 
 ### Binomial data
 
@@ -120,7 +121,7 @@ The data are right skewed and on the continuous scale. This type of
 distribution for the x data are common for concentration response
 experiments, where the x “concentration” data are the concentration of
 contaminants, or dilutions. In general we can model x as gamma. The
-current default in jagsNEC is to estimate the appropriate distribution
+current default in *jagsNEC* is to estimate the appropriate distribution
 for both the *y.type* and *x.type* arguments, but it is possible to
 supply these arguments directly.
 
@@ -128,10 +129,10 @@ The data are clearly binomial, with the header “suc” - indicating the
 number of ‘successes’ in the binomial call, with ‘tot’ clearly
 indicating the number of trials.
 
-The main ‘working’ function in jagsNEC is the function fit.jagsNEC,
+The main ‘working’ function in *jagsNEC* is the function *fit.jagsNEC*,
 which calls the other necessary functions and fits the jags model. See
-?fit.jagsNEC for more details. We run fit.jagsNEC by supplying *data* -
-a data.frame containing the data for the model fitting, here,
+?*fit.jagsNEC* for more details. We run *fit.jagsNEC* by supplying
+*data* - a data.frame containing the data for the model fitting, here,
 binom.data; *x.var* - the name of the column in *data* which contains
 the concentration data or ‘x’ data to be used in the NEC model fit, and
 *y.var* - the name of the column in *data* which contains the response
@@ -140,9 +141,9 @@ this is binomial, we must also supply *trials.var*, which is the name of
 the column in *data* which contains the number of trials in the binomial
 call.
 
-fit.jagsNEC sill guess the data types for use, although we could specify
-*y.type* as “binomial” and *x.type* as “gamma”. This example fits
-without specifying either, but trials.var must be supplied.
+*fit.jagsNEC* will guess the data types for use, although we could
+specify *y.type* as “binomial” and *x.type* as “gamma”. This example
+fits without specifying either, but trials.var must be supplied.
 
     library(jagsNEC)
 
@@ -171,15 +172,15 @@ The function shows the progress of the jags fit and returns the usual
 jags output (with a few other additions to this list). The function
 *check.chains* can be used to plot the chains and the chain ACF, so we
 can assess mixing and looks for other potential issues with the model
-fit. Initially jagsNEC will attempt to use starting values generated by
-the init function that we have specified for that type of model fit. It
-will run a small number of iterations and then test for good mixing. If
-the model fails to fit or the mixing is not very good (among chain
-variance is a lot bigger than within chain variance) jagsNEC with try up
-to *n.tries* more times to fit the data using the generated *init*
+fit. Initially *jagsNEC* will attempt to use starting values generated
+by the init function that we have specified for that type of model fit.
+It will run a small number of iterations and then test for good mixing.
+If the model fails to fit or the mixing is not very good (among chain
+variance is a lot bigger than within chain variance) *jagsNEC* with try
+up to *n.tries* more times to fit the data using the generated *init*
 function to try and obtain a successfuly fitted model with good mixing.
 If this still fails to yield a successful and/or well mixed model,
-jagsNEC will try up to *n.tries* more times using the default initial
+*jagsNEC* will try up to *n.tries* more times using the default initial
 values as generated by R2jags. If no model is successfully fit an error
 will be returned indicating the model could not be fit succesfully. If a
 model is fit but still has poor mixing even after *n.tries* attempts,
@@ -196,7 +197,7 @@ so we can go ahead and interpret this model.
 
 The function *plot* can be used to plot the fitted model. Alternatively
 you can make your own plot from the data included in the returned list
-from the call to fit.jagsNEC. In this example, this could be extracted
+from the call to *fit.jagsNEC*. In this example, this could be extracted
 using *out$pred.vals*
 
     par(mfrow = c(1, 1))
@@ -216,6 +217,17 @@ theoretical ‘trials’ and the data must be modelled using a beta
 distribution.
 
     require(tidyverse)
+    #> Loading required package: tidyverse
+    #> -- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+    #> v ggplot2 3.3.1     v purrr   0.3.4
+    #> v tibble  3.0.1     v dplyr   1.0.0
+    #> v tidyr   1.1.0     v stringr 1.4.0
+    #> v readr   1.3.1     v forcats 0.5.0
+    #> -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+    #> x dplyr::filter()  masks stats::filter()
+    #> x purrr::flatten() masks R.rsp::flatten()
+    #> x dplyr::lag()     masks stats::lag()
+    #> x tibble::view()   masks R.rsp::view()
     prop.data <- read.table("https://pastebin.com/raw/123jq46d", header = TRUE, dec = ",") %>%
       mutate(
         raw.x = log(as.numeric(as.character(raw.x)) + 1),
@@ -476,7 +488,7 @@ poisson models, which are single parameter distributions.
 
 ![](man/figures/README-fit-binomial-NEC2-2.png)
 
-A test for over or under-dispersion is performed by jagsNEC, and this
+A test for over or under-dispersion is performed by *jagsNEC*, and this
 can be extracted using *$over.disp*. Values &gt;0.5 indicate
 over-dispersion and values &lt;0.5 indicate under-dispersion. Values in
 the range 0.22-0.75 are acceptable. In this case the overdispersion
@@ -532,23 +544,23 @@ there is a tendency to underestimate the response (the residual plot
 appears to be negatively biased). Note that we still have an over
 dispersion paramter of 1.
 
-By default jagsNEC will fit a 3 parameter NEC model (model = NEC3param)
-which has the parameters *top* (the mean value of the response without
-any effect of the toxicant), *NEC* (the concentration at which an effect
-of the toxicant begins to occur), and *beta* (the rate of exponential
-decay of the response). However there are other models that have been
-implemented, including: NEC4param, which is equivalent to NEC3param but
-includes a *bot* parameter (the bottom plateau); and ECx4param, with
-parameters *top* (the upper plateau of the response), *EC50* (the EC50
-estimate of the curve), *beta* (the rate of exponential decay of the
-response), and *bot* (the bottom plateau). The ECx model can be used
-when evidence for an NEC model is weak (ie there is a consistent decline
-with increasing concentration and no evidence of a *step*). For model =
-ECx4param, no NEC value can be formally derived, although an
-approximation based on the ‘NSEC’ concept described under ‘background’
-is currently used as an approximation by default on all ‘ECx’ model
-output. At this time the concept has not be formally tested and
-published and should be used with caution.
+By default *jagsNEC* will fit a 3 parameter NEC model (model =
+NEC3param) which has the parameters *top* (the mean value of the
+response without any effect of the toxicant), *NEC* (the concentration
+at which an effect of the toxicant begins to occur), and *beta* (the
+rate of exponential decay of the response). However there are other
+models that have been implemented, including: NEC4param, which is
+equivalent to NEC3param but includes a *bot* parameter (the bottom
+plateau); and ECx4param, with parameters *top* (the upper plateau of the
+response), *EC50* (the EC50 estimate of the curve), *beta* (the rate of
+exponential decay of the response), and *bot* (the bottom plateau). The
+ECx model can be used when evidence for an NEC model is weak (ie there
+is a consistent decline with increasing concentration and no evidence of
+a *step*). For model = ECx4param, no NEC value can be formally derived,
+although an approximation based on the ‘NSEC’ concept described under
+‘background’ is currently used as an approximation by default on all
+‘ECx’ model output. At this time the concept has not be formally tested
+and published and should be used with caution.
 
 Let’s now try fitting the same data using the 4-parameter NEC model.
 
@@ -678,8 +690,8 @@ distribution.
 
 For all model types a wide range of distributions are available for the
 response variable *y.var*. As detailed above, if *y.type* is unspecified
-jagsNEC will attempt to guess the right distribution to use. This can of
-course be manually specified. Here we will set *over.disp=TRUE* to
+*jagsNEC* will attempt to guess the right distribution to use. This can
+of course be manually specified. Here we will set *over.disp=TRUE* to
 automatically apply a beta model to our binomial data (the same thing
 could also be achieved through using *y.type=“beta”*).
 
@@ -819,16 +831,16 @@ distribution would also have improved our original NEC model fit.
     out$over.disp
     #> [1] 0.554
 
-Fitting multiple models and model averaging using the fit.jagsMANEC function
-----------------------------------------------------------------------------
+Fitting multiple models and model averaging using the *fit.jagsMANEC* function
+------------------------------------------------------------------------------
 
-### Fitting a fit.jagsMANEC model
+### Fitting a *fit.jagsMANEC* model
 
 So far we have explored how to fit individual models via the function
-‘fit.jagsNEC’. The jagsNEC package also has a function ‘fit.jagsMANEC’
+*fit.jagsNEC*. The *jagsNEC* package also has a function *fit.jagsMANEC*
 that can be used to fit a selection of models, or even all the available
 models in the package. Note that as these are Bayesian methods requiring
-multiple MCMC chains using ‘fit.jagsMANEC’ can be very slow.
+multiple MCMC chains using *fit.jagsMANEC* can be very slow.
 
     # set.seed(333)
     # out <- fit.jagsMANEC(
@@ -841,18 +853,18 @@ multiple MCMC chains using ‘fit.jagsMANEC’ can be very slow.
     # save(out, file="out_temp.RData")
     load(file = "out_temp.RData")
 
-Here we run ‘fit.jagsMANEC’ using model.set = ‘all’ using the
+Here we run *fit.jagsMANEC* using model.set = ‘all’ using the
 proportional data example for a beta response variable from above, and
 save the output as an .RData file so that the rmarkdown will not include
 all of the console output that is generated when these models run.
-Saving and .RData file of the ‘all’ model.set fit.jagsMANEC output can
+Saving and .RData file of the ‘all’ model.set *fit.jagsMANEC* output can
 be a useful way of fitting all the models at a convenient time (this can
 be very slow), that means you can reload them to explore and plot,
 extract values, and modify the model set as required.
 
-### Exploring a fit.jagsMANEC model
+### Exploring a *fit.jagsMANEC* model
 
-We have created some plotting method functions for our jagsNEC model
+We have created some plotting method functions for our *jagsNEC* model
 types, so we can plot a jagsMANECfit model object simply with ‘plot’.
 
     load(file = "out_temp.RData")
@@ -897,7 +909,7 @@ can be extracted using
 
 Which would extract the NEC3param model from the jagsMANECfit and create
 a new object that contains just this fit. This would be identical to
-fitting the ‘NEC3param’ model using ‘fit.jagsNEC’ as we did above. All
+fitting the ‘NEC3param’ model using ‘*fit.jagsNEC*’ as we did above. All
 of the models can be simultaneously plotted using
 
     load(file = "out_temp.RData")
@@ -935,10 +947,7 @@ and then drop the ‘NECsigmoidal’ model as invalid (see above)
 
     load(file = "out_temp.RData")
     out.NEC <- modify_jagsMANEC(out.NEC, drop.models = "NECsigmoidal")
-    #> Warning in extract_modStats(mod.fits): successfully fitted the models: NEC3param NEC4param NECHormesis
     out <- modify_jagsMANEC(out, drop.models = "NECsigmoidal")
-    #> Warning in extract_modStats(mod.fits): successfully fitted the models: NEC3param NEC4param NECHormesis ECxLinear ECxExp ECxsigmoidal ECx4param
-    #> ECxWeibull1 ECxWeibull2
 
 Now we have two model sets, an NEC set and a mixed NEC and ECx set,
 neither of which have the ‘NECsigmoidal’ model. Of course before we use
@@ -957,10 +966,7 @@ we should drop this as well from our model sets
 
     load(file = "out_temp.RData")
     out.NEC <- modify_jagsMANEC(out.NEC, drop.models = "NECHormesis")
-    #> Warning in extract_modStats(mod.fits): successfully fitted the models: NEC3param NEC4param
     out <- modify_jagsMANEC(out, drop.models = "NECHormesis")
-    #> Warning in extract_modStats(mod.fits): successfully fitted the models: NEC3param NEC4param NECsigmoidal ECxLinear ECxExp ECxsigmoidal ECx4param
-    #> ECxWeibull1 ECxWeibull2
 
 Now we can use the extract\_ECx function to get EC10 and EC50 values. We
 can do this using our all model set, because it is valud to use NEC
