@@ -2,7 +2,7 @@
 % Please edit documentation in R/jagsNEC_input.R
 \name{jagsNEC_input}
 \alias{jagsNEC_input}
-\title{fit.jagsNEC}
+\title{jagsNEC_input}
 \usage{
 jagsNEC_input(
   data,
@@ -30,24 +30,19 @@ If not supplied, the model may run but will not be the model you intended!}
 characteristic of the input data if not supplied.}
 
 \item{y.type}{the statistical distribution to use for the y (response) data. This may currently be one of  'binomial',
-'poisson',' 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer.
+'poisson',' 'gaussian', 'beta', 'negbin' or 'gamma'. Others can be added as required, please contact the package maintainer.
 If not supplied, the appropriate distribution will be guessed based on the distribution of the input data.}
 
-\item{params}{A vector of names indicating the parameters that to trace during the jags fit. For the NEC jags model
-this is typically 'NEC','top' and 'beta'. If left out, fit.jagsNEC will supply this based on the selected y.type and
-x.type.}
+\item{params}{a vector of names indicating the parameters to trace during the jags fit.}
 
-\item{model}{The type of model to be fit. Currently takes values of "NEC3param",
-"NEC4param", "NECsigmoidal", "NECHormesis", "ECx4param", "ECxWeibull1", or "ECxWeibull2".}
-
-\item{over.disp.}{If an overdispersed model should be used. Only changes the model fit for poisson and binomial y.type
-data. For poisson, a negative binomial model will be fit. For binomial a beta model will be fit.}
+\item{model}{the type of model to be fit. Currently takes values of "NEC3param",
+"NEC4param", "NECsigmoidal", "NECHormesis", "ECx4param", "ECxExp", "ECxLinear", "ECxsigmoidal", "ECxWeibull1", or "ECxWeibull2".}
 }
 \value{
 Modified elements of the jagsNEC input data.
 }
 \description{
-Fits an NEC model as per Fox 2010, using jags and R2jags
+Checks the model inputs for a jagsNEC model fit
 }
 \details{
 This is a wrapper function to test input data criteria and write the jags model file for use in a jagsNEC model fit

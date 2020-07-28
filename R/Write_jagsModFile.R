@@ -18,13 +18,13 @@
 #'
 #' @param  x.type The type of predictor data to write the model for
 #'
-#' @param y.type The type of response data to write the model for
+#' @param y.type the type of response data to write the model for
 #'
-#' @param mod.dat A list containing the jags model data
+#' @param mod.dat a list containing the jags model data
 #'
-#' @param params A character vector containing the parameters of the model
+#' @param params a character vector containing the parameters of the model
 #'
-#' @param model The type of model to fit
+#' @param model the type of model to fit
 #'
 #' @export
 #' @return In init.fun and updated params vector

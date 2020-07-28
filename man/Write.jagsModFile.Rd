@@ -9,13 +9,13 @@ Write.jagsModFile(x.type, y.type, mod.dat, params, model)
 \arguments{
 \item{x.type}{The type of predictor data to write the model for}
 
-\item{y.type}{The type of response data to write the model for}
+\item{y.type}{the type of response data to write the model for}
 
-\item{mod.dat}{A list containing the jags model data}
+\item{mod.dat}{a list containing the jags model data}
 
-\item{params}{A character vector containing the parameters of the model}
+\item{params}{a character vector containing the parameters of the model}
 
-\item{model}{The type of model to fit}
+\item{model}{the type of model to fit}
 }
 \value{
 In init.fun and updated params vector

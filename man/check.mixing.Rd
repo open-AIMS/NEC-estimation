@@ -18,5 +18,6 @@ A list of within and between coefficient of variations for parameter,
 the outcome of the test if between is greater than within, and the ratio.
 }
 \description{
-Calculates the within and between chain mixing and tests if the between is greater than within based on the supplied quantile probability value.
+Calculates the within and between chain mixing and tests if the between is greater
+than within based on the supplied quantile probability value.
 }

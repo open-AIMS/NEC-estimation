@@ -14,15 +14,18 @@
 
 #' plot.jagsNEC
 #'
-#' Generates a plot of a fitted jags NEC model, as returned by fit.jagsNEC.
+#' Generates a plot of a fitted jagsNEC model, as returned by fit.jagsNEC.
 #'
-#' @param X the jags NEC model fit as returned by fit.jagsNEC.
+#' @param X the jagsNEC model fit as returned by fit.jagsNEC.
 #'
-#' @param CI a logical value indicating if confidence intervals on the model fit should be plotted, calculated as the upper and lower bounds of the individual predicted values from all posterior samples
+#' @param CI a logical value indicating if confidence intervals on the model fit should be plotted,
+#' calculated as the upper and lower bounds of the individual predicted values from all posterior samples
 #'
-#' @param posterior.median a logical value indicating if the posterior median of the model fit should be plotted, calculated as the median of the individual predicted values from all posterior samples
+#' @param posterior.median a logical value indicating if the posterior median of the model fit should be plotted,
+#' calculated as the median of the individual predicted values from all posterior samples
 #'
-#' @param median.model a logical value indicating if the fitted model calculated from the median estimates of the NEC, top and beta parameters should be plotted. This is the fitted model as shown in Fox 2010.
+#' @param median.model a logical value indicating if the fitted model calculated from the median estimates of the NEC,
+#' top and beta parameters should be plotted. This is the fitted model as shown in Fox 2010.
 #'
 #' @param add.NEC a logical value indicating if the estimated NEC value and 95\% credible intervals should be added to the plot.
 #'
@@ -34,9 +37,9 @@
 #'
 #' @param lxform a function to be applied as a transformation only to axis labels and the annoted NEC/EC10 values.
 #'
-#' @param x.jitter a logical value indicating if the x data points on the plot should be jittered.
+#' @param jitter.x a logical value indicating if the x data points on the plot should be jittered.
 #'
-#' @param y.jitter a logical value indicating if the y data points on the plot should be jittered.
+#' @param jitter.y a logical value indicating if the y data points on the plot should be jittered.
 #'
 #' @param xlab a character vector to use for the x-axis label
 #'
@@ -44,18 +47,26 @@
 #'
 #' @param xlim a numeric vector of length two to use for the lower and uper limits of the x-axis range
 #'
-#' @param xticks a numeric vector indicate where to place the tick marks of the x-axis
+#' @param xticks a numeric vector indicating where to place the tick marks of the x-axis
 #'
 #' @export
 #' @return a plot of the fitted model
 
-plot.jagsNECfit <- function(X, CI = TRUE, posterior.median = TRUE, median.model = FALSE,
-                            add.NEC = TRUE, legend.loc = "topright", add.EC10 = FALSE,
-                            xform = NA, lxform = NA,
-                            jitter.x = FALSE, jitter.y = FALSE,
+plot.jagsNECfit <- function(X,
+                            CI = TRUE,
+                            posterior.median = TRUE,
+                            median.model = FALSE,
+                            add.NEC = TRUE,
+                            add.EC10 = FALSE,
+                            legend.loc = "topright",
+                            xform = NA,
+                            lxform = NA,
+                            jitter.x = FALSE,
+                            jitter.y = FALSE,
                             ylab = "response",
                             xlab = "concentration",
-                            xlim = NA, xticks = NA, ...) {
+                            xlim = NA,
+                            xticks = NA, ...) {
 
   # check if y.type is binomial
   y.type <- X$y.type
@@ -180,50 +191,32 @@ plot.jagsNECfit <- function(X, CI = TRUE, posterior.median = TRUE, median.model 
 
 #' plot.jagsMANEC
 #'
-#' Generates a plot of a fitted jags NEC model, as returned by fit.jagsNEC.
+#' Generates a plot of a fitted jagsMANEC model, as returned by fit.jagsMANEC.
 #'
-#' @param X the jags NEC model fit as returned by fit.jagsNEC.
+#' @inheritParams plot.jagsNECfit
 #'
-#' @param CI a logical value indicating if confidence intervals on the model fit should be plotted, calculated as the upper and lower bounds of the individual predicted values from all posterior samples
+#' @param xtick.rounding the rounding to be applied for manually specifying xticks, when data are back transformed via lxform.
 #'
-#' @param posterior.median a logical value indicating if the posterior median of the model fit should be plotted, calculated as the median of the individual predicted values from all posterior samples
-#'
-#' @param median.model a logical value indicating if the fitted model calculated from the median estimates of the NEC, top and beta parameters should be plotted. This is the fitted model as shown in Fox 2010.
-#'
-#' @param add.NEC a logical value indicating if the estimated NEC value and 95\% credible intervals should be added to the plot.
-#'
-#' @param add.EC10 a logical value indicating if an estimated EC10 value and 95\% credible intervals should be added to the plot.
-#'
-#' @param legend.loc a vector indicating the location of the NEC or EC10 legend, as per a call to legend.
-#'
-#' @param xform a function to be applied as a transformation of the x data.
-#'
-#' @param lxform a function to be applied as a transformation only to axis labels and the annoted NEC/EC10 values.
-#'
-#' @param x.jitter a logical value indicating if the x data points on the plot should be jittered.
-#'
-#' @param y.jitter a logical value indicating if the y data points on the plot should be jittered.
-#'
-#' @param xlab a character vector to use for the x-axis label
-#'
-#' @param ylab a character vector to use for the y-axis label
-#'
-#' @param xlim a numeric vector of length two to use for the lower and uper limits of the x-axis range
-#'
-#' @param xticks a numeric vector indicate where to place the tick marks of the x-axis
+#' @param all_models a logical, indicating if all models should be plotted individually, or if the model averaged plot should be returned.
 #'
 #' @export
 #' @return a plot of the fitted model
 
-plot.jagsMANECfit <- function(X, CI = TRUE, posterior.median = TRUE, median.model = FALSE,
-                              add.NEC = TRUE, legend.loc = "topright", add.EC10 = FALSE,
+plot.jagsMANECfit <- function(X,
+                              CI = TRUE,
+                              posterior.median = TRUE,
+                              median.model = FALSE,
+                              add.NEC = TRUE,
+                              add.EC10 = FALSE,
+                              legend.loc = "topright",
                               xform = NA, lxform = NA,
                               jitter.x = FALSE, jitter.y = FALSE,
                               ylab = "response",
                               xlab = "concentration",
                               xlim = NA,
                               ylim = NA,
-                              xticks = NA, xtick.rounding = 5,
+                              xticks = NA,
+                              xtick.rounding = 5,
                               all_models = FALSE, ...) {
   if (all_models) {
     mod_fits <- X$mod.fits

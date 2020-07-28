@@ -10,8 +10,8 @@
   posterior.median = TRUE,
   median.model = FALSE,
   add.NEC = TRUE,
-  legend.loc = "topright",
   add.EC10 = FALSE,
+  legend.loc = "topright",
   xform = NA,
   lxform = NA,
   jitter.x = FALSE,
@@ -27,23 +27,30 @@
 )
 }
 \arguments{
-\item{X}{the jags NEC model fit as returned by fit.jagsNEC.}
+\item{X}{the jagsNEC model fit as returned by fit.jagsNEC.}
 
-\item{CI}{a logical value indicating if confidence intervals on the model fit should be plotted, calculated as the upper and lower bounds of the individual predicted values from all posterior samples}
+\item{CI}{a logical value indicating if confidence intervals on the model fit should be plotted,
+calculated as the upper and lower bounds of the individual predicted values from all posterior samples}
 
-\item{posterior.median}{a logical value indicating if the posterior median of the model fit should be plotted, calculated as the median of the individual predicted values from all posterior samples}
+\item{posterior.median}{a logical value indicating if the posterior median of the model fit should be plotted,
+calculated as the median of the individual predicted values from all posterior samples}
 
-\item{median.model}{a logical value indicating if the fitted model calculated from the median estimates of the NEC, top and beta parameters should be plotted. This is the fitted model as shown in Fox 2010.}
+\item{median.model}{a logical value indicating if the fitted model calculated from the median estimates of the NEC,
+top and beta parameters should be plotted. This is the fitted model as shown in Fox 2010.}
 
 \item{add.NEC}{a logical value indicating if the estimated NEC value and 95\% credible intervals should be added to the plot.}
 
-\item{legend.loc}{a vector indicating the location of the NEC or EC10 legend, as per a call to legend.}
-
 \item{add.EC10}{a logical value indicating if an estimated EC10 value and 95\% credible intervals should be added to the plot.}
+
+\item{legend.loc}{a vector indicating the location of the NEC or EC10 legend, as per a call to legend.}
 
 \item{xform}{a function to be applied as a transformation of the x data.}
 
 \item{lxform}{a function to be applied as a transformation only to axis labels and the annoted NEC/EC10 values.}
+
+\item{jitter.x}{a logical value indicating if the x data points on the plot should be jittered.}
+
+\item{jitter.y}{a logical value indicating if the y data points on the plot should be jittered.}
 
 \item{ylab}{a character vector to use for the y-axis label}
 
@@ -51,15 +58,15 @@
 
 \item{xlim}{a numeric vector of length two to use for the lower and uper limits of the x-axis range}
 
-\item{xticks}{a numeric vector indicate where to place the tick marks of the x-axis}
+\item{xticks}{a numeric vector indicating where to place the tick marks of the x-axis}
 
-\item{x.jitter}{a logical value indicating if the x data points on the plot should be jittered.}
+\item{xtick.rounding}{the rounding to be applied for manually specifying xticks, when data are back transformed via lxform.}
 
-\item{y.jitter}{a logical value indicating if the y data points on the plot should be jittered.}
+\item{all_models}{a logical, indicating if all models should be plotted individually, or if the model averaged plot should be returned.}
 }
 \value{
 a plot of the fitted model
 }
 \description{
-Generates a plot of a fitted jags NEC model, as returned by fit.jagsNEC.
+Generates a plot of a fitted jagsMANEC model, as returned by fit.jagsMANEC.
 }

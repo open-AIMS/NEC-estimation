@@ -18,7 +18,7 @@ extract_NSEC(
 )
 }
 \arguments{
-\item{X}{a jag model fit as returned by a call to jags from fit.jagsNSEC}
+\item{X}{a jag model fit as returned by a call to jags from fit.jagsNEC}
 
 \item{sig.val}{the Probability value to use as the lower quantile to test significance of the predictor posterior values
 against the control, to estimate NSEC as an interpolated NOEC value from smooth ECx curves.}
@@ -33,11 +33,12 @@ instead of just the median and 95 credible intervals.}
 
 \item{x.range}{A range of x values over which to consider extracting NSEC}
 
-\item{prob.vals}{A vector indicating the probability values over which to return the estimated NSEC value. Defaults to 0.5 (median) and 0.025 and 0.975 (95 percent credible intervals).}
+\item{prob.vals}{A vector indicating the probability values over which to return the estimated NSEC value.
+Defaults to 0.5 (median) and 0.025 and 0.975 (95 percent credible intervals).}
 }
 \value{
 A vector containing the estimated NSEC value, including upper and lower 95 percent Credible Interval bounds
 }
 \description{
-Extracts the predicted NSEC value as desired from a jagsNSEC or a jagsMANSEC model fit.
+Extracts the predicted NSEC value as desired from a jagsNEC or a jagsMANEC model fit.
 }

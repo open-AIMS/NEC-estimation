@@ -10,10 +10,12 @@ write.jags.NECHormesis.mod(x = "gamma", y, mod.dat)
 \item{x}{the statistical distribution to use for the x (concentration) data. This may currently be one of  'beta', 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer.}
 
 \item{y}{the statistical distribution to use for the y (response) data. This may currently be one of  'binomial', 'beta', 'poisson', 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer.}
+
+\item{mod.dat}{the model data to use}
 }
 \value{
 an init function to pass to jags
 }
 \description{
-Writes an NEC model file for a three parameter model (top, beta and NEC), but allowing a slope to occur before the NEC value to accomodate hormesis. A function for generating initial values to pass to jags is also define.
+Writes an NEC model file for a three parameter model (top, beta and NEC), but allowing a slope to occur before the NEC value to accommodate hormesis. A function for generating initial values to pass to jags is also define.
 }

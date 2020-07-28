@@ -16,16 +16,19 @@
 #'
 #' Extracts the predicted ECx value as desired from a jagsNEC or a jagsMANEC model fit.
 #'
-#' @param  X a jag model fit as returned by a call to jags from fit.jagsNEC
+#' @param  X a jag model fit as returned by a call to jags from fit.jagsNEC or fit.jagsMANEC
 #'
 #' @param ECx.val the desired percentage effect value. This must be a value between 1 and 99 (for type = "relative"
 #' and "absolute"), defaults to 10.
 #'
 #' @param type a character vector, taking values of "relative",  "absolute" (the default) or "direct".
-#' Type "relative" is calculated as the percentage decrease from the maximum predicted value of the response (top) to the minimum predicted value
-#' of the response. Type "absolute" (the default) is calculated as the percentage decrease from the maximum value of the response (top)
-#' to 0 (or bot for a 4 parameter model fit). Type "direct" provides a direct estimate of the x value for a given y.
-#' Note that for the current version, ECx for an NECHormesis model is estimated at a percent decline from the control
+#' Type "relative" is calculated as the percentage decrease from the maximum predicted value of the response (top)
+#' to the minimum predicted value
+#' of the response.
+#' Type "absolute" (the default) is calculated as the percentage decrease from the maximum value of
+#' the response (top)
+#' to 0 (or bot for a 4 parameter model fit where the y data are not bounded by zero).
+#' Type "direct" provides a direct estimate of the x value for a given y.
 #'
 #' @param precision The number of unique x values over which to find ECx - large values will make the ECx estimate more
 #' precise.
@@ -33,18 +36,23 @@
 #' @param posterior A logical value indicating if the full posterior sample of calculated ECx values should be returned
 #' instead of just the median and 95 credible intervals.
 #'
+#' @param hormesis.def takes values of 'max' or 'control' (the default).
+#' If 'control' Absolute and relative ECx values are calculated as a decline from the control.
+#' If 'max' Absolute and relative ECx values are calculated as a decline from the maximum predicted value.
+#'
 #' @param xform A function to apply to the returned estimated concentration values
 #'
 #' @param x.range A range of x values over which to consider extracting ECx
 #'
-#' @param prob.vals A vector indicating the probability values over which to return the estimated ECx value. Defaults to 0.5 (median) and 0.025 and 0.975 (95 percent credible intervals).
+#' @param prob.vals A vector indicating the probability values over which to return the estimated ECx value.
+#' Defaults to 0.5 (median) and 0.025 and 0.975 (95 percent credible intervals).
 #'
 #' @export
 #' @return A vector containing the estimated ECx value, including upper and lower 95 percent Credible Interval bounds
 #'
-extract_ECx <- function(X, ECx.val = 10, precision = 10000, posterior = FALSE, type = "absolute",
+extract_ECx <- function(X, ECx.val = 10, type = "absolute", precision = 10000, posterior = FALSE,
                         hormesis.def = "control", xform = NA, x.range = NA,
-                        prob.vals = c(0.5, 0.025, 0.975), link = "identity") {
+                        prob.vals = c(0.5, 0.025, 0.975)) {
   if (class(X) == "jagsNECfit") {
     ECx <- extract_ECx.jagsNECfit(X,
       x.range = x.range,
@@ -71,22 +79,9 @@ extract_ECx <- function(X, ECx.val = 10, precision = 10000, posterior = FALSE, t
 
 #' extract_ECx.jagsNEC
 #'
-#' Extracts the predicted ECx value as desired from a jagsNEC model fit obeject
+#' Extracts the predicted ECx value as desired from a jagsNEC model fit object
 #'
-#' @param  X a jag model fit as returned by a call to jags from fit.jagsNEC
-#'
-#' @param ECx.val the desired percentage effect value.
-#'
-#' @param type a character vector indicating if relative or absolute values for the ECx should be calculated.
-#'
-#' @param precision The number of unique x values over which to find ECx.
-#'
-#' @param posterior A logical value indicating if the full posterior sample of calculated ECx values should be returned
-#' instead of just the median and 95 credible intervals.
-#'
-#' @param xform A function to apply to the returned estimated concentration values
-#'
-#' @param prob.vals A vector indicating the probability values over which to return the estimated ECx value.
+#' @inheritParams extract_ECx
 #'
 #' @export
 #' @return A vector containing the estimated ECx value, including upper and lower 95 percent Credible Interval bounds
@@ -186,23 +181,9 @@ extract_ECx.jagsNECfit <- function(X, ECx.val = 10, precision = 10000, posterior
 
 #' extract_ECx.jagsMANEC
 #'
-#' Extracts the predicted ECx value as desired from a jagsNEC model fit obeject
+#' Extracts the predicted ECx value as desired from a jagsMANEC model fit obeject
 #'
-#' @param  X a fitted jagsMANEC model object, containing a list of jag model fit as returned by a call to jags from
-#' fit.jagsNEC
-#'
-#' @param ECx.val the desired percentage effect value.
-#'
-#' @param type a character vector indicating if relative or absolute values for the ECx should be calculated.
-#'
-#' @param precision The number of unique x values over which to find ECx.
-#'
-#' @param posterior A logical value indicating if the full posterior sample of calculated ECx values
-#' should be returned instead of just the median and 95 credible intervals.
-#'
-#' @param xform A function to apply to the returned estimated concentration values
-#'
-#' @param prob.vals A vector indicating the probability values over which to return the estimated ECx value.
+#' @inheritParams extract_ECx
 #'
 #' @export
 #' @return A vector containing the estimated ECx value, including upper and lower 95 percent Credible Interval bounds

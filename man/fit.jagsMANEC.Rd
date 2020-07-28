@@ -17,8 +17,8 @@ fit.jagsMANEC(
   n.tries = 3,
   params = c("top", "beta", "NEC", "SS", "SSsim"),
   over.disp = FALSE,
-  model.set = "all",
   sig.val = 0.01,
+  model.set = "all",
   ...
 )
 }
@@ -29,30 +29,30 @@ fit.jagsMANEC(
 
 \item{y.var}{the column heading indicating the response (y) variable}
 
-\item{trials.var}{the column heading indicating the column for the number of "trials" for binomial response data. If not supplied, the model may run but will not be the model you intended!}
+\item{trials.var}{the column heading indicating the column for the number of "trials" for binomial response data.
+If not supplied, the model may run but will not be the model you intended!}
 
-\item{x.type}{the statistical distribution to use for the x (concentration) data. This will be guess based on the characteristic of the input data if not supplied. As some concentration-response data will use zero concentration, and there is no distribution on the continuous scale from 0 to in (ie tweedie) available in jags, a small offset is added (1/10^3 of the next lowest value) to zero values of concentration where these are gamma distributed.}
+\item{x.type}{the statistical distribution to use for the x (concentration) data. This will be guess based on the
+characteristic of the input data if not supplied.}
 
-\item{y.type}{the statistical distribution to use for the y (response) data. This may currently be one of  'binomial', 'poisson',' 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer. If not supplied, the appropriate distribution will be guessed based on the distribution of the input data.}
+\item{y.type}{the statistical distribution to use for the y (response) data. This may currently be one of  'binomial',
+'poisson',' 'gaussian', 'beta', 'negbin' or 'gamma'. Others can be added as required, please contact the package maintainer.
+If not supplied, the appropriate distribution will be guessed based on the distribution of the input data.}
 
 \item{burnin}{the number of iterations to use as burnin.}
 
-\item{n.iter}{the number of interations to run following burnin for the initial jags fit. Defaults to 500 + burnin, but small values are good when the model may have trouble fitting and is updated by n.iter.update iterations anyway.}
+\item{n.iter}{the number of iterations to run following burnin for the initial jags fit. Defaults to 500 + burnin,}
 
-\item{params}{A vector of names indicating the parameters that to trace during the jags fit. For the NEC jags model this is typically 'NEC','top' and 'beta'. If left out, fit.jagsNEC will supply this based on the selected y.type and x.type.}
+\item{n.tries}{the number of tries to attempt to fit the model and attain good chain mixing. See details below.}
+
+\item{params}{a vector of names indicating the parameters to trace during the jags fit.}
+
+\item{sig.val}{probability value to use as the lower quantile to test significance of the predictor posterior values
+against the control, to estimate NSEC as an interpolated NOEC value from smooth ECx curves.}
 
 \item{model.set}{A vector of the names of model types to be fit. Currently defaults to
 all available model types. If "NEC" is supplied, only the NEC models will be fit. If "ECx" is supplied,
- only continuous curve models will be fit.}
-
-\item{sig.val}{Probability value to use as the lower quantile to test significance of the predictor posterior values
-against the control, to estimate NEC as an interpolated NOEC value from smooth ECx curves.}
-
-\item{n.iter.burnin}{the number of interations to run overall. This should be large. Defaults to 10000.}
-
-\item{n.tries.}{If the initial model fit fails because it cannot be fit by jags (miss-specified priors, invalid initial values), or because there is poor chain mixing fit.jagsNEC will try n.tries many times using the init.fun defined by the write model function. If all those attempts fail, fit.jagsNEC will then try using default values provided by jags. The function will only return an error if all n.tries fail.}
-
-\item{over.disp.}{If an overdispersed model should be used. Only changes the model fit for poisson and binomial y.type data. For poisson, a negative binomial model will be fit. For binomial a beta model will be fit.}
+ only continuous curve models will be fit. see ?fit.jagsNEC to see the available models to fit.}
 }
 \value{
 All successully fitted jags model fits, mod.stats a data.frame of model fit statistics, NEC a model

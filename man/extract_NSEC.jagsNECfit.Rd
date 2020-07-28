@@ -2,7 +2,7 @@
 % Please edit documentation in R/extract_NSEC.R
 \name{extract_NSEC.jagsNECfit}
 \alias{extract_NSEC.jagsNECfit}
-\title{extract_NSEC.jagsNSEC}
+\title{extract_NSEC.jagsNEC}
 \usage{
 extract_NSEC.jagsNECfit(
   X,
@@ -16,23 +16,27 @@ extract_NSEC.jagsNECfit(
 )
 }
 \arguments{
-\item{X}{a jag model fit as returned by a call to jags from fit.jagsNSEC}
+\item{X}{a jag model fit as returned by a call to jags from fit.jagsNEC}
 
 \item{sig.val}{the Probability value to use as the lower quantile to test significance of the predictor posterior values
 against the control, to estimate NSEC as an interpolated NOEC value from smooth ECx curves.}
 
-\item{precision}{The number of unique x values over which to find NSEC.}
+\item{precision}{The number of unique x values over which to find NSEC - large values will make the NSEC estimate more
+precise.}
 
 \item{posterior}{A logical value indicating if the full posterior sample of calculated NSEC values should be returned
 instead of just the median and 95 credible intervals.}
 
+\item{x.range}{A range of x values over which to consider extracting NSEC}
+
 \item{xform}{A function to apply to the returned estimated concentration values}
 
-\item{prob.vals}{A vector indicating the probability values over which to return the estimated NSEC value.}
+\item{prob.vals}{A vector indicating the probability values over which to return the estimated NSEC value.
+Defaults to 0.5 (median) and 0.025 and 0.975 (95 percent credible intervals).}
 }
 \value{
 A vector containing the estimated NSEC value, including upper and lower 95 percent Credible Interval bounds
 }
 \description{
-Extracts the predicted NSEC value as desired from a jagsNSEC model fit object
+Extracts the predicted NSEC value as desired from a jagsNEC model fit object
 }

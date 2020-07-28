@@ -1021,7 +1021,7 @@ lower asymptote (otherwise the predicted values may never reach zero).
 Here we will consider our *ECx* values in relative terms instead for
 simplicity, which means the *ECx* values represent a percentage decline
 in the response relative to the range of the fitted data across the
-observed range of concentration (x.val). We will do this for both out
+observed range of concentration (x.val). We will do this for both our
 EC10 and our EC50 to be consistent.
 
     load(file = "out_temp.RData")

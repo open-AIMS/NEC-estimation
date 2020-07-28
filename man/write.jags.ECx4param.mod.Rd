@@ -10,10 +10,12 @@ write.jags.ECx4param.mod(x = "gamma", y, mod.dat)
 \item{x}{the statistical distribution to use for the x (concentration) data. This may currently be one of  'beta', 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer.}
 
 \item{y}{the statistical distribution to use for the y (response) data. This may currently be one of  'binomial', 'beta', 'poisson', 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer.}
+
+\item{mod.dat}{the model data to use}
 }
 \value{
 an init function to pass to jags
 }
 \description{
-Writes an EC50 model (log logistic) file and generates a function for initial values to pass to jags
+Writes the ECx4param model (log logistic) file and generates a function for initial values to pass to jags
 }

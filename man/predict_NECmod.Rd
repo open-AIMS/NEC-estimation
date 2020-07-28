@@ -26,7 +26,11 @@ predict_NECmod(
 
 \item{alpha}{the offset of a gaussian y response variable}
 
+\item{d}{the exponent used in the sigmoidal models}
+
 \item{bot}{the lower plateau}
+
+\item{slope}{the slope of the positive linear increase in the hormesis model}
 }
 \value{
 A list containing x and fitted y, with up and lw values

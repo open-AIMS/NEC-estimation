@@ -17,24 +17,40 @@ extract_ECx.jagsNECfit(
 )
 }
 \arguments{
-\item{X}{a jag model fit as returned by a call to jags from fit.jagsNEC}
+\item{X}{a jag model fit as returned by a call to jags from fit.jagsNEC or fit.jagsMANEC}
 
-\item{ECx.val}{the desired percentage effect value.}
+\item{ECx.val}{the desired percentage effect value. This must be a value between 1 and 99 (for type = "relative"
+and "absolute"), defaults to 10.}
 
-\item{precision}{The number of unique x values over which to find ECx.}
+\item{precision}{The number of unique x values over which to find ECx - large values will make the ECx estimate more
+precise.}
 
 \item{posterior}{A logical value indicating if the full posterior sample of calculated ECx values should be returned
 instead of just the median and 95 credible intervals.}
 
-\item{type}{a character vector indicating if relative or absolute values for the ECx should be calculated.}
+\item{type}{a character vector, taking values of "relative",  "absolute" (the default) or "direct".
+Type "relative" is calculated as the percentage decrease from the maximum predicted value of the response (top)
+to the minimum predicted value
+of the response.
+Type "absolute" (the default) is calculated as the percentage decrease from the maximum value of
+the response (top)
+to 0 (or bot for a 4 parameter model fit where the y data are not bounded by zero).
+Type "direct" provides a direct estimate of the x value for a given y.}
+
+\item{hormesis.def}{takes values of 'max' or 'control' (the default).
+If 'control' Absolute and relative ECx values are calculated as a decline from the control.
+If 'max' Absolute and relative ECx values are calculated as a decline from the maximum predicted value.}
+
+\item{x.range}{A range of x values over which to consider extracting ECx}
 
 \item{xform}{A function to apply to the returned estimated concentration values}
 
-\item{prob.vals}{A vector indicating the probability values over which to return the estimated ECx value.}
+\item{prob.vals}{A vector indicating the probability values over which to return the estimated ECx value.
+Defaults to 0.5 (median) and 0.025 and 0.975 (95 percent credible intervals).}
 }
 \value{
 A vector containing the estimated ECx value, including upper and lower 95 percent Credible Interval bounds
 }
 \description{
-Extracts the predicted ECx value as desired from a jagsNEC model fit obeject
+Extracts the predicted ECx value as desired from a jagsNEC model fit object
 }

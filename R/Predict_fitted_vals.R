@@ -26,9 +26,13 @@
 #'
 #' @param beta the exponential decay rate
 #'
+#' @param alpha the offset of a gaussian y response variable
+#'
+#' @param d the exponent used in the sigmoidal models
+#'
 #' @param bot the lower plateau
 #'
-#' @param alpha the offset of a gaussian y response variable
+#' @param slope the slope of the positive linear increase in the hormesis model
 #'
 #' @export
 #' @return A list containing x and fitted y, with up and lw values
@@ -129,11 +133,11 @@ predict_WB2mod <- function(x.vec, EC50, top, beta, bot = 0) {
 #'
 #' @param  x.vec the x vector over which to calculate
 #'
-#' @param EC50 the 50 percent effect concentration
-#'
 #' @param top the upper plateau
 #'
 #' @param beta the linear decay rate
+#'
+#' @param link the link function used
 #'
 #' @export
 #' @return A list containing x and fitted y, with up and lw values
@@ -191,7 +195,7 @@ predict_ECxsigmoidalmod <- function(x.vec, top, beta, d) {
 #'
 #' @param  x.vec the x vector over which to calculate
 #'
-#' @param link The link function used
+#' @param link the link function used
 #'
 #' @export
 #' @return A list containing x and fitted y, with up and lw values
@@ -216,7 +220,7 @@ xform_link <- function(pred.vec, use.link) {
 #' predict_NECbugsmod
 #'
 #'
-#' @param X the jags NEC model fit (as returned by fit.jagsNEC)
+#' @param X the jagsNEC model fit (as returned by fit.jagsNEC)
 #'
 #' @param precision the number of x values over which to predict values
 #'
@@ -411,7 +415,7 @@ predict_NECbugsmod <- function(X, precision = 100, x.range = NA) {
 #'
 #' Calculated predicted values for a jagsNEC or a jagsMANEC model fit.
 #'
-#' @param  X a jags model fit as returned by a call to jags from fit.jagsNEC
+#' @param  X a jagsNEC model fit as returned by a call to jags from fit.jagsNEC or fit.jagsMANEC
 #'
 #' @param precision The number of unique x values over which to find fitted - large values will make the fitted estimate more
 #' precise.
@@ -458,16 +462,7 @@ predict <- function(X, precision = 100, posterior = FALSE, x.range = NA,
 #'
 #' Extracts the predicted fitted value as desired from a jagsNEC model fit obeject
 #'
-#' @param  X a jag model fit as returned by a call to jags from fit.jagsNEC
-#'
-#' @param precision The number of unique x values over which to find fitted.
-#'
-#' @param x.range A range of x values over which to consider extracting fitted
-#'
-#' @param posterior A logical value indicating if the full posterior sample of calculated fitted values should be returned
-#' instead of just the median and 95 credible intervals.
-#'
-#' @param prob.vals A vector indicating the probability values over which to return the estimated fitted value.
+#' @inheritParams predict
 #'
 #' @export
 #' @return A vector containing the estimated fitted value, including upper and lower 95 percent Credible Interval bounds
@@ -494,17 +489,7 @@ predict.jagsNECfit <- function(X, precision = 100, posterior = FALSE, x.range = 
 #'
 #' Extracts the predicted fitted value as desired from a jagsNEC model fit obeject
 #'
-#' @param  X a fitted jagsMANEC model object, containing a list of jag model fit as returned by a call to jags from
-#' fit.jagsNEC
-#'
-#' @param precision The number of unique x values over which to calculated fitted values.
-#'
-#' @param x.range A range of x values over which to consider extracting fitted
-#'
-#' @param posterior A logical value indicating if the full posterior sample of calculated fitted values
-#' should be returned instead of just the median and 95 credible intervals.
-#'
-#' @param prob.vals A vector indicating the probability values over which to return the estimated fitted value.
+#' @inheritParams predict
 #'
 #' @export
 #' @return A vector containing the estimated fitted value, including upper and lower 95 percent Credible Interval bounds

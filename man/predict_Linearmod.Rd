@@ -13,7 +13,7 @@ predict_Linearmod(x.vec, top, beta, link)
 
 \item{beta}{the linear decay rate}
 
-\item{EC50}{the 50 percent effect concentration}
+\item{link}{the link function used}
 }
 \value{
 A list containing x and fitted y, with up and lw values

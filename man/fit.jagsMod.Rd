@@ -15,23 +15,23 @@ fit.jagsMod(
 )
 }
 \arguments{
-\item{mod.dat}{The jags model data to use}
+\item{mod.dat}{the model data to use for the model fit}
 
-\item{init.fun}{A jags init.fun with which to generate starting values}
+\item{init.fun}{the init function to use for the model fit}
 
-\item{params}{A vector of names indicating the parameters that to trace during the jags fit}
+\item{params}{a vector of names indicating the parameters to trace during the jags fit.}
 
-\item{burnin}{the number of interations to run overall. This should be large. Defaults to 10000.}
+\item{burnin}{the number of iterations to use as burnin.}
 
-\item{n.iter}{the number of interations to run following burnin for the initial jags fit. Defaults to 500 + burnin,}
+\item{n.iter}{the number of iterations to run following burnin for the initial jags fit. Defaults to 500 + burnin,}
 
-\item{init.value.warning}{Indicates if a warning should be given if the init.fun generated fails.}
+\item{init.value.warning}{indicates if a warning should be given if the init.fun generated fails.}
 
-\item{n.tries}{The number of tries to attempt to fit the model and attain good chain mixing. See details below.}
+\item{n.tries}{the number of tries to attempt to fit the model and attain good chain mixing. See details below.}
 }
 \value{
 The fitted jags model output
 }
 \description{
-Fits an NEC model as per Fox 2010, using jags and R2jags
+Fits a Bayesian model using jags and R2jags
 }

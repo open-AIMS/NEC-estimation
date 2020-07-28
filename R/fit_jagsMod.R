@@ -14,23 +14,13 @@
 
 #' fit.jagsMod
 #'
-#' Fits an NEC model as per Fox 2010, using jags and R2jags
+#' Fits a Bayesian model using jags and R2jags
 #'
-#' @param mod.dat The jags model data to use
+#' @param mod.dat the model data to use for the model fit
 #'
-#' @param init.fun A jags init.fun with which to generate starting values
+#' @param init.fun the init function to use for the model fit
 #'
-#' @param  params A vector of names indicating the parameters that to trace during the jags fit
-#'
-#' @param burnin the number of iterations to use as burnin.
-#'
-#' @param n.iter the number of interations to run following burnin for the initial jags fit. Defaults to 500 + burnin,
-#'
-#' @param burnin the number of interations to run overall. This should be large. Defaults to 10000.
-#'
-#' @param n.tries The number of tries to attempt to fit the model and attain good chain mixing. See details below.
-#'
-#' @param init.value.warning Indicates if a warning should be given if the init.fun generated fails.
+#' @inheritParams fit.jagsNEC
 #'
 #' @export
 #' @return The fitted jags model output

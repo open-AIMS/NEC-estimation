@@ -101,5 +101,5 @@ plot_jagsNEC <- function(X, CI = TRUE, posterior.median = TRUE, median.model = F
   }
 
 
-  warning("The function plot_jagsNEC has been replaced with a generic plot function. You can now just call plot()")
+  warning("The function plot_jagsNEC has been replaced with a generic plot function. You can now just call plot(). This function will be depracated in future releases.")
 }

@@ -22,10 +22,14 @@ compare_posterior(
 \item{ECx.val}{the desired percentage effect value. This must be a value between 1 and 99 (for type = "relative"
 and "absolute"), defaults to 10.}
 
-\item{type}{a character vector indicating the type of ECx.val to calculate, taking values of "relative",  "absolute" (the default) or "direct".
-Type "relative" is calculated as the percentage decrease from the maximum predicted value of the response (top) to the minimum predicted value
-of the response. Type "absolute" (the default) is calculated as the percentage decrease from the maximum value of the response (top)
-to 0 (or bot for a 4 parameter model fit). Type "direct" provides a direct estimate of the x value for a given y.
+\item{type}{a character vector indicating the type of ECx.val to calculate, taking values of "relative",
+"absolute" (the default) or "direct".
+Type "relative" is calculated as the percentage decrease from the maximum predicted value of the response (top)
+to the minimum predicted value
+of the response. Type "absolute" (the default) is calculated as the percentage decrease from the maximum value
+of the response (top)
+to 0 (or bot for a 4 parameter model fit when the y data are not bounded by zero).
+Type "direct" provides a direct estimate of the x value for a given y.
 Note that for the current version, ECx for an NECHormesis model is estimated at a percent decline from the control}
 }
 \value{
@@ -38,11 +42,13 @@ a list containing:
    \item "Prob_diff" the probability that x is great than y
    \item "plot1" a ggplot2 plot of the input posteriors
    \item "plot2" a ggplot2 plot of the difference of the input posteriors (x-y)
+   \item "df3.s" the internal df3.s object
+   \item "df4.s" the internal df4.s object
 }
 Probability (%) Posterior 1 is greater than posterior 2
 }
 \description{
 Compares two posterior samples through differencing.
 Can be used to compare two NEC values from jagsNEC or jagsMANEC model fits,
-two ECx values also from jagsNEC or jagsMANEC model fits, or simply any two posteriors passed as numeric vectors.
+two ECx values from jagsNEC or jagsMANEC model fits, or simply any two posteriors passed as numeric vectors.
 }

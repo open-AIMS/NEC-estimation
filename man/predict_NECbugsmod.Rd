@@ -7,7 +7,7 @@
 predict_NECbugsmod(X, precision = 100, x.range = NA)
 }
 \arguments{
-\item{X}{the jags NEC model fit (as returned by fit.jagsNEC)}
+\item{X}{the jagsNEC model fit (as returned by fit.jagsNEC)}
 
 \item{precision}{the number of x values over which to predict values}
 

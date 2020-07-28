@@ -14,9 +14,9 @@
 
 #' extract_NSEC
 #'
-#' Extracts the predicted NSEC value as desired from a jagsNSEC or a jagsMANSEC model fit.
+#' Extracts the predicted NSEC value as desired from a jagsNEC or a jagsMANEC model fit.
 #'
-#' @param  X a jag model fit as returned by a call to jags from fit.jagsNSEC
+#' @param  X a jag model fit as returned by a call to jags from fit.jagsNEC
 #'
 #' @param sig.val the Probability value to use as the lower quantile to test significance of the predictor posterior values
 #' against the control, to estimate NSEC as an interpolated NOEC value from smooth ECx curves.
@@ -31,7 +31,8 @@
 #'
 #' @param x.range A range of x values over which to consider extracting NSEC
 #'
-#' @param prob.vals A vector indicating the probability values over which to return the estimated NSEC value. Defaults to 0.5 (median) and 0.025 and 0.975 (95 percent credible intervals).
+#' @param prob.vals A vector indicating the probability values over which to return the estimated NSEC value.
+#' Defaults to 0.5 (median) and 0.025 and 0.975 (95 percent credible intervals).
 #'
 #' @export
 #' @return A vector containing the estimated NSEC value, including upper and lower 95 percent Credible Interval bounds
@@ -62,23 +63,11 @@ extract_NSEC <- function(X, sig.val = 0.01, precision = 10000, posterior = FALSE
   return(NSEC)
 }
 
-#' extract_NSEC.jagsNSEC
+#' extract_NSEC.jagsNEC
 #'
-#' Extracts the predicted NSEC value as desired from a jagsNSEC model fit object
+#' Extracts the predicted NSEC value as desired from a jagsNEC model fit object
 #'
-#' @param  X a jag model fit as returned by a call to jags from fit.jagsNSEC
-#'
-#' @param sig.val the Probability value to use as the lower quantile to test significance of the predictor posterior values
-#' against the control, to estimate NSEC as an interpolated NOEC value from smooth ECx curves.
-#'
-#' @param precision The number of unique x values over which to find NSEC.
-#'
-#' @param posterior A logical value indicating if the full posterior sample of calculated NSEC values should be returned
-#' instead of just the median and 95 credible intervals.
-#'
-#' @param xform A function to apply to the returned estimated concentration values
-#'
-#' @param prob.vals A vector indicating the probability values over which to return the estimated NSEC value.
+#' @inheritParams extract_NSEC
 #'
 #' @export
 #' @return A vector containing the estimated NSEC value, including upper and lower 95 percent Credible Interval bounds
@@ -157,24 +146,11 @@ extract_NSEC.jagsNECfit <- function(X, sig.val = 0.01, precision = 10000, poster
   }
 }
 
-#' extract_NSEC.jagsMANSEC
+#' extract_NSEC.jagsMANEC
 #'
-#' Extracts the predicted NSEC value as desired from a jagsNSEC model fit object
+#' Extracts the predicted NSEC value as desired from a jagsMANEC model fit object
 #'
-#' @param  X a fitted jagsMANSEC model object, containing a list of jag model fit as returned by a call to jags from
-#' fit.jagsNSEC
-#'
-#' @param sig.val the Probability value to use as the lower quantile to test significance of the predictor posterior values
-#' against the control, to estimate NSEC as an interpolated NOEC value from smooth ECx curves.
-#'
-#' @param precision The number of unique x values over which to find NSEC.
-#'
-#' @param posterior A logical value indicating if the full posterior sample of calculated NSEC values
-#' should be returned instead of just the median and 95 credible intervals.
-#'
-#' @param xform A function to apply to the returned estimated concentration values
-#'
-#' @param prob.vals A vector indicating the probability values over which to return the estimated NSEC value.
+#' @inheritParams extract_NSEC
 #'
 #' @export
 #' @return A vector containing the estimated NSEC value, including upper and lower 95 percent Credible Interval bounds

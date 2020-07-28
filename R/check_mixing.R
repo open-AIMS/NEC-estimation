@@ -14,7 +14,8 @@
 
 #' check.mixing
 #'
-#' Calculates the within and between chain mixing and tests if the between is greater than within based on the supplied quantile probability value.
+#' Calculates the within and between chain mixing and tests if the between is greater
+#' than within based on the supplied quantile probability value.
 #'
 #' @param  J a jag model fit as returned by a call to jags
 #'

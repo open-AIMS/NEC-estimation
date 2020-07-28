@@ -14,7 +14,7 @@ predict(
 )
 }
 \arguments{
-\item{X}{a jags model fit as returned by a call to jags from fit.jagsNEC}
+\item{X}{a jagsNEC model fit as returned by a call to jags from fit.jagsNEC or fit.jagsMANEC}
 
 \item{precision}{The number of unique x values over which to find fitted - large values will make the fitted estimate more
 precise.}

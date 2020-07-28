@@ -12,35 +12,11 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-#' fit.jagsNEC
+#' jagsNEC_input
 #'
-#' Fits an NEC model as per Fox 2010, using jags and R2jags
+#' Checks the model inputs for a jagsNEC model fit
 #'
-#' @param  data a data.frame containing the data to use for the model
-#'
-#' @param x.var the column heading indicating the concentration (x) variable
-#'
-#' @param y.var the column heading indicating the response (y) variable
-#'
-#' @param trials.var the column heading indicating the column for the number of "trials" for binomial response data.
-#' If not supplied, the model may run but will not be the model you intended!
-#'
-#' @param x.type the statistical distribution to use for the x (concentration) data. This will be guess based on the
-#' characteristic of the input data if not supplied.
-#'
-#' @param y.type the statistical distribution to use for the y (response) data. This may currently be one of  'binomial',
-#' 'poisson',' 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer.
-#' If not supplied, the appropriate distribution will be guessed based on the distribution of the input data.
-#'
-#' @param  params A vector of names indicating the parameters that to trace during the jags fit. For the NEC jags model
-#' this is typically 'NEC','top' and 'beta'. If left out, fit.jagsNEC will supply this based on the selected y.type and
-#' x.type.
-#'
-#' @param over.disp. If an overdispersed model should be used. Only changes the model fit for poisson and binomial y.type
-#' data. For poisson, a negative binomial model will be fit. For binomial a beta model will be fit.
-#'
-#' @param model The type of model to be fit. Currently takes values of "NEC3param",
-#' "NEC4param", "NECsigmoidal", "NECHormesis", "ECx4param", "ECxWeibull1", or "ECxWeibull2".
+#' @inheritParams fit.jagsNEC
 #'
 #' @details
 #'

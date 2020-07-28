@@ -9,7 +9,7 @@ xform_link(pred.vec, use.link)
 \arguments{
 \item{x.vec}{the x vector over which to calculate}
 
-\item{link}{The link function used}
+\item{link}{the link function used}
 }
 \value{
 A list containing x and fitted y, with up and lw values

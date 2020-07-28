@@ -14,11 +14,9 @@
 
 #' write.jags.NEC3param.mod
 #'
-#' Writes an NEC model file for a three parameter model (top, beta and NEC) and generates a function for initial values to pass to jags
+#' Writes an NEC3param model file for a three parameter model (top, beta and NEC) and generates a function for initial values to pass to jags
 #'
-#' @param x the statistical distribution to use for the x (concentration) data. This may currently be one of  'beta', 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer.
-#'
-#' @param y the statistical distribution to use for the y (response) data. This may currently be one of  'binomial', 'beta', 'poisson', 'gaussian', or 'gamma'. Others can be added as required, please contact the package maintainer.
+#' @inheritParams write.jags.ECx4param.mod
 #'
 #' @export
 #' @return an init function to pass to jags

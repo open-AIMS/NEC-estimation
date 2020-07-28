@@ -14,9 +14,9 @@
 
 #' wi
 #'
-#' Calculates model weights based on AIC, AICc, or BIC, or DIC
+#' Calculates model weights based on AIC, AICc, BIC, or DIC
 #'
-#' @param vec A vector of AIC, AICc or BIC values
+#' @param vec A vector of AIC, AICc, BIC or DIC values
 #'
 #' @export
 #' @return A vector of weights

@@ -12,20 +12,20 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-#' modify.jagsMANEC
+#' modify_jagsMANEC
 #'
-#' Modifys an existing jagsMANECfit, for example, but adding or removing fitted models.
+#' Modifies an existing jagsMANECfit, for example, but adding or removing fitted models.
 #'
 #' @param  jagsMANECfit a jagsMANECfit output list, as returned by fit.jagsMANEC
 #'
-#' @param model.set A character vector containing the of names of model types to be included in the modified fit.
+#' @param model.set a character vector containing the of names of model types to be included in the modified fit.
 #'
-#' @param drop.models A character vector containing the names of model types you which to drop for the modified fit.
+#' @param drop.models a character vector containing the names of model types to drop in the modified fit.
 #'
-#' @param add.models A character vector containing the names of model types to add to the modified fit.
+#' @param add.models a character vector containing the names of model types to add to the modified fit.
 #'
 #' @export
-#' @return All successully fitted jagsMANECfit model fit.
+#' @return All successfully fitted jagsMANECfit model fit.
 
 modify_jagsMANEC <- function(jagsMANECfit, model.set = NA, drop.models = NA, add.models = NA) {
 

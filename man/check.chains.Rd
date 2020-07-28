@@ -7,9 +7,11 @@
 check.chains(X, name = "", pdf.file = "")
 }
 \arguments{
-\item{X}{a jag model fit as returned by a call to jags from fit.jagsNEC}
+\item{X}{a jag model fit as returned by a call to jags from fit.jagsNEC or fit.jagsMANEC}
 
 \item{name}{an optional character string indicating the label to be placed at the top of the plotting window}
+
+\item{pdf.file}{A character string to use in the file name for saving the plots as a pdf}
 }
 \value{
 A plot of MCMC chains and ACF diagrams for each element in params.

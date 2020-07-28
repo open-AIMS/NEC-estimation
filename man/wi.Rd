@@ -7,11 +7,11 @@
 wi(vec)
 }
 \arguments{
-\item{vec}{A vector of AIC, AICc or BIC values}
+\item{vec}{A vector of AIC, AICc, BIC or DIC values}
 }
 \value{
 A vector of weights
 }
 \description{
-Calculates model weights based on AIC, AICc, or BIC, or DIC
+Calculates model weights based on AIC, AICc, BIC, or DIC
 }
