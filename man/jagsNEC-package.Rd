@@ -9,7 +9,7 @@ Package: \tab jagsNEC\cr
 Type: \tab Package\cr
 Title: \tab No-Effect-Concentration modelling with jags\cr
 Version: \tab 1.0\cr
-Date: \tab 2019-09-06\cr
+Date: \tab 2020-28-07\cr
 Author: \tab Rebecca Fisher\cr
 Maintainer: \tab Rebecca Fisher\cr
 License: \tab Apache 2\cr
@@ -19,33 +19,33 @@ Depends: \tab R2jags\cr
 \description{
 Bayesian model fitting can be difficult to automate across a broad range of usage cases, particularly
 with respect to specifying valid initial values and appropriate priors. This is one reason the use of
-Bayesian statistics for *NEC* estimation (or even *ECx* estimation) is not currently widely adopted across
+Bayesian statistics for NEC estimation (or even ECx estimation) is not currently widely adopted across
 the broader ecotoxicological community, who rarely have access to specialist statistical expertise.
 
-The *jagsNEC* package attempts to provide an accessible interface to the *R2jags* package specifically for
-fitting *NEC* models and other concentration-response models, with a range of models specified based on the
+The jagsNEC package attempts to provide an accessible interface to the R2jags package specifically for
+fitting NEC models and other concentration-response models, with a range of models specified based on the
 known distribution of the "concentration" or "dose" variable (the predictor, x) as well as the "response" (y) variable.
 
-The model formula, including priors and the *init* function required to call a *jags* model are automatically
+The model formula, including priors and the init function required to call a jags model are automatically
 generated based on information contained in the supplied data. While the distribution of the x and y variables
-can be specified directly, *jagsNEC* will automatically 'guess' the correct distribution to use based on the
+can be specified directly, jagsNEC will automatically 'guess' the correct distribution to use based on the
 characteristics of the provided data.
 
-Specific models can be fit directly using *fit.jagsNEC*.
-Alternatively it is possible to fit a specific set or all of the available models using the function *fit.jagsMANEC*.
-The *fit.jagsMANEC* function returns a model weighted estimate of predicted posterior values, based on deviance information criteria (DIC) model weights,
-analogous to the way model weights are generated using AIC or AICc [@Burnham2002].
-It is also possible to obtain all individual model fits from the fitted *jagsMANECfit* model object if required.
-Multi-model inference can be useful where there are a range of plausible models that could be used [@Burnham2002] and
-has been recently adopted in ecotoxicology for SSD model inference [@Thorley2018].
+Specific models can be fit directly using fit.jagsNEC.
+Alternatively it is possible to fit a specific set or all of the available models using the function fit.jagsMANEC.
+The fit.jagsMANEC function returns a model weighted estimate of predicted posterior values, based on deviance information criteria (DIC) model weights,
+analogous to the way model weights are generated using AIC or AICc.
+It is also possible to obtain all individual model fits from the fitted jagsMANECfit model object if required.
+Multi-model inference can be useful where there are a range of plausible models that could be used and
+has been recently adopted in ecotoxicology for SSD model inference.
 
 An additional endpoint has also been derived using Bayesian posterior predicted values to estimate the "No-Statistical-Effect-Concentration"
-as the concentration at which predicted values for each MCMC chain fall below a lower percentile bound (defined as *sig.val*) of the control,
-which is assumed to be the lowest treatment (x.var) concentration in the data. *NSEC* estimates are currently used to approximate *NEC*
-for models without a specific *NEC* step parameter (in *jagsNEC* these have the prefix *ECx* in their model name). Note that this endpoint definition
+as the concentration at which predicted values for each MCMC chain fall below a lower percentile bound (defined as sig.val) of the control,
+which is assumed to be the lowest treatment (x.var) concentration in the data. NSEC estimates are currently used to approximate NEC
+for models without a specific NEC step parameter (in jagsNEC these have the prefix ECx in their model name). Note that this endpoint definition
 has not been tested and peer reviewed, and should not currently be used in reporting. NEC values should only be reported for NEC model types.
 
-Important information on the current package build is contained in the *jagsNEC* and *jagsMANEC* helpfiles (see *?jagsNEC* and *?jagsMANEC*).
+Important information on the current package build is contained in the jagsNEC and jagsMANEC helpfiles (see ?jagsNEC and ?jagsMANEC).
 }
 \details{
 This package is currently under development. Your are using the beta version and there may
@@ -68,7 +68,7 @@ Please see the github page for this pacakge for usage examples at
 \url{https://github.com/AIMS/NEC-estimation}
 
 Note that jagsNEC by default tries to guess the distribution of both the y and x data, however
-these can be manually supplied (see *?fit.jagsNEC*).
+these can be manually supplied (see ?fit.jagsNEC).
 
 Note if the x data contain 0 but are otherwise gamma distributed,
 the x data are adjusted by adding 1/10^3 of the next smallest value to
