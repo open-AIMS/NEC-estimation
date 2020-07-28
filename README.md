@@ -948,7 +948,12 @@ and then drop the *NECsigmoidal* model as invalid (see above)
 
     load(file = "out_temp.RData")
     out.NEC <- modify_jagsMANEC(out.NEC, drop.models = "NECsigmoidal")
+    #> Warning in extract_modStats(mod.fits): successfully fitted the models: NEC3param
+    #> NEC4param NECHormesis
     out <- modify_jagsMANEC(out, drop.models = "NECsigmoidal")
+    #> Warning in extract_modStats(mod.fits): successfully fitted the models: NEC3param
+    #> NEC4param NECHormesis ECxLinear ECxExp ECxsigmoidal ECx4param ECxWeibull1
+    #> ECxWeibull2
 
 Now we have two model sets, an *NEC* set and a mixed *NEC* and *ECx*
 set, neither of which have the *NECsigmoidal* model. Of course before we
@@ -963,15 +968,21 @@ out to a pdf file, which can be more convenient, as you can see here
     check.chains(out)
 
 ![](man/figures/README-checkchains-beta-MANEC-1.png)![](man/figures/README-checkchains-beta-MANEC-2.png)![](man/figures/README-checkchains-beta-MANEC-3.png)![](man/figures/README-checkchains-beta-MANEC-4.png)![](man/figures/README-checkchains-beta-MANEC-5.png)![](man/figures/README-checkchains-beta-MANEC-6.png)![](man/figures/README-checkchains-beta-MANEC-7.png)![](man/figures/README-checkchains-beta-MANEC-8.png)![](man/figures/README-checkchains-beta-MANEC-9.png)![](man/figures/README-checkchains-beta-MANEC-10.png)
+
 Chains for the *NECHormesis* model in this case are very badly mixed, so
 we should drop this as well from our model sets
 
     load(file = "out_temp.RData")
     out.NEC <- modify_jagsMANEC(out.NEC, drop.models = "NECHormesis")
+    #> Warning in extract_modStats(mod.fits): successfully fitted the models: NEC3param
+    #> NEC4param
     out <- modify_jagsMANEC(out, drop.models = "NECHormesis")
+    #> Warning in extract_modStats(mod.fits): successfully fitted the models: NEC3param
+    #> NEC4param NECsigmoidal ECxLinear ECxExp ECxsigmoidal ECx4param ECxWeibull1
+    #> ECxWeibull2
 
 Now we can use the extract\_ECx function to get EC10 and EC50 values. We
-can do this using our all model set, because it is valud to use *NEC*
+can do this using our all model set, because it is valid to use *NEC*
 models for estimating *ECx*.
 
     load(file = "out_temp.RData")
@@ -985,14 +996,14 @@ models for estimating *ECx*.
     #>    EC_50 EC_50_lw EC_50_up 
     #>  5.70711  5.62851  5.70711
 
-Note that the median estimate is the same as the upper bound. This
-indicates that the ‘absolute’ EC50 may lie beyond the observed data,
-because the lowest values here are just below 0.2, and the ‘absolute’
-*ECx* type scales between the higher predicted values (usually *top* or
-the y-intercept) and 0. We could use *type = ‘relative’* in our call to
-*extract\_ECx* or we can try extending the *x.range*. Which you use
-depends on your specific context and question. Let’s try extending the
-x.range.
+Note that the median estimate for our EC50 is the same as the upper
+bound. This indicates that the ‘absolute’ EC50 may lie beyond the
+observed data, because the lowest values here are just below 0.2, and
+the ‘absolute’ *ECx* type scales between the highest predicted values
+(usually *top* or the y-intercept) and 0. We could use *type =
+‘relative’* in our call to *extract\_ECx* or we can try extending the
+*x.range*. Which option to use depends on the specific context and
+question. Let’s try extending the x.range.
 
     load(file = "out_temp.RData")
     ECx50 <- extract_ECx(out, ECx.val = 50, x.range = c(0.01, 8))
@@ -1000,17 +1011,18 @@ x.range.
     #>    EC_50 EC_50_lw EC_50_up 
     #> 6.279581 5.683308 8.000000
 
-This still yields an upper bound that is identical to our upper range,
-which is again an indication that the upper bound at a concentration of
-8 still does not reach our EC50. To extend further it would be better to
-refit our data using *model.set = “bot.free”* - as if we want to
-extrapolate for an absolute *ECx* value, it may be more valid to only
-use models that do not have a lower asymptote, but actually will
-asymptote at zero. Here we will consider our *ECx* values in relative
-terms instead for simplicity, which means the *ECx* values represent a
-percentage decline in the response relative to the range of the fitted
-data across the observed range of concentration (x.val). We will do this
-for both out EC10 and our EC50 to be consistent.
+This still yields an upper bound that is identical to the upper range
+that we supplied, which is again an indication that the upper bound at a
+concentration of 8 still does not reach our EC50. To extend the
+predictions further it would be better to refit our data using
+*model.set = “bot.free”*. This is because to extrapolate for an absolute
+*ECx* value it may be more valid to only use models that do not have a
+lower asymptote (otherwise the predicted values may never reach zero).
+Here we will consider our *ECx* values in relative terms instead for
+simplicity, which means the *ECx* values represent a percentage decline
+in the response relative to the range of the fitted data across the
+observed range of concentration (x.val). We will do this for both out
+EC10 and our EC50 to be consistent.
 
     load(file = "out_temp.RData")
     ECx10 <- extract_ECx(out, ECx.val = 10, type = "relative")
