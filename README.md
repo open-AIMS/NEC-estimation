@@ -46,7 +46,7 @@ it is possible to fit a specific set or all of the available models
 using the function *fit.jagsMANEC*. The *fit.jagsMANEC* function returns
 a model weighted estimate of predicted posterior values, based on DIC
 model weights. It is also possible to obtain all individual model fits
-from the fitted jagsMANECfit model object if required. Multi-model
+from the fitted *jagsMANECfit* model object if required. Multi-model
 inference can be useful where there are a range of plausible models that
 could be used (Burnham and Anderson 2002) and has been recently adopted
 in ecotoxicology for SSD model inference (Thorley and Schwarz 2018).
@@ -61,7 +61,7 @@ without a specific NEC step parameter (in *jagsNEC* these have the
 prefix ECx in their model name).
 
 Important information on the current package is contained in the
-*jagsNEC* and jagsMANEC helpfiles (see *?jagsNEC* and *?jagsMANEC*).
+*jagsNEC* and *jagsMANEC* helpfiles (see *?jagsNEC* and *?jagsMANEC*).
 
 This package is currently under development. We are keen on any feedback
 regarding usage, and especially bug reporting that includes an easy self
@@ -550,17 +550,17 @@ response without any effect of the toxicant), *NEC* (the concentration
 at which an effect of the toxicant begins to occur), and *beta* (the
 rate of exponential decay of the response). However there are other
 models that have been implemented, including: NEC4param, which is
-equivalent to NEC3param but includes a *bot* parameter (the bottom
-plateau); and ECx4param, with parameters *top* (the upper plateau of the
-response), *EC50* (the EC50 estimate of the curve), *beta* (the rate of
-exponential decay of the response), and *bot* (the bottom plateau). The
-ECx model can be used when evidence for an NEC model is weak (ie there
-is a consistent decline with increasing concentration and no evidence of
-a *step*). For model = ECx4param, no NEC value can be formally derived,
-although an approximation based on the ‘NSEC’ concept described under
-‘background’ is currently used as an approximation by default on all
-‘ECx’ model output. At this time the concept has not be formally tested
-and published and should be used with caution.
+equivalent to *NEC3param* but includes a *bot* parameter (the bottom
+plateau); and *ECx4param*, with parameters *top* (the upper plateau of
+the response), *EC50* (the *EC50* estimate of the curve), *beta* (the
+rate of exponential decay of the response), and *bot* (the bottom
+plateau). The *ECx* model can be used when evidence for an *NEC* model
+is weak (ie there is a consistent decline with increasing concentration
+and no evidence of a *step*). For *model = ECx4param*, no *NEC* value
+can be formally derived, although an approximation based on the *NSEC*
+concept described under *background* is currently returned by default on
+all *ECx* model output. At this time the concept has not be formally
+tested and published and should be used with caution.
 
 Let’s now try fitting the same data using the 4-parameter NEC model.
 
@@ -853,11 +853,11 @@ multiple MCMC chains using *fit.jagsMANEC* can be very slow.
     # save(out, file="out_temp.RData")
     load(file = "out_temp.RData")
 
-Here we run *fit.jagsMANEC* using model.set = ‘all’ using the
+Here we run *fit.jagsMANEC* using model.set = *all* using the
 proportional data example for a beta response variable from above, and
 save the output as an .RData file so that the rmarkdown will not include
 all of the console output that is generated when these models run.
-Saving and .RData file of the ‘all’ model.set *fit.jagsMANEC* output can
+Saving and .RData file of the *all* model.set *fit.jagsMANEC* output can
 be a useful way of fitting all the models at a convenient time (this can
 be very slow), that means you can reload them to explore and plot,
 extract values, and modify the model set as required.
@@ -865,7 +865,7 @@ extract values, and modify the model set as required.
 ### Exploring a *fit.jagsMANEC* model
 
 We have created some plotting method functions for our *jagsNEC* model
-types, so we can plot a jagsMANECfit model object simply with ‘plot’.
+types, so we can plot a *jagsMANECfit* model object simply with *plot*.
 
     load(file = "out_temp.RData")
     plot(out)
@@ -876,7 +876,7 @@ The default plot looks exactly the same out our regular jagsNECfit plot,
 but the output is based in a weighted average of all the models fits.
 The NEC estimate on this plot is based on a mix of actual NEC estimates,
 as well as the NSEC estimates that are used as an approximation to NEC
-for all the ‘ECx’ models in the set. The fitted jagsMANECfit object
+for all the *ECx* models in the set. The fitted *jagsMANECfit* object
 contains different elements to the jagsNECfit. In particular
 
     load(file = "out_temp.RData")
@@ -898,70 +898,70 @@ This includes the model name, the DIC (as returned from jags), DIC.delta
 (DIC - the lowest DIC), wi (the model weight), pD, and the
 overdispersion estimate. For this example, three models have relatively
 similar weights and contribute to the model averaged outcome, including
-the NEC3param, NEC4param and the ECx4param models, with the NEC4param
-being overall the highest.
+the *NEC3param*, *NEC4param* and the *ECx4param* models, with the
+*NEC4param* being overall the highest.
 
-The jagsMANECfit object also contains all of the original fits, which
+The *jagsMANECfit* object also contains all of the original fits, which
 can be extracted using
 
     load(file = "out_temp.RData")
     out.NEC3param <- out$mod.fits$NEC3param
 
-Which would extract the NEC3param model from the jagsMANECfit and create
-a new object that contains just this fit. This would be identical to
-fitting the ‘NEC3param’ model using ‘*fit.jagsNEC*’ as we did above. All
-of the models can be simultaneously plotted using
+Which would extract the NEC3param model from the *jagsMANECfit* and
+create a new object that contains just this fit. This would be identical
+to fitting the *NEC3param* model using *fit.jagsNEC* as we did above.
+All of the models can be simultaneously plotted using
 
     load(file = "out_temp.RData")
     plot(out, all_models = TRUE)
 
 ![](man/figures/README-plot_mod-beta-MANEC-1.png)
 
-You can see that the ‘NECHormesis’ model and the ‘NECsigmoidal’ models
-are highly unresolved. The ‘NECsigmoidal’ model in particular poses a
+You can see that the *NECHormesis* model and the *NECsigmoidal* models
+are highly unresolved. The *NECsigmoidal* model in particular poses a
 theoretical problem as it is a model that has a natural upper plateau.
 Thus it becomes difficult to resolve where the flat no-effect part of
 the data ends, and the sigmoidal decline begins. It should not be used,
 and we may remove it from the model set in future versions. We it is
 currently retained out of interest and to explore it’s behaviour under
-different scenarios. The ‘NECHormesis’ model allows an initial linear
+different scenarios. The *NECHormesis* model allows an initial linear
 increase with concentration, prior to the exponential decline of the
-‘NEC3param’ model once the NEC concentration has been reached. This does
+*NEC3param* model once the NEC concentration has been reached. This does
 not work well for this data, but neither does it have substantial
 weight, so it can be left in the model set for completeness.
 
-The models prefixed with ‘ECx’ are all models that do not have the NEC
+The models prefixed with *ECx* are all models that do not have the NEC
 as a parameter in the model. That is the are smooth curves as a function
 of concentration nad have no breakpoint. The NEC on the plot above for
-these models are an approximation based on ‘NSEC’ (see above) and should
+these models are an approximation based on *NSEC* (see above) and should
 not be used without careful consideration of the validity of this
 endpoint value. A formal model averaged estimate of NEC should be
-obtained with ‘model.set = NEC’, and there is a helper function
-‘modify\_jagsMANEC’ that can be used to alter the model set as required.
-We can use this to obtain first a set of ‘NEC’ only models
+obtained with *model.set = NEC*, and there is a helper function
+*modify\_jagsMANEC* that can be used to alter the model set as required.
+We can use this to obtain first a set of *NEC* only models
 
     load(file = "out_temp.RData")
     out.NEC <- modify_jagsMANEC(out, model.set = "NEC")
 
-and then drop the ‘NECsigmoidal’ model as invalid (see above)
+and then drop the *NECsigmoidal* model as invalid (see above)
 
     load(file = "out_temp.RData")
     out.NEC <- modify_jagsMANEC(out.NEC, drop.models = "NECsigmoidal")
     out <- modify_jagsMANEC(out, drop.models = "NECsigmoidal")
 
-Now we have two model sets, an NEC set and a mixed NEC and ECx set,
-neither of which have the ‘NECsigmoidal’ model. Of course before we use
-this model set for any inference, we would need to check the chains
-mixing and acf. We can use check.chains on the ‘jagsMANECfit’. Note that
-adding the argument ‘pdf.file = “Cl\_chains”’ to ‘check.chains’ would
+Now we have two model sets, an *NEC* set and a mixed *NEC* and *ECx*
+set, neither of which have the *NECsigmoidal* model. Of course before we
+use this model set for any inference, we would need to check the chains
+mixing and acf. We can use check.chains on the *jagsMANECfit*. Note that
+adding the argument *pdf.file = “Cl\_chains”* to *check.chains* would
 write the chain plots out to a pdf file, which can be more convenient,
-as you can see here ‘check.chains’ generates a lot of plots on a
-‘jagsMANECfit’.
+as you can see here *check.chains* generates a lot of plots on a
+*jagsMANECfit*.
 
     load(file = "out_temp.RData")
     check.chains(out)
 
-Chains for the ‘NECHormesis’ model in this case are very badly mixed, so
+Chains for the *NECHormesis* model in this case are very badly mixed, so
 we should drop this as well from our model sets
 
     load(file = "out_temp.RData")
@@ -986,9 +986,9 @@ models for estimating ECx.
 Note that the median estimate is the same as the upper bound. This
 indicates that the ‘absolute’ EC50 may lie beyond the observed data,
 because the lowest values here are just below 0.2, and the ‘absolute’
-ECx type scales between the higher predicted values (usually ‘top’ or
-the y-intercept) and 0. We could use type = ‘relative’ in our call to
-‘extract\_ECx’ or we can try extending the ‘x.range’. Which you use
+ECx type scales between the higher predicted values (usually *top* or
+the y-intercept) and 0. We could use *type = ‘relative’* in our call to
+*extract\_ECx* or we can try extending the *x.range*. Which you use
 depends on your specific context and question. Let’s try extending the
 x.range.
 
@@ -1001,7 +1001,7 @@ x.range.
 This still yields an upper bound that is identical to our upper range,
 which is again an indication that the upper bound at a concentration of
 8 still does not reach our EC50. To extend further it would be better to
-refit our data using ‘model.set = “bot.free”’ - as if we want to
+refit our data using *model.set = “bot.free”* - as if we want to
 extrapolate for an absolute ECx value, it may be more valid to only use
 models that do not have a lower asymptote, but actually will asymptote
 at zero. Here we will consider our ECx values in relative terms instead
