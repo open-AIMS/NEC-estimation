@@ -54,7 +54,7 @@ alternative *NEC* model types, as well as a range of typically used
 concentration-response models (such as 4-parameter logistic and weibull
 models) that have no *NEC* ‘step’ function but simply model response as
 a smooth function of concentration, as can be fit using other commonly
-used frequentist packages such as drc (Ritz et al. 2016).
+used frequentist packages such as drc (Ritz et al. 2016).
 
 Specific models can be fit directly using *fit.jagsNEC*. Alternatively
 it is possible to fit a specific set or all of the available models
@@ -95,10 +95,8 @@ To install the latest version from github
 (<a href="https://github.com/AIMS/NEC-estimation" class="uri">https://github.com/AIMS/NEC-estimation</a>)
 use:
 
-``` r
-install.packages("remotes")
-remotes::install_github("AIMS/NEC-estimation")
-```
+    install.packages("remotes")
+    remotes::install_github("AIMS/NEC-estimation")
 
 Examples
 ========
@@ -120,20 +118,18 @@ of individuals, for example) y is binomial. First we read in the
 binomial example from pastebin, and then plot the “concentration” or x
 data, in this case raw.x.
 
-``` r
-binom.data <- read.table("https://pastebin.com/raw/zfrUha88", header = TRUE, dec = ",")
-str(binom.data)
-#> 'data.frame':    48 obs. of  3 variables:
-#>  $ raw.x: chr  "0.1" "0.1" "0.1" "0.1" ...
-#>  $ suc  : int  101 106 102 112 58 158 95 91 93 113 ...
-#>  $ tot  : int  175 112 103 114 69 165 109 92 99 138 ...
-binom.data$raw.x <- as.numeric(as.character(binom.data$raw.x))
-range(binom.data$raw.x)
-#> [1]   0.1 400.0
-par(mfrow = c(2, 1))
-hist(binom.data$raw.x)
-hist(binom.data$suc / binom.data$tot)
-```
+    binom.data <- read.table("https://pastebin.com/raw/zfrUha88", header = TRUE, dec = ",")
+    str(binom.data)
+    #> 'data.frame':    48 obs. of  3 variables:
+    #>  $ raw.x: chr  "0.1" "0.1" "0.1" "0.1" ...
+    #>  $ suc  : int  101 106 102 112 58 158 95 91 93 113 ...
+    #>  $ tot  : int  175 112 103 114 69 165 109 92 99 138 ...
+    binom.data$raw.x <- as.numeric(as.character(binom.data$raw.x))
+    range(binom.data$raw.x)
+    #> [1]   0.1 400.0
+    par(mfrow = c(2, 1))
+    hist(binom.data$raw.x)
+    hist(binom.data$suc / binom.data$tot)
 
 ![](man/figures/README-get-binomial-data-1.png)
 
@@ -167,29 +163,27 @@ manually specify *y.type* as “binomial” and *x.type* as “gamma”. This
 example fits without specifying either, but *trials.var* must be
 supplied.
 
-``` r
-library(jagsNEC)
+    library(jagsNEC)
 
-set.seed(333)
-out <- fit.jagsNEC(
-  data = binom.data,
-  x.var = "raw.x",
-  y.var = "suc",
-  trials.var = "tot"
-)
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 51
-#>    Total graph size: 685
-#> 
-#> Initializing model
-#> 
-#>   |                                                          |                                                  |   0%  |                                                          |*                                                 |   2%  |                                                          |**                                                |   4%  |                                                          |***                                               |   6%  |                                                          |****                                              |   8%  |                                                          |*****                                             |  10%  |                                                          |******                                            |  12%  |                                                          |*******                                           |  14%  |                                                          |********                                          |  16%  |                                                          |*********                                         |  18%  |                                                          |**********                                        |  20%  |                                                          |***********                                       |  22%  |                                                          |************                                      |  24%  |                                                          |*************                                     |  26%  |                                                          |**************                                    |  28%  |                                                          |***************                                   |  30%  |                                                          |****************                                  |  32%  |                                                          |*****************                                 |  34%  |                                                          |******************                                |  36%  |                                                          |*******************                               |  38%  |                                                          |********************                              |  40%  |                                                          |*********************                             |  42%  |                                                          |**********************                            |  44%  |                                                          |***********************                           |  46%  |                                                          |************************                          |  48%  |                                                          |*************************                         |  50%  |                                                          |**************************                        |  52%  |                                                          |***************************                       |  54%  |                                                          |****************************                      |  56%  |                                                          |*****************************                     |  58%  |                                                          |******************************                    |  60%  |                                                          |*******************************                   |  62%  |                                                          |********************************                  |  64%  |                                                          |*********************************                 |  66%  |                                                          |**********************************                |  68%  |                                                          |***********************************               |  70%  |                                                          |************************************              |  72%  |                                                          |*************************************             |  74%  |                                                          |**************************************            |  76%  |                                                          |***************************************           |  78%  |                                                          |****************************************          |  80%  |                                                          |*****************************************         |  82%  |                                                          |******************************************        |  84%  |                                                          |*******************************************       |  86%  |                                                          |********************************************      |  88%  |                                                          |*********************************************     |  90%  |                                                          |**********************************************    |  92%  |                                                          |***********************************************   |  94%  |                                                          |************************************************  |  96%  |                                                          |************************************************* |  98%  |                                                          |**************************************************| 100%
-#> Response variable suc modelled using a binomial distribution.
-```
+    set.seed(333)
+    out <- fit.jagsNEC(
+      data = binom.data,
+      x.var = "raw.x",
+      y.var = "suc",
+      trials.var = "tot"
+    )
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 51
+    #>    Total graph size: 685
+    #> 
+    #> Initializing model
+    #> 
+    #>   |                                                          |                                                  |   0%  |                                                          |*                                                 |   2%  |                                                          |**                                                |   4%  |                                                          |***                                               |   6%  |                                                          |****                                              |   8%  |                                                          |*****                                             |  10%  |                                                          |******                                            |  12%  |                                                          |*******                                           |  14%  |                                                          |********                                          |  16%  |                                                          |*********                                         |  18%  |                                                          |**********                                        |  20%  |                                                          |***********                                       |  22%  |                                                          |************                                      |  24%  |                                                          |*************                                     |  26%  |                                                          |**************                                    |  28%  |                                                          |***************                                   |  30%  |                                                          |****************                                  |  32%  |                                                          |*****************                                 |  34%  |                                                          |******************                                |  36%  |                                                          |*******************                               |  38%  |                                                          |********************                              |  40%  |                                                          |*********************                             |  42%  |                                                          |**********************                            |  44%  |                                                          |***********************                           |  46%  |                                                          |************************                          |  48%  |                                                          |*************************                         |  50%  |                                                          |**************************                        |  52%  |                                                          |***************************                       |  54%  |                                                          |****************************                      |  56%  |                                                          |*****************************                     |  58%  |                                                          |******************************                    |  60%  |                                                          |*******************************                   |  62%  |                                                          |********************************                  |  64%  |                                                          |*********************************                 |  66%  |                                                          |**********************************                |  68%  |                                                          |***********************************               |  70%  |                                                          |************************************              |  72%  |                                                          |*************************************             |  74%  |                                                          |**************************************            |  76%  |                                                          |***************************************           |  78%  |                                                          |****************************************          |  80%  |                                                          |*****************************************         |  82%  |                                                          |******************************************        |  84%  |                                                          |*******************************************       |  86%  |                                                          |********************************************      |  88%  |                                                          |*********************************************     |  90%  |                                                          |**********************************************    |  92%  |                                                          |***********************************************   |  94%  |                                                          |************************************************  |  96%  |                                                          |************************************************* |  98%  |                                                          |**************************************************| 100%
+    #> Response variable suc modelled using a binomial distribution.
 
 The function shows the progress of the *jags* fit and returns the usual
 *jags* output (with a few other elements added to this list). The
@@ -211,16 +205,14 @@ after *n.tries* attempts, the model with the best mixing will be
 returned, with a warning to cautiously interpret the results and inspect
 the chain mixing diagnostic plot.
 
-``` r
-require(jagsNEC)
-#> Loading required package: jagsNEC
-#> 
-#> Attaching package: 'jagsNEC'
-#> The following object is masked from 'package:stats':
-#> 
-#>     predict
-check.chains(out)
-```
+    require(jagsNEC)
+    #> Loading required package: jagsNEC
+    #> 
+    #> Attaching package: 'jagsNEC'
+    #> The following object is masked from 'package:stats':
+    #> 
+    #>     predict
+    check.chains(out)
 
 ![](man/figures/README-check-binomial-NEC-1.png)
 
@@ -232,10 +224,8 @@ you can make your own plot from the data included in the returned list
 from the call to *fit.jagsNEC*. In this example, this could be extracted
 using *out$pred.vals*
 
-``` r
-par(mfrow = c(1, 1))
-plot(out)
-```
+    par(mfrow = c(1, 1))
+    plot(out)
 
 ![](man/figures/README-plot-binomial-NEC-1.png)
 
@@ -250,65 +240,59 @@ that is not based on trials and successes. In this case there are no
 theoretical ‘trials’ and the data must be modelled using a beta
 distribution.
 
-``` r
-require(tidyverse)
-prop.data <- read.table("https://pastebin.com/raw/123jq46d", header = TRUE, dec = ",") %>%
-  mutate(
-    raw.x = log(as.numeric(as.character(raw.x)) + 1),
-    resp = as.numeric(as.character(resp))
-  )
-set.seed(333)
-out <- fit.jagsNEC(
-  data = prop.data,
-  x.var = "raw.x",
-  y.var = "resp",
-  n.tries = 1
-)
-#> module glm loaded
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 160
-#>    Unobserved stochastic nodes: 164
-#>    Total graph size: 1545
-#> 
-#> Initializing model
-#> Deleting model
-#> 
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 160
-#>    Unobserved stochastic nodes: 164
-#>    Total graph size: 1545
-#> 
-#> Initializing model
-#> Deleting model
-#> 
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 160
-#>    Unobserved stochastic nodes: 164
-#>    Total graph size: 1545
-#> 
-#> Initializing model
-#> Response variable resp modelled using a beta distribution.
-```
+    require(tidyverse)
+    prop.data <- read.table("https://pastebin.com/raw/123jq46d", header = TRUE, dec = ",") %>%
+      mutate(
+        raw.x = log(as.numeric(as.character(raw.x)) + 1),
+        resp = as.numeric(as.character(resp))
+      )
+    set.seed(333)
+    out <- fit.jagsNEC(
+      data = prop.data,
+      x.var = "raw.x",
+      y.var = "resp",
+      n.tries = 1
+    )
+    #> module glm loaded
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 160
+    #>    Unobserved stochastic nodes: 164
+    #>    Total graph size: 1545
+    #> 
+    #> Initializing model
+    #> Deleting model
+    #> 
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 160
+    #>    Unobserved stochastic nodes: 164
+    #>    Total graph size: 1545
+    #> 
+    #> Initializing model
+    #> Deleting model
+    #> 
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 160
+    #>    Unobserved stochastic nodes: 164
+    #>    Total graph size: 1545
+    #> 
+    #> Initializing model
+    #> Response variable resp modelled using a beta distribution.
 
-``` r
-check.chains(out)
-```
+    check.chains(out)
 
 ![](man/figures/README-check-beta-NEC-1.png)
 
-``` r
-par(mfrow = c(1, 1))
-plot(out)
-```
+    par(mfrow = c(1, 1))
+    plot(out)
 
 ![](man/figures/README-plot-beta-NEC-1.png)
 
@@ -320,21 +304,19 @@ First we read in the count data example from pastebin, and then plot the
 “concentration” or x data, Again, this is raw.x, and distributed as in
 our binomial example above.
 
-``` r
-count.data <- read.table("https://pastebin.com/raw/ENgNSgf7", header = TRUE, dec = ",")
-str(count.data)
-#> 'data.frame':    48 obs. of  2 variables:
-#>  $ raw.x: chr  "0.1" "0.1" "0.1" "0.1" ...
-#>  $ count: int  164 100 103 102 102 101 131 102 112 100 ...
+    count.data <- read.table("https://pastebin.com/raw/ENgNSgf7", header = TRUE, dec = ",")
+    str(count.data)
+    #> 'data.frame':    48 obs. of  2 variables:
+    #>  $ raw.x: chr  "0.1" "0.1" "0.1" "0.1" ...
+    #>  $ count: int  164 100 103 102 102 101 131 102 112 100 ...
 
-count.data$raw.x <- as.numeric(as.character(count.data$raw.x))
+    count.data$raw.x <- as.numeric(as.character(count.data$raw.x))
 
-range(count.data$raw.x)
-#> [1]   0.1 190.0
-par(mfrow = c(2, 1))
-hist(count.data$raw.x)
-hist(count.data$count)
-```
+    range(count.data$raw.x)
+    #> [1]   0.1 190.0
+    par(mfrow = c(2, 1))
+    hist(count.data$raw.x)
+    hist(count.data$count)
 
 ![](man/figures/README-get-poisson-data-1.png)
 
@@ -343,35 +325,29 @@ First we supply *fit.jagsNEC* with *data* (count.data), and specify
 be the gamma distribution, and *y.type* is “poisson”. The default
 behaviour to guess the variable types works for this example.
 
-``` r
-set.seed(333)
-out <- fit.jagsNEC(
-  data = count.data,
-  x.var = "raw.x",
-  y.var = "count"
-)
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 51
-#>    Total graph size: 469
-#> 
-#> Initializing model
-#> Response variable count modelled using a poisson distribution.
-```
+    set.seed(333)
+    out <- fit.jagsNEC(
+      data = count.data,
+      x.var = "raw.x",
+      y.var = "count"
+    )
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 51
+    #>    Total graph size: 469
+    #> 
+    #> Initializing model
+    #> Response variable count modelled using a poisson distribution.
 
-``` r
-check.chains(out)
-```
+    check.chains(out)
 
 ![](man/figures/README-check-poisson-NEC-1.png)
 
-``` r
-par(mfrow = c(1, 1))
-plot(out)
-```
+    par(mfrow = c(1, 1))
+    plot(out)
 
 ![](man/figures/README-plot-poisson-NEC-1.png)
 
@@ -383,111 +359,101 @@ read in the count data example from pastebin, and then plot the
 “concentration” or x data, Again, this is raw.x, and distributed as in
 our binomial example above.
 
-``` r
-measure.data <- read.table("https://pastebin.com/raw/pWeS6x0n", header = TRUE, dec = ",")
-measure.data$raw.x <- as.numeric(as.character(measure.data$raw.x))
-measure.data$measure <- as.numeric(as.character(measure.data$measure))
-```
+    measure.data <- read.table("https://pastebin.com/raw/pWeS6x0n", header = TRUE, dec = ",")
+    measure.data$raw.x <- as.numeric(as.character(measure.data$raw.x))
+    measure.data$measure <- as.numeric(as.character(measure.data$measure))
 
-``` r
-set.seed(333)
-out <- fit.jagsNEC(
-  data = measure.data,
-  x.var = "raw.x",
-  y.var = "measure"
-)
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 52
-#>    Total graph size: 526
-#> 
-#> Initializing model
-#> Deleting model
-#> 
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 52
-#>    Total graph size: 526
-#> 
-#> Initializing model
-#> Deleting model
-#> 
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 52
-#>    Total graph size: 526
-#> 
-#> Initializing model
-#> Deleting model
-#> 
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 52
-#>    Total graph size: 526
-#> 
-#> Initializing model
-#> Deleting model
-#> 
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 52
-#>    Total graph size: 526
-#> 
-#> Initializing model
-#> 
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 52
-#>    Total graph size: 526
-#> 
-#> Initializing model
-#> Response variable measure modelled using a gamma distribution.
-```
+    set.seed(333)
+    out <- fit.jagsNEC(
+      data = measure.data,
+      x.var = "raw.x",
+      y.var = "measure"
+    )
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 52
+    #>    Total graph size: 526
+    #> 
+    #> Initializing model
+    #> Deleting model
+    #> 
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 52
+    #>    Total graph size: 526
+    #> 
+    #> Initializing model
+    #> Deleting model
+    #> 
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 52
+    #>    Total graph size: 526
+    #> 
+    #> Initializing model
+    #> Deleting model
+    #> 
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 52
+    #>    Total graph size: 526
+    #> 
+    #> Initializing model
+    #> Deleting model
+    #> 
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 52
+    #>    Total graph size: 526
+    #> 
+    #> Initializing model
+    #> 
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 52
+    #>    Total graph size: 526
+    #> 
+    #> Initializing model
+    #> Response variable measure modelled using a gamma distribution.
 
-``` r
-check.chains(out)
-```
+    check.chains(out)
 
 ![](man/figures/README-check-measure-NEC-1.png)
 
 The function *plot* can be used to plot the fitted model. The estimated
 *NEC* value can be obtained directly from the fitted model object, using
 *out$NEC*. EC*x* estimates can also be obtained from the *NEC* model
-fit, using the function *extract_ECx*. Note these may differ from a
+fit, using the function *extract\_ECx*. Note these may differ from a
 typical 4-parameter non-linear model, as the *NEC* model is a broken
 stick non-linear regression and will often fall more sharply than a
 smooth 4-parameter non-linear curve.
 
-``` r
-par(mfrow = c(1, 1))
-plot(out)
-```
+    par(mfrow = c(1, 1))
+    plot(out)
 
 ![](man/figures/README-plot-measure-NEC-1.png)
 
-``` r
-extract_ECx(out)
-#>    EC_10 EC_10_lw EC_10_up 
-#> 64.32111 53.61632 72.71695
-```
+    extract_ECx(out)
+    #>    EC_10 EC_10_lw EC_10_up 
+    #> 64.32111 53.61632 72.71695
 
 Model validation and selection
 ------------------------------
@@ -501,40 +467,36 @@ have less residual variance than that generated by the fitted model).
 Generally overdispersion is more common, particularly for binomial and
 poisson models, which are single parameter distributions.
 
-``` r
-set.seed(333)
-out <- fit.jagsNEC(
-  data = binom.data,
-  x.var = "raw.x",
-  y.var = "suc",
-  trials.var = "tot"
-)
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 51
-#>    Total graph size: 685
-#> 
-#> Initializing model
-#> Response variable suc modelled using a binomial distribution.
-check.chains(out)
-```
+    set.seed(333)
+    out <- fit.jagsNEC(
+      data = binom.data,
+      x.var = "raw.x",
+      y.var = "suc",
+      trials.var = "tot"
+    )
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 51
+    #>    Total graph size: 685
+    #> 
+    #> Initializing model
+    #> Response variable suc modelled using a binomial distribution.
+    check.chains(out)
 
 ![](man/figures/README-fit-binomial-NEC2-1.png)
 
-``` r
-par(mfrow = c(1, 2))
-plot(out)
-plot(binom.data$raw.x, out$residuals)
-```
+    par(mfrow = c(1, 2))
+    plot(out)
+    plot(binom.data$raw.x, out$residuals)
 
 ![](man/figures/README-fit-binomial-NEC2-2.png)
 
 A test for over or under-dispersion is performed by *jagsNEC*, and this
-can be extracted using *$over.disp*. Values \>0.5 indicate
-over-dispersion and values \<0.5 indicate under-dispersion. Values in
+can be extracted using *$over.disp*. Values &gt;0.5 indicate
+over-dispersion and values &lt;0.5 indicate under-dispersion. Values in
 the range 0.22-0.75 are acceptable. In this case the overdispersion
 value is 1, indicating quite extreme overdispersion (meaning our model
 doesn’t properly capture the true variability represented in this data).
@@ -543,51 +505,43 @@ violation of the distribution assumptions of the fitted data (for
 example, when the response data are poisson, the variance should equal
 to the mean, which is often not the case).
 
-``` r
-out$over.disp
-#> [1] 1
-```
+    out$over.disp
+    #> [1] 1
 
 First, let’s see if the model fits better using a log transformation of
 the x-data, given these appear to have been set on a log scaling anyway
 (based on the spacing between the treatment values).
 
-``` r
-set.seed(333)
-binom.data$log.x <- log(binom.data$raw.x)
-out <- fit.jagsNEC(
-  data = binom.data,
-  x.var = "log.x",
-  y.var = "suc",
-  trials.var = "tot"
-)
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 51
-#>    Total graph size: 686
-#> 
-#> Initializing model
-#> Response variable suc modelled using a binomial distribution.
-check.chains(out)
-```
+    set.seed(333)
+    binom.data$log.x <- log(binom.data$raw.x)
+    out <- fit.jagsNEC(
+      data = binom.data,
+      x.var = "log.x",
+      y.var = "suc",
+      trials.var = "tot"
+    )
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 51
+    #>    Total graph size: 686
+    #> 
+    #> Initializing model
+    #> Response variable suc modelled using a binomial distribution.
+    check.chains(out)
 
 ![](man/figures/README-fit-binomial-logx-NEC-1.png)
 
-``` r
-par(mfrow = c(1, 2))
-plot(out)
-plot(binom.data$log.x, out$residuals)
-```
+    par(mfrow = c(1, 2))
+    plot(out)
+    plot(binom.data$log.x, out$residuals)
 
 ![](man/figures/README-fit-binomial-logx-NEC-2.png)
 
-``` r
-out$over.disp
-#> [1] 1
-```
+    out$over.disp
+    #> [1] 1
 
 Using the log data the residual plot looks a little better, although
 there is a tendency to underestimate the response (the residual plot
@@ -614,42 +568,36 @@ formally tested or peer reviewed and should be used with caution.
 
 Let’s now try fitting the same data using the 4-parameter *NEC* model.
 
-``` r
-set.seed(333)
-out <- fit.jagsNEC(
-  data = binom.data,
-  x.var = "log.x",
-  y.var = "suc",
-  trials.var = "tot",
-  model = "NEC4param"
-)
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 52
-#>    Total graph size: 697
-#> 
-#> Initializing model
-#> Response variable suc modelled using a binomial distribution.
-check.chains(out)
-```
+    set.seed(333)
+    out <- fit.jagsNEC(
+      data = binom.data,
+      x.var = "log.x",
+      y.var = "suc",
+      trials.var = "tot",
+      model = "NEC4param"
+    )
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 52
+    #>    Total graph size: 697
+    #> 
+    #> Initializing model
+    #> Response variable suc modelled using a binomial distribution.
+    check.chains(out)
 
 ![](man/figures/README-fit-binomial-4param-NEC-1.png)
 
-``` r
-par(mfrow = c(1, 2))
-plot(out)
-plot(binom.data$log.x, out$residuals)
-```
+    par(mfrow = c(1, 2))
+    plot(out)
+    plot(binom.data$log.x, out$residuals)
 
 ![](man/figures/README-fit-binomial-4param-NEC-2.png)
 
-``` r
-out$over.disp
-#> [1] 1
-```
+    out$over.disp
+    #> [1] 1
 
 Even for the 4-parameter *NEC* model we still have an overdisperon value
 of 1, suggesting that our 95% confidence band on the *NEC* will be far
@@ -657,82 +605,76 @@ smaller than what it should be in reality. It does seem there is a more
 gradual decline in this data, so it is possible the 4-parameter *ECx*
 model will fit better. Let’s try fitting that now.
 
-``` r
-set.seed(333)
-out <- fit.jagsNEC(
-  data = binom.data,
-  x.var = "log.x",
-  y.var = "suc",
-  trials.var = "tot",
-  model = "ECx4param"
-)
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 52
-#>    Total graph size: 696
-#> 
-#> Initializing model
-#> 
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 52
-#>    Total graph size: 696
-#> 
-#> Initializing model
-#> 
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 52
-#>    Total graph size: 696
-#> 
-#> Initializing model
-#> 
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 52
-#>    Total graph size: 696
-#> 
-#> Initializing model
-#> 
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 52
-#>    Total graph size: 696
-#> 
-#> Initializing model
-#> Response variable suc modelled using a binomial distribution.
-check.chains(out)
-```
+    set.seed(333)
+    out <- fit.jagsNEC(
+      data = binom.data,
+      x.var = "log.x",
+      y.var = "suc",
+      trials.var = "tot",
+      model = "ECx4param"
+    )
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 52
+    #>    Total graph size: 696
+    #> 
+    #> Initializing model
+    #> 
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 52
+    #>    Total graph size: 696
+    #> 
+    #> Initializing model
+    #> 
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 52
+    #>    Total graph size: 696
+    #> 
+    #> Initializing model
+    #> 
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 52
+    #>    Total graph size: 696
+    #> 
+    #> Initializing model
+    #> 
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 52
+    #>    Total graph size: 696
+    #> 
+    #> Initializing model
+    #> Response variable suc modelled using a binomial distribution.
+    check.chains(out)
 
 ![](man/figures/README-fit-binomial-ECx-1.png)
 
-``` r
-par(mfrow = c(1, 2))
-plot(out)
-plot(binom.data$log.x, out$residuals)
-```
+    par(mfrow = c(1, 2))
+    plot(out)
+    plot(binom.data$log.x, out$residuals)
 
 ![](man/figures/README-fit-binomial-ECx-2.png)
 
-``` r
-out$over.disp
-#> [1] 1
-```
+    out$over.disp
+    #> [1] 1
 
 This model does look like it fits a little bit better than the either of
 the two *NEC* models. The residual plot shows a more even distribution
@@ -753,149 +695,137 @@ of course be manually specified. Here we will set *over.disp=TRUE* to
 automatically apply a beta model to our binomial data (the same thing
 could also be achieved through using *y.type=“beta”*).
 
-``` r
-set.seed(333)
-out <- fit.jagsNEC(
-  data = binom.data,
-  x.var = "log.x",
-  y.var = "suc",
-  trials.var = "tot",
-  model = "ECx4param",
-  over.disp = TRUE
-)
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 53
-#>    Total graph size: 580
-#> 
-#> Initializing model
-#> 
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 53
-#>    Total graph size: 580
-#> 
-#> Initializing model
-#> 
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 53
-#>    Total graph size: 580
-#> 
-#> Initializing model
-#> Response variable suc modelled using a beta distribution.
-check.chains(out)
-```
+    set.seed(333)
+    out <- fit.jagsNEC(
+      data = binom.data,
+      x.var = "log.x",
+      y.var = "suc",
+      trials.var = "tot",
+      model = "ECx4param",
+      over.disp = TRUE
+    )
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 53
+    #>    Total graph size: 580
+    #> 
+    #> Initializing model
+    #> 
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 53
+    #>    Total graph size: 580
+    #> 
+    #> Initializing model
+    #> 
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 53
+    #>    Total graph size: 580
+    #> 
+    #> Initializing model
+    #> Response variable suc modelled using a beta distribution.
+    check.chains(out)
 
 ![](man/figures/README-fit-binomial-beta-ECx-1.png)
 
-``` r
-par(mfrow = c(1, 2))
-plot(out)
-plot(binom.data$log.x, out$residuals)
-```
+    par(mfrow = c(1, 2))
+    plot(out)
+    plot(binom.data$log.x, out$residuals)
 
 ![](man/figures/README-fit-binomial-beta-ECx-2.png)
 
-``` r
-out$over.disp
-#> [1] 0.608
-```
+    out$over.disp
+    #> [1] 0.608
 
 From the results we can see that we now have a much better fit in terms
 of dispersion, with an over-dispersion paramter of 0.608, and much wider
 more representative confidence bands. Let us see if the *beta*
 distribution would also have improved our original *NEC* model fit.
 
-``` r
-set.seed(333)
-out <- fit.jagsNEC(
-  data = binom.data,
-  x.var = "log.x",
-  y.var = "suc",
-  trials.var = "tot",
-  over.disp = TRUE
-)
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 52
-#>    Total graph size: 570
-#> 
-#> Initializing model
-#> Deleting model
-#> 
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 52
-#>    Total graph size: 570
-#> 
-#> Initializing model
-#> Deleting model
-#> 
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 52
-#>    Total graph size: 570
-#> 
-#> Initializing model
-#> Deleting model
-#> 
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 52
-#>    Total graph size: 570
-#> 
-#> Initializing model
-#> Deleting model
-#> 
-#> Compiling model graph
-#>    Resolving undeclared variables
-#>    Allocating nodes
-#> Graph information:
-#>    Observed stochastic nodes: 48
-#>    Unobserved stochastic nodes: 52
-#>    Total graph size: 570
-#> 
-#> Initializing model
-#> Response variable suc modelled using a beta distribution.
-check.chains(out)
-```
+    set.seed(333)
+    out <- fit.jagsNEC(
+      data = binom.data,
+      x.var = "log.x",
+      y.var = "suc",
+      trials.var = "tot",
+      over.disp = TRUE
+    )
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 52
+    #>    Total graph size: 570
+    #> 
+    #> Initializing model
+    #> Deleting model
+    #> 
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 52
+    #>    Total graph size: 570
+    #> 
+    #> Initializing model
+    #> Deleting model
+    #> 
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 52
+    #>    Total graph size: 570
+    #> 
+    #> Initializing model
+    #> Deleting model
+    #> 
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 52
+    #>    Total graph size: 570
+    #> 
+    #> Initializing model
+    #> Deleting model
+    #> 
+    #> Compiling model graph
+    #>    Resolving undeclared variables
+    #>    Allocating nodes
+    #> Graph information:
+    #>    Observed stochastic nodes: 48
+    #>    Unobserved stochastic nodes: 52
+    #>    Total graph size: 570
+    #> 
+    #> Initializing model
+    #> Response variable suc modelled using a beta distribution.
+    check.chains(out)
 
 ![](man/figures/README-fit-binomial-beta-NEC-1.png)
 
-``` r
-par(mfrow = c(1, 2))
-plot(out)
-plot(binom.data$log.x, out$residuals)
-```
+    par(mfrow = c(1, 2))
+    plot(out)
+    plot(binom.data$log.x, out$residuals)
 
 ![](man/figures/README-fit-binomial-beta-NEC-2.png)
 
-``` r
-out$over.disp
-#> [1] 0.554
-```
+    out$over.disp
+    #> [1] 0.554
 
 Yes it seems that the beta distribution provides a good fit to these
 data regardless of which model is fit, and should probably be used for
@@ -912,17 +842,15 @@ that can be used to fit a selection of models, or even all the available
 models in the package. Note that as these are Bayesian methods requiring
 multiple MCMC chains using *fit.jagsMANEC* can be very slow.
 
-``` r
-# set.seed(333)
-# out <- fit.jagsMANEC(
-#  data = prop.data,
-#  x.var = "raw.x",
-#  y.var = "resp",
-#  n.tries = 1,
-#  model.set = "all"
-# )
-# save(out, file="out_temp.RData")
-```
+    # set.seed(333)
+    # out <- fit.jagsMANEC(
+    #  data = prop.data,
+    #  x.var = "raw.x",
+    #  y.var = "resp",
+    #  n.tries = 1,
+    #  model.set = "all"
+    # )
+    # save(out, file="out_temp.RData")
 
 Here we run *fit.jagsMANEC* using model.set = *all* using the
 proportional data example for a beta response variable from above, and
@@ -938,10 +866,8 @@ plot, extract values, and modify the model set as required.
 We have created some plotting method functions for our *jagsNEC* model
 types, so we can plot a *jagsMANECfit* model object simply with *plot*.
 
-``` r
-load(file = "out_temp.RData")
-plot(out)
-```
+    load(file = "out_temp.RData")
+    plot(out)
 
 ![](man/figures/README-plot-beta-MANEC1-1.png)
 
@@ -954,21 +880,19 @@ do not currently recommend reporting this values as the *NEC* (see
 below).The fitted *jagsMANECfit* object contains different elements to
 the *jagsNECfit*. In particular
 
-``` r
-load(file = "out_temp.RData")
-out$mod.stats
-#>                    DIC DIC.delta           wi        pD over.disp
-#> NEC3param    -437.0293  1.390218 2.506284e-01  3.703887     0.494
-#> NEC4param    -438.4195  0.000000 5.022411e-01  4.881895     0.456
-#> NECHormesis  -417.5176 20.901859 1.452550e-05  6.464839     0.454
-#> NECsigmoidal -421.0629 17.356548 8.550385e-05 15.803425     0.438
-#> ECxLinear    -374.1195 64.300022 5.474443e-15  2.706478     0.482
-#> ECxExp       -360.1182 78.301325 4.988793e-18  3.531736     0.438
-#> ECxsigmoidal -423.2727 15.146818 2.581205e-04  3.439405     0.488
-#> ECx4param    -436.1619  2.257633 1.624327e-01  5.809713     0.484
-#> ECxWeibull1  -433.9400  4.479507 5.348103e-02  7.362563     0.470
-#> ECxWeibull2  -432.8402  5.579327 3.085863e-02  8.018570     0.460
-```
+    load(file = "out_temp.RData")
+    out$mod.stats
+    #>                    DIC DIC.delta           wi        pD over.disp
+    #> NEC3param    -437.0293  1.390218 2.506284e-01  3.703887     0.494
+    #> NEC4param    -438.4195  0.000000 5.022411e-01  4.881895     0.456
+    #> NECHormesis  -417.5176 20.901859 1.452550e-05  6.464839     0.454
+    #> NECsigmoidal -421.0629 17.356548 8.550385e-05 15.803425     0.438
+    #> ECxLinear    -374.1195 64.300022 5.474443e-15  2.706478     0.482
+    #> ECxExp       -360.1182 78.301325 4.988793e-18  3.531736     0.438
+    #> ECxsigmoidal -423.2727 15.146818 2.581205e-04  3.439405     0.488
+    #> ECx4param    -436.1619  2.257633 1.624327e-01  5.809713     0.484
+    #> ECxWeibull1  -433.9400  4.479507 5.348103e-02  7.362563     0.470
+    #> ECxWeibull2  -432.8402  5.579327 3.085863e-02  8.018570     0.460
 
 contains the table of model fit statistic for all the fitted models.
 This includes the model name, the DIC (as returned from *jags*),
@@ -981,20 +905,16 @@ the *NEC3param*, *NEC4param* and the *ECx4param* models, with the
 The *jagsMANECfit* object also contains all of the original fits, which
 can be extracted using
 
-``` r
-load(file = "out_temp.RData")
-out.NEC3param <- out$mod.fits$NEC3param
-```
+    load(file = "out_temp.RData")
+    out.NEC3param <- out$mod.fits$NEC3param
 
 Which would extract the *NEC3param* model from the *jagsMANECfit* and
 create a new object that contains just this fit. This would be identical
 to fitting the *NEC3param* model using *fit.jagsNEC* as we did above.
 All of the models can be simultaneously plotted using
 
-``` r
-load(file = "out_temp.RData")
-plot(out, all_models = TRUE)
-```
+    load(file = "out_temp.RData")
+    plot(out, all_models = TRUE)
 
 ![](man/figures/README-plot_mod-beta-MANEC-1.png)
 
@@ -1018,79 +938,67 @@ above for these models are an approximation based on *NSEC* (see above)
 and should not be used without careful consideration of the validity of
 this endpoint value. A formal model averaged estimate of *NEC* should be
 obtained with *model.set = NEC*, and there is a helper function
-*modify_jagsMANEC* that can be used to alter the model set as required.
+*modify\_jagsMANEC* that can be used to alter the model set as required.
 We can use this to obtain first a set of *NEC* only models
 
-``` r
-load(file = "out_temp.RData")
-out.NEC <- modify_jagsMANEC(out, model.set = "NEC")
-```
+    load(file = "out_temp.RData")
+    out.NEC <- modify_jagsMANEC(out, model.set = "NEC")
 
 and then drop the *NECsigmoidal* model as invalid (see above)
 
-``` r
-load(file = "out_temp.RData")
-out.NEC <- modify_jagsMANEC(out.NEC, drop.models = "NECsigmoidal")
-out <- modify_jagsMANEC(out, drop.models = "NECsigmoidal")
-```
+    load(file = "out_temp.RData")
+    out.NEC <- modify_jagsMANEC(out.NEC, drop.models = "NECsigmoidal")
+    out <- modify_jagsMANEC(out, drop.models = "NECsigmoidal")
 
 Now we have two model sets, an *NEC* set and a mixed *NEC* and *ECx*
 set, neither of which have the *NECsigmoidal* model. Of course before we
 use this model set for any inference, we would need to check the chain
 mixing and acf plot for each of the input models. We can use
 *check.chains* on the *jagsMANECfit*. Note that adding the argument
-*pdf.file = “Cl_chains”* to *check.chains* would write the chain plots
+*pdf.file = “Cl\_chains”* to *check.chains* would write the chain plots
 out to a pdf file, which can be more convenient, as you can see here
 *check.chains* generates a lot of plots on a *jagsMANECfit*.
 
-``` r
-load(file = "out_temp.RData")
-check.chains(out)
-```
+    load(file = "out_temp.RData")
+    check.chains(out)
 
 ![](man/figures/README-checkchains-beta-MANEC-1.png)![](man/figures/README-checkchains-beta-MANEC-2.png)![](man/figures/README-checkchains-beta-MANEC-3.png)![](man/figures/README-checkchains-beta-MANEC-4.png)![](man/figures/README-checkchains-beta-MANEC-5.png)![](man/figures/README-checkchains-beta-MANEC-6.png)![](man/figures/README-checkchains-beta-MANEC-7.png)![](man/figures/README-checkchains-beta-MANEC-8.png)![](man/figures/README-checkchains-beta-MANEC-9.png)![](man/figures/README-checkchains-beta-MANEC-10.png)
 Chains for the *NECHormesis* model in this case are very badly mixed, so
 we should drop this as well from our model sets
 
-``` r
-load(file = "out_temp.RData")
-out.NEC <- modify_jagsMANEC(out.NEC, drop.models = "NECHormesis")
-out <- modify_jagsMANEC(out, drop.models = "NECHormesis")
-```
+    load(file = "out_temp.RData")
+    out.NEC <- modify_jagsMANEC(out.NEC, drop.models = "NECHormesis")
+    out <- modify_jagsMANEC(out, drop.models = "NECHormesis")
 
-Now we can use the extract_ECx function to get EC10 and EC50 values. We
+Now we can use the extract\_ECx function to get EC10 and EC50 values. We
 can do this using our all model set, because it is valud to use *NEC*
 models for estimating *ECx*.
 
-``` r
-load(file = "out_temp.RData")
-ECx10 <- extract_ECx(out, ECx.val = 10)
-ECx50 <- extract_ECx(out, ECx.val = 50)
+    load(file = "out_temp.RData")
+    ECx10 <- extract_ECx(out, ECx.val = 10)
+    ECx50 <- extract_ECx(out, ECx.val = 50)
 
-ECx10
-#>    EC_10 EC_10_lw EC_10_up 
-#> 3.442832 3.189625 3.764327
-ECx50
-#>    EC_50 EC_50_lw EC_50_up 
-#>  5.70711  5.62851  5.70711
-```
+    ECx10
+    #>    EC_10 EC_10_lw EC_10_up 
+    #> 3.442832 3.189625 3.764327
+    ECx50
+    #>    EC_50 EC_50_lw EC_50_up 
+    #>  5.70711  5.62851  5.70711
 
 Note that the median estimate is the same as the upper bound. This
 indicates that the ‘absolute’ EC50 may lie beyond the observed data,
 because the lowest values here are just below 0.2, and the ‘absolute’
 *ECx* type scales between the higher predicted values (usually *top* or
 the y-intercept) and 0. We could use *type = ‘relative’* in our call to
-*extract_ECx* or we can try extending the *x.range*. Which you use
+*extract\_ECx* or we can try extending the *x.range*. Which you use
 depends on your specific context and question. Let’s try extending the
 x.range.
 
-``` r
-load(file = "out_temp.RData")
-ECx50 <- extract_ECx(out, ECx.val = 50, x.range = c(0.01, 8))
-ECx50
-#>    EC_50 EC_50_lw EC_50_up 
-#> 6.279581 5.683308 8.000000
-```
+    load(file = "out_temp.RData")
+    ECx50 <- extract_ECx(out, ECx.val = 50, x.range = c(0.01, 8))
+    ECx50
+    #>    EC_50 EC_50_lw EC_50_up 
+    #> 6.279581 5.683308 8.000000
 
 This still yields an upper bound that is identical to our upper range,
 which is again an indication that the upper bound at a concentration of
@@ -1104,49 +1012,43 @@ percentage decline in the response relative to the range of the fitted
 data across the observed range of concentration (x.val). We will do this
 for both out EC10 and our EC50 to be consistent.
 
-``` r
-load(file = "out_temp.RData")
-ECx10 <- extract_ECx(out, ECx.val = 10, type = "relative")
-ECx50 <- extract_ECx(out, ECx.val = 50, type = "relative")
+    load(file = "out_temp.RData")
+    ECx10 <- extract_ECx(out, ECx.val = 10, type = "relative")
+    ECx50 <- extract_ECx(out, ECx.val = 50, type = "relative")
 
-ECx10
-#>    EC_10 EC_10_lw EC_10_up 
-#> 3.224040 2.830127 3.449214
-ECx50
-#>    EC_50 EC_50_lw EC_50_up 
-#> 4.017164 3.715042 4.266639
-```
+    ECx10
+    #>    EC_10 EC_10_lw EC_10_up 
+    #> 3.224040 2.830127 3.449214
+    ECx50
+    #>    EC_50 EC_50_lw EC_50_up 
+    #> 4.017164 3.715042 4.266639
 
 The *NEC* values can be extracted directly from the *NEC* model set
 object, as they are an explicit parameter in these models.
 
-``` r
-load(file = "out_temp.RData")
-NECvals <- out.NEC$NEC
-NECvals
-#>     2.5%      50%    97.5% 
-#> 2.619696 3.075013 3.324965
-```
+    load(file = "out_temp.RData")
+    NECvals <- out.NEC$NEC
+    NECvals
+    #>     2.5%      50%    97.5% 
+    #> 2.619696 3.075013 3.324965
 
 Now we can make a combined plot of our output, showing the model
 averaged “*NEC*” model and the “all averaged model”, along with the
 relevant thresholds.
 
-``` r
-load(file = "out_temp.RData")
-plot(out, add.NEC = FALSE)
+    load(file = "out_temp.RData")
+    plot(out, add.NEC = FALSE)
 
-abline(v = ECx10, col = "orange", lty = c(1, 3, 3))
-abline(v = ECx50, col = "blue", lty = c(1, 3, 3))
-abline(v = NECvals, col = "darkgrey", lty = c(3, 1, 3))
-lines(out.NEC$pred.vals$x, out.NEC$pred.vals$y, col = "darkgrey")
-lines(out.NEC$pred.vals$x, out.NEC$pred.vals$up, col = "darkgrey", lty = 3)
-lines(out.NEC$pred.vals$x, out.NEC$pred.vals$lw, col = "darkgrey", lty = 3)
-legend("bottomleft",
-  legend = c("Complete averaged model", "EC10", "EC50", "NEC"),
-  col = c("black", "orange", "blue", "darkgrey"), lty = 1, bty = "n"
-)
-```
+    abline(v = ECx10, col = "orange", lty = c(1, 3, 3))
+    abline(v = ECx50, col = "blue", lty = c(1, 3, 3))
+    abline(v = NECvals, col = "darkgrey", lty = c(3, 1, 3))
+    lines(out.NEC$pred.vals$x, out.NEC$pred.vals$y, col = "darkgrey")
+    lines(out.NEC$pred.vals$x, out.NEC$pred.vals$up, col = "darkgrey", lty = 3)
+    lines(out.NEC$pred.vals$x, out.NEC$pred.vals$lw, col = "darkgrey", lty = 3)
+    legend("bottomleft",
+      legend = c("Complete averaged model", "EC10", "EC50", "NEC"),
+      col = c("black", "orange", "blue", "darkgrey"), lty = 1, bty = "n"
+    )
 
 ![](man/figures/README-plot_final-beta-MANEC-1.png)
 
@@ -1172,38 +1074,18 @@ The code is released under the Apache License 2.0
 References
 ==========
 
-<div id="refs" class="references hanging-indent">
-
-<div id="ref-Burnham2002">
-
 Burnham, K P, and D R Anderson. 2002. *Model Selection and Multimodel
-Inference; A Practical Information-Theoretic Approach*. 2nd ed. New
+Inference; A Practical Information-Theoretic Approach*. 2nd ed. New
 York: Springer.
-
-</div>
-
-<div id="ref-Fox2010">
 
 Fox, David R. 2010. “A Bayesian approach for determining the no effect
 concentration and hazardous concentration in ecotoxicology.”
 *Ecotoxicology and Environmental Safety* 73 (2): 123–31.
 
-</div>
-
-<div id="ref-Ritz2016">
-
 Ritz, Christian, Florent Baty, Jens C Streibig, and Daniel Gerhard.
 2016. “Dose-Response Analysis Using R.” *PLoS ONE* 10 (12): e0146021.
-<https://doi.org/10.1371/journal.pone.0146021>.
-
-</div>
-
-<div id="ref-Thorley2018">
+<a href="https://doi.org/10.1371/journal.pone.0146021" class="uri">https://doi.org/10.1371/journal.pone.0146021</a>.
 
 Thorley, Joe, and Carl Schwarz. 2018. “ssdtools: Species Sensitivity
 Distributions. R package version 0.0.3.
-https://CRAN.R-project.org/package=ssdtools.”
-
-</div>
-
-</div>
+<a href="https://CRAN.R-project.org/package=ssdtools" class="uri">https://CRAN.R-project.org/package=ssdtools</a>.”
