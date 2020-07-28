@@ -4,10 +4,11 @@
 =========
 
 The *jagsNEC* is an R package to fit concentration(dose) - response
-curves to toxicity data, and derive No-Effect-Concentration (NEC),
-No-Significant-Effect-Concentration (NSEC), and Effect-Concentration (of
-specified percentage ‘x’, ECx) thresholds from non-linear models fitted
-using Bayesian MCMC fitting methods via the *R2jags* package and *jags*.
+curves to toxicity data, and derive No-Effect-Concentration (*NEC*),
+No-Significant-Effect-Concentration (*NSEC*), and Effect-Concentration
+(of specified percentage ‘x’, *ECx*) thresholds from non-linear models
+fitted using Bayesian MCMC fitting methods via the *R2jags* package and
+*jags*.
 
 Background
 ==========
@@ -15,61 +16,63 @@ Background
 Bayesian model fitting can be difficult to automate across a broad range
 of usage cases, particularly with respect to specifying valid initial
 values and appropriate priors. This is one reason the use of Bayesian
-statistics for NEC estimation (or even ECx estimation) is not currently
-widely adopted across the broader ecotoxicological community, who rarely
-have access to specialist statistical expertise. The *jagsNEC* package
-attempts to provide an accessible interface to the R2jags package
-specifically for fitting NEC models and other concentration-response
-models, with a range of models specified based on the known distribution
-of the “concentration” or “dose” variable (the predictor, x) as well as
-the “response” (y) variable. The model formula, including priors and the
-init function required to call a jags model are automatically generated
-based on information contained in the supplied data. While the
-distribution of the x and y variables can be specified directly,
-*jagsNEC* will automatically ‘guess’ the correct distribution to use
-based on the characteristics of the provided data.
+statistics for *NEC* estimation (or even *ECx* estimation) is not
+currently widely adopted across the broader ecotoxicological community,
+who rarely have access to specialist statistical expertise. The
+*jagsNEC* package attempts to provide an accessible interface to the
+*R2jags* package specifically for fitting *NEC* models and other
+concentration-response models, with a range of models specified based on
+the known distribution of the “concentration” or “dose” variable (the
+predictor, x) as well as the “response” (y) variable. The model formula,
+including priors and the *init* function required to call a *jags* model
+are automatically generated based on information contained in the
+supplied data. While the distribution of the x and y variables can be
+specified directly, *jagsNEC* will automatically ‘guess’ the correct
+distribution to use based on the characteristics of the provided data.
 
-This project started with an implementation of the NEC model based on
+This project started with an implementation of the *NEC* model based on
 that described in (Fox 2010) using R2jags. The package has been further
 generalised to allow a large range of response variables to be modelled
 using the appropriate statistical distribution, and the current
 implementation supports gaussian, poisson, binomial, gamma, negbin and
 beta response data. We have since also further added a range of
-alternative NEC model types, as well as a range of typically used
+alternative *NEC* model types, as well as a range of typically used
 concentration-response models (such as 4-parameter logistic and weibull
-models) that have no NEC ‘step’ function but simply model response as a
-smooth function of concentration, as can be fit using other commonly
-used frequentist packages such as drc (Ritz et al. 2016).
+models) that have no *NEC* ‘step’ function but simply model response as
+a smooth function of concentration, as can be fit using other commonly
+used frequentist packages such as drc (Ritz et al. 2016).
 
 Specific models can be fit directly using *fit.jagsNEC*. Alternatively
 it is possible to fit a specific set or all of the available models
 using the function *fit.jagsMANEC*. The *fit.jagsMANEC* function returns
-a model weighted estimate of predicted posterior values, based on DIC
-model weights. It is also possible to obtain all individual model fits
-from the fitted *jagsMANECfit* model object if required. Multi-model
-inference can be useful where there are a range of plausible models that
-could be used (Burnham and Anderson 2002) and has been recently adopted
-in ecotoxicology for SSD model inference (Thorley and Schwarz 2018).
+a model weighted estimate of predicted posterior values, based on
+deviance information criteria (DIC) model weights, analogous to the way
+model weights are generated using AIC or AICc (Burnham and Anderson
+2002). It is also possible to obtain all individual model fits from the
+fitted *jagsMANECfit* model object if required. Multi-model inference
+can be useful where there are a range of plausible models that could be
+used (Burnham and Anderson 2002) and has been recently adopted in
+ecotoxicology for SSD model inference (Thorley and Schwarz 2018).
 
 An additional endpoint has also been derived using Bayesian posterior
 predicted values to estimate the “No-Statistical-Effect-Concentration”
 as the concentration at which predicted values for each MCMC chain fall
-below a lower percentile bound (defined as sig.val) of the control,
+below a lower percentile bound (defined as *sig.val*) of the control,
 which is assumed to be the lowest treatment (x.var) concentration in the
-data. NSEC estimates are currently used to approximate NEC for models
-without a specific NEC step parameter (in *jagsNEC* these have the
-prefix ECx in their model name).
+data. *NSEC* estimates are currently used to approximate *NEC* for
+models without a specific *NEC* step parameter (in *jagsNEC* these have
+the prefix *ECx* in their model name).
 
 Important information on the current package is contained in the
 *jagsNEC* and *jagsMANEC* helpfiles (see *?jagsNEC* and *?jagsMANEC*).
 
 This package is currently under development. We are keen on any feedback
-regarding usage, and especially bug reporting that includes an easy self
-contained reproducible example of unexpected behaviour or example model
-fits that fail to converge (have poor chain mixing) or yield other
-errors. Such information will hopefully help us towards building a more
-robust package. We cannot help troublshoot issues if an easy to run
-reproducible example is not supplied.
+regarding usage, and especially bug reporting that includes an easy to
+run self contained reproducible example of unexpected behaviour or
+example model fits that fail to converge (have poor chain mixing) or
+yield other errors. Such information will hopefully help us towards
+building a more robust package. We cannot help troublshoot issues if an
+easy to run reproducible example is not supplied.
 
 Installation
 ============
@@ -88,10 +91,10 @@ Fitting the NEC3param model using *fit.jagsNEC*
 -----------------------------------------------
 
 Here we include some examples showing how to use the package to fit an
-NEC model to binomial, proportional, count and continuous response (y)
+*NEC* model to binomial, proportional, count and continuous response (y)
 data. The examples are those used by Gerard Ricardo at:
 <a href="https://github.com/gerard-ricardo/NECs/blob/master/NECs" class="uri">https://github.com/gerard-ricardo/NECs/blob/master/NECs</a>.
-Here we show how to run the same jags models using the *jagsNEC*
+Here we show how to run the same *jags* models using the *jagsNEC*
 package.
 
 ### Binomial data
@@ -130,20 +133,21 @@ number of ‘successes’ in the binomial call, with ‘tot’ clearly
 indicating the number of trials.
 
 The main ‘working’ function in *jagsNEC* is the function *fit.jagsNEC*,
-which calls the other necessary functions and fits the jags model. See
+which calls the other necessary functions and fits the *jags* model. See
 ?*fit.jagsNEC* for more details. We run *fit.jagsNEC* by supplying
 *data* - a data.frame containing the data for the model fitting, here,
 binom.data; *x.var* - the name of the column in *data* which contains
-the concentration data or ‘x’ data to be used in the NEC model fit, and
-*y.var* - the name of the column in *data* which contains the response
-or ‘y’ data to be used in the NEC model fit. In our example here, as
-this is binomial, we must also supply *trials.var*, which is the name of
-the column in *data* which contains the number of trials in the binomial
-call.
+the concentration data or ‘x’ data to be used in the *NEC* model fit,
+and *y.var* - the name of the column in *data* which contains the
+response or ‘y’ data to be used in the *NEC* model fit. In our example
+here, as this is binomial, we must also supply *trials.var*, which is
+the name of the column in *data* which contains the number of trials in
+the binomial call.
 
 *fit.jagsNEC* will guess the data types for use, although we could
-specify *y.type* as “binomial” and *x.type* as “gamma”. This example
-fits without specifying either, but trials.var must be supplied.
+manually specify *y.type* as “binomial” and *x.type* as “gamma”. This
+example fits without specifying either, but *trials.var* must be
+supplied.
 
     library(jagsNEC)
 
@@ -168,25 +172,25 @@ fits without specifying either, but trials.var must be supplied.
     #>   |                                                          |                                                  |   0%  |                                                          |*                                                 |   2%  |                                                          |**                                                |   4%  |                                                          |***                                               |   6%  |                                                          |****                                              |   8%  |                                                          |*****                                             |  10%  |                                                          |******                                            |  12%  |                                                          |*******                                           |  14%  |                                                          |********                                          |  16%  |                                                          |*********                                         |  18%  |                                                          |**********                                        |  20%  |                                                          |***********                                       |  22%  |                                                          |************                                      |  24%  |                                                          |*************                                     |  26%  |                                                          |**************                                    |  28%  |                                                          |***************                                   |  30%  |                                                          |****************                                  |  32%  |                                                          |*****************                                 |  34%  |                                                          |******************                                |  36%  |                                                          |*******************                               |  38%  |                                                          |********************                              |  40%  |                                                          |*********************                             |  42%  |                                                          |**********************                            |  44%  |                                                          |***********************                           |  46%  |                                                          |************************                          |  48%  |                                                          |*************************                         |  50%  |                                                          |**************************                        |  52%  |                                                          |***************************                       |  54%  |                                                          |****************************                      |  56%  |                                                          |*****************************                     |  58%  |                                                          |******************************                    |  60%  |                                                          |*******************************                   |  62%  |                                                          |********************************                  |  64%  |                                                          |*********************************                 |  66%  |                                                          |**********************************                |  68%  |                                                          |***********************************               |  70%  |                                                          |************************************              |  72%  |                                                          |*************************************             |  74%  |                                                          |**************************************            |  76%  |                                                          |***************************************           |  78%  |                                                          |****************************************          |  80%  |                                                          |*****************************************         |  82%  |                                                          |******************************************        |  84%  |                                                          |*******************************************       |  86%  |                                                          |********************************************      |  88%  |                                                          |*********************************************     |  90%  |                                                          |**********************************************    |  92%  |                                                          |***********************************************   |  94%  |                                                          |************************************************  |  96%  |                                                          |************************************************* |  98%  |                                                          |**************************************************| 100%
     #> Response variable suc modelled using a binomial distribution.
 
-The function shows the progress of the jags fit and returns the usual
-jags output (with a few other additions to this list). The function
-*check.chains* can be used to plot the chains and the chain ACF, so we
-can assess mixing and looks for other potential issues with the model
-fit. Initially *jagsNEC* will attempt to use starting values generated
-by the init function that we have specified for that type of model fit.
-It will run a small number of iterations and then test for good mixing.
-If the model fails to fit or the mixing is not very good (among chain
-variance is a lot bigger than within chain variance) *jagsNEC* with try
-up to *n.tries* more times to fit the data using the generated *init*
-function to try and obtain a successfuly fitted model with good mixing.
-If this still fails to yield a successful and/or well mixed model,
-*jagsNEC* will try up to *n.tries* more times using the default initial
-values as generated by R2jags. If no model is successfully fit an error
-will be returned indicating the model could not be fit succesfully. If a
-model is fit but still has poor mixing even after *n.tries* attempts,
-the model with the best mixing will be returned, with a warning to
-cautiously interpret the results and inspect the chain mixing diagnostic
-plot.
+The function shows the progress of the *jags* fit and returns the usual
+*jags* output (with a few other elements added to this list). The
+function *check.chains* can be used to plot the chains and the chain
+ACF, so we can assess mixing and look for other potential issues with
+the model fit. Initially *jagsNEC* will attempt to use starting values
+generated by the *init* function that we have specified for that type of
+model fit. It will run a small number of iterations and then test for
+good mixing. If the model fails to fit or the mixing is not very good
+(among chain variance is a lot bigger than within chain variance)
+*jagsNEC* with try up to *n.tries* more times to fit the data using the
+generated *init* function to try and obtain a successfuly fitted model
+with good mixing. If this still fails to yield a successful and/or well
+mixed model, *jagsNEC* will try up to *n.tries* more times using the
+default initial values as generated by R2jags. If no model is
+successfully fit an error will be returned indicating the model could
+not be fit succesfully. If a model is fit but still has poor mixing even
+after *n.tries* attempts, the model with the best mixing will be
+returned, with a warning to cautiously interpret the results and inspect
+the chain mixing diagnostic plot.
 
     check.chains(out)
 
@@ -431,12 +435,12 @@ our binomial example above.
 ![](man/figures/README-check-measure-NEC-1.png)
 
 The function *plot* can be used to plot the fitted model. The estimated
-NEC value can be obtained directly from the fitted model object, using
-*out$NEC*. EC*x* estimates can also be obtained from the NEC model fit,
-using the function *extract\_ECx*. Note these may differ from a typical
-4-parameter non-linear model, as the NEC model is a broken stick
-non-linear regression and will often fall more sharply than a smooth
-4-parameter non-linear curve.
+*NEC* value can be obtained directly from the fitted model object, using
+*out$NEC*. EC*x* estimates can also be obtained from the *NEC* model
+fit, using the function *extract\_ECx*. Note these may differ from a
+typical 4-parameter non-linear model, as the *NEC* model is a broken
+stick non-linear regression and will often fall more sharply than a
+smooth 4-parameter non-linear curve.
 
     par(mfrow = c(1, 1))
     plot(out)
@@ -497,7 +501,7 @@ doesn’t properly capture the true variability represented in this data).
 Over and under-dispersion can be due to a poor fitting model, as well as
 violation of the distribution assumptions of the fitted data (for
 example, when the response data are poisson, the variance should equal
-the mean, which is often not the case).
+to the mean, which is often not the case).
 
     out$over.disp
     #> [1] 1
@@ -544,25 +548,25 @@ there is a tendency to underestimate the response (the residual plot
 appears to be negatively biased). Note that we still have an over
 dispersion paramter of 1.
 
-By default *jagsNEC* will fit a 3 parameter NEC model (model =
-NEC3param) which has the parameters *top* (the mean value of the
+By default *jagsNEC* will fit a 3 parameter *NEC* model (*model =
+NEC3param*) which has the parameters *top* (the mean value of the
 response without any effect of the toxicant), *NEC* (the concentration
 at which an effect of the toxicant begins to occur), and *beta* (the
 rate of exponential decay of the response). However there are other
-models that have been implemented, including: NEC4param, which is
-equivalent to *NEC3param* but includes a *bot* parameter (the bottom
-plateau); and *ECx4param*, with parameters *top* (the upper plateau of
-the response), *EC50* (the *EC50* estimate of the curve), *beta* (the
-rate of exponential decay of the response), and *bot* (the bottom
-plateau). The *ECx* model can be used when evidence for an *NEC* model
-is weak (ie there is a consistent decline with increasing concentration
-and no evidence of a *step*). For *model = ECx4param*, no *NEC* value
-can be formally derived, although an approximation based on the *NSEC*
-concept described under *background* is currently returned by default on
-all *ECx* model output. At this time the concept has not be formally
-tested and published and should be used with caution.
+models that have been implemented, including (but not limited to):
+*NEC4param*, which is equivalent to *NEC3param* but includes a *bot*
+parameter (the bottom plateau); and *ECx4param*, with parameters *top*
+(the upper plateau of the response), *EC50* (the *EC50* estimate of the
+curve), *beta* (the rate of exponential decay of the response), and
+*bot* (the bottom plateau). An *ECx* model can be used when evidence for
+an *NEC* model is weak (ie there is a consistent decline with increasing
+concentration and no evidence of a *step*). For *model = ECx4param*, no
+*NEC* value can be formally derived, although an approximation based on
+the *NSEC* concept described under *background* is currently returned by
+default on all *ECx* model output. At this time the concept has not be
+formally tested and published and should be used with caution.
 
-Let’s now try fitting the same data using the 4-parameter NEC model.
+Let’s now try fitting the same data using the 4-parameter *NEC* model.
 
     set.seed(333)
     out <- fit.jagsNEC(
@@ -597,10 +601,10 @@ Let’s now try fitting the same data using the 4-parameter NEC model.
     out$over.disp
     #> [1] 1
 
-Even for the 4-parameter NEC model we still have an overdisperon value
-of 1, suggesting that our 95% confidence band on the NEC will be far
+Even for the 4-parameter *NEC* model we still have an overdisperon value
+of 1, suggesting that our 95% confidence band on the *NEC* will be far
 smaller than what it should be in reality. It does seem there is a more
-gradual decline in this data, so it is possible the 4-parameter ECx
+gradual decline in this data, so it is possible the 4-parameter *ECx*
 model will fit better. Let’s try fitting that now.
 
     set.seed(333)
@@ -677,10 +681,10 @@ model will fit better. Let’s try fitting that now.
     #> [1] 1
 
 This model does look like it fits a little bit better than the either of
-the two NEC models. The residual plot shows a more even distribution of
-the data around the fitted line. However, the overdispersion paramters
-suggests this model is still over dispersed, meaning our confidence
-bound are still too narrow.
+the two *NEC* models. The residual plot shows a more even distribution
+of the data around the fitted line. However, the overdispersion
+paramters suggests this model is still over dispersed, meaning our
+confidence bound are still too narrow.
 
 If your model is overdispersed, there is now an argument to specify
 *over.disp=TRUE*, which will generalise a poisson model to use a
@@ -752,7 +756,7 @@ could also be achieved through using *y.type=“beta”*).
 From the results we can see that we now have a much better fit in terms
 of dispersion, with an over-dispersion paramter of 0.608, and much wider
 more representative confidence bands. Let us see if the *beta*
-distribution would also have improved our original NEC model fit.
+distribution would also have improved our original *NEC* model fit.
 
     set.seed(333)
     out <- fit.jagsNEC(
@@ -874,10 +878,11 @@ types, so we can plot a *jagsMANECfit* model object simply with *plot*.
 
 The default plot looks exactly the same out our regular jagsNECfit plot,
 but the output is based in a weighted average of all the models fits.
-The NEC estimate on this plot is based on a mix of actual NEC estimates,
-as well as the NSEC estimates that are used as an approximation to NEC
-for all the *ECx* models in the set. The fitted *jagsMANECfit* object
-contains different elements to the jagsNECfit. In particular
+The *NEC* estimate on this plot is based on a mix of actual *NEC*
+estimates, as well as the *NSEC* estimates that are used as an
+approximation to *NEC* for all the *ECx* models in the set. The fitted
+*jagsMANECfit* object contains different elements to the jagsNECfit. In
+particular
 
     load(file = "out_temp.RData")
     out$mod.stats
@@ -894,8 +899,8 @@ contains different elements to the jagsNECfit. In particular
     #> ECxWeibull2  -432.8402  5.579327 3.085863e-02  8.018570     0.460
 
 contains the table of model fit statistic for all the fitted models.
-This includes the model name, the DIC (as returned from jags), DIC.delta
-(DIC - the lowest DIC), wi (the model weight), pD, and the
+This includes the model name, the DIC (as returned from *jags*),
+DIC.delta (DIC - the lowest DIC), wi (the model weight), pD, and the
 overdispersion estimate. For this example, three models have relatively
 similar weights and contribute to the model averaged outcome, including
 the *NEC3param*, *NEC4param* and the *ECx4param* models, with the
@@ -926,16 +931,16 @@ and we may remove it from the model set in future versions. We it is
 currently retained out of interest and to explore it’s behaviour under
 different scenarios. The *NECHormesis* model allows an initial linear
 increase with concentration, prior to the exponential decline of the
-*NEC3param* model once the NEC concentration has been reached. This does
-not work well for this data, but neither does it have substantial
+*NEC3param* model once the *NEC* concentration has been reached. This
+does not work well for this data, but neither does it have substantial
 weight, so it can be left in the model set for completeness.
 
-The models prefixed with *ECx* are all models that do not have the NEC
+The models prefixed with *ECx* are all models that do not have the *NEC*
 as a parameter in the model. That is the are smooth curves as a function
-of concentration nad have no breakpoint. The NEC on the plot above for
+of concentration nad have no breakpoint. The *NEC* on the plot above for
 these models are an approximation based on *NSEC* (see above) and should
 not be used without careful consideration of the validity of this
-endpoint value. A formal model averaged estimate of NEC should be
+endpoint value. A formal model averaged estimate of *NEC* should be
 obtained with *model.set = NEC*, and there is a helper function
 *modify\_jagsMANEC* that can be used to alter the model set as required.
 We can use this to obtain first a set of *NEC* only models
@@ -969,8 +974,8 @@ we should drop this as well from our model sets
     out <- modify_jagsMANEC(out, drop.models = "NECHormesis")
 
 Now we can use the extract\_ECx function to get EC10 and EC50 values. We
-can do this using our all model set, because it is valud to use NEC
-models for estimating ECx.
+can do this using our all model set, because it is valud to use *NEC*
+models for estimating *ECx*.
 
     load(file = "out_temp.RData")
     ECx10 <- extract_ECx(out, ECx.val = 10)
@@ -986,7 +991,7 @@ models for estimating ECx.
 Note that the median estimate is the same as the upper bound. This
 indicates that the ‘absolute’ EC50 may lie beyond the observed data,
 because the lowest values here are just below 0.2, and the ‘absolute’
-ECx type scales between the higher predicted values (usually *top* or
+*ECx* type scales between the higher predicted values (usually *top* or
 the y-intercept) and 0. We could use *type = ‘relative’* in our call to
 *extract\_ECx* or we can try extending the *x.range*. Which you use
 depends on your specific context and question. Let’s try extending the
@@ -1002,13 +1007,13 @@ This still yields an upper bound that is identical to our upper range,
 which is again an indication that the upper bound at a concentration of
 8 still does not reach our EC50. To extend further it would be better to
 refit our data using *model.set = “bot.free”* - as if we want to
-extrapolate for an absolute ECx value, it may be more valid to only use
-models that do not have a lower asymptote, but actually will asymptote
-at zero. Here we will consider our ECx values in relative terms instead
-for simplicity, which means the ECx values represent a percentage
-decline in the response relative to the range of the fitted data across
-the observed range of concentration (x.val). We will do this for both
-out EC10 and our EC50 to be consistent.
+extrapolate for an absolute *ECx* value, it may be more valid to only
+use models that do not have a lower asymptote, but actually will
+asymptote at zero. Here we will consider our *ECx* values in relative
+terms instead for simplicity, which means the *ECx* values represent a
+percentage decline in the response relative to the range of the fitted
+data across the observed range of concentration (x.val). We will do this
+for both out EC10 and our EC50 to be consistent.
 
     load(file = "out_temp.RData")
     ECx10 <- extract_ECx(out, ECx.val = 10, type = "relative")
@@ -1021,8 +1026,8 @@ out EC10 and our EC50 to be consistent.
     #>    EC_50 EC_50_lw EC_50_up 
     #> 4.017164 3.715042 4.266639
 
-The NEC values can be extracted directly from the NEC model set object,
-as they are an explicit parameter in these models.
+The *NEC* values can be extracted directly from the *NEC* model set
+object, as they are an explicit parameter in these models.
 
     load(file = "out_temp.RData")
     NECvals <- out.NEC$NEC
@@ -1031,7 +1036,7 @@ as they are an explicit parameter in these models.
     #> 2.619696 3.075013 3.324965
 
 Now we can make a combined plot of our output, showing the model
-averaged “NEC” model and the “all averaged model”, along with the
+averaged “*NEC*” model and the “all averaged model”, along with the
 relevant thresholds.
 
     load(file = "out_temp.RData")
@@ -1073,7 +1078,7 @@ References
 ==========
 
 Burnham, K P, and D R Anderson. 2002. *Model Selection and Multimodel
-Inference; A Practical Information-Theoretic Approach*. 2nd ed. New
+Inference; A Practical Information-Theoretic Approach*. 2nd ed. New
 York: Springer.
 
 Fox, David R. 2010. “A Bayesian approach for determining the no effect
@@ -1082,8 +1087,8 @@ concentration and hazardous concentration in ecotoxicology.”
 
 Ritz, Christian, Florent Baty, Jens C Streibig, and Daniel Gerhard.
 2016. “Dose-Response Analysis Using R.” *PLoS ONE* 10 (12): e0146021.
-<https://doi.org/10.1371/journal.pone.0146021>.
+<a href="https://doi.org/10.1371/journal.pone.0146021" class="uri">https://doi.org/10.1371/journal.pone.0146021</a>.
 
 Thorley, Joe, and Carl Schwarz. 2018. “ssdtools: Species Sensitivity
 Distributions. R package version 0.0.3.
-https://CRAN.R-project.org/package=ssdtools.”
+<a href="https://CRAN.R-project.org/package=ssdtools" class="uri">https://CRAN.R-project.org/package=ssdtools</a>.”
