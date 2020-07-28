@@ -73,7 +73,7 @@ check.chains <- function(X, name = "", pdf.file = "") {
       x <- X.m$sims.array
       num.chains <- ncol(x[, , params[1]])
       if (nchar(pdf.file) == 0) {
-        x11()
+        #x11()
       }
       par(mfrow = c(length(params), 2), mar = c(0, 5, 0.5, 0.5), oma = c(4, 0, 2, 0))
       for (i in 1:length(params)) {
