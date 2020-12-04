@@ -105,8 +105,7 @@ Citation
 ========
 
 If you use our package, please use the folling citation: *Fisher, R.,
-Ricardo, G., & Fox, D. (2020, July 30). Bayesian concentration-response
-modelling using jagsNEC.
+Ricardo, G., & Fox, D. (2020, July 30). jagsNEC: A Bayesian No Effect Concentration (NEC) package
 <a href="doi:10.5281/ZENODO.3966864" class="uri">doi:10.5281/ZENODO.3966864</a>*
 
 Examples
